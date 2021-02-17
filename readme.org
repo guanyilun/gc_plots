@@ -1,0 +1,27 @@
+* ACT GC Paper Plots
+Here I collect the scripts to make all kinds of plots in the act gc
+paper.
+
+** planck vs. act temperature map
+- script: plot_planck_act_sidebyside.py
+- data: planck, coadd
+- run script:
+  #+BEGIN_SRC bash
+  python plot_planck_act_sidebyside.py -o plots --oname planck_coadd_sidebyside.pdf
+  #+END_SRC
+
+** QU in 3 bands
+- script: plot_qu_in_3bands.py
+- data: coadd
+- run script:
+  #+BEGIN_SRC bash
+  python plot_qu_in_3bands.py -o plots
+  #+END_SRC
+
+** magnetic field in 3 bands
+- script: plot_mag_in_3bands.py
+- data: coadd
+- run script
+  #+BEGIN_SRC bash
+  python plot_mag_in_3bands.py -o plots
+  #+END_SRC
