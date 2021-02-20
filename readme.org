@@ -25,3 +25,28 @@ paper.
   #+BEGIN_SRC bash
   python plot_mag_in_3bands.py -o plots
   #+END_SRC
+
+** polarization fraction
+- plot polarization fraction per frequency
+- script: plot_polfrac.py
+- run script
+  #+BEGIN_SRC bash
+  python plot_polfrac.py -o plots --freq f090 --oname polfrac_f090.pdf
+  python plot_polfrac.py -o plots --freq f150 --oname polfrac_f150.pdf
+  python plot_polfrac.py -o plots --freq f220 --oname polfrac_f220.pdf
+  #+END_SRC
+** polarization uncertainties
+- script plot_polangle_error.py
+- run script
+  #+BEGIN_SRC bash
+  python plot_polangle_error.py -o plots --freq f090 --oname polang_err_f090.pdf
+  python plot_polangle_error.py -o plots --freq f150 --oname polang_err_f150.pdf
+  python plot_polangle_error.py -o plots --freq f220 --oname polang_err_f220.pdf
+  #+END_SRC
+** plot magnetic field orientation
+- script plot_mag.py
+#+BEGIN_SRC 
+python plot_mag.py -o plots --freq f090 --oname mag_f090.pdf
+python plot_mag.py -o plots --freq f150 --oname mag_f150.pdf
+python plot_mag.py -o plots --freq f220 --oname mag_f220.pdf
+#+END_SRC

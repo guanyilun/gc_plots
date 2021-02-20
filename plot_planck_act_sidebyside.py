@@ -20,7 +20,7 @@ args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 
 # Build figure
-fig, axes = plt.subplots(3, 2, gridspec_kw={'hspace': 0.05, 'wspace': 0.05}, figsize=(9,7))
+fig, axes = plt.subplots(3, 2, figsize=(9,7))
 box = np.array([[-1,2],[1,-2]]) / 180*np.pi
 
 plot_opts = {
@@ -38,7 +38,7 @@ imap = process_map(imap)
 axes[0,1].imshow(imap, **plot_opts)
 
 # row 1: f150
-plot_opts.update({'vmax': 4.5})
+plot_opts.update({'vmin':2, 'vmax': 4.5})
 imap = load_map(filedb['f150']['planck'], box)
 imap = process_map(imap)
 axes[1,0].imshow(imap, **plot_opts)
@@ -47,7 +47,7 @@ imap = process_map(imap)
 axes[1,1].imshow(imap, **plot_opts)
 
 # row 2: f220
-plot_opts.update({'vmax': 5})
+plot_opts.update({'vmin':2.5, 'vmax': 5})
 imap = load_map(filedb['f220']['planck'], box)
 imap = process_map(imap)
 axes[2,0].imshow(imap, **plot_opts)
@@ -78,7 +78,7 @@ axes[1,0].text(-0.05, 0.35, 'f150', rotation=90,
 axes[2,0].text(-0.05, 0.35, 'f220', rotation=90,
                verticalalignment='bottom', horizontalalignment='left',
                transform=axes[2,0].transAxes, fontsize=12)
-
+plt.tight_layout(w_pad=0.2, h_pad=0.2)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
 plt.savefig(ofile, bbox_inches='tight')

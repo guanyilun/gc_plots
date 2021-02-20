@@ -19,7 +19,8 @@ def process_map(m, component='Q'):
     if   component == 'Q': i = 1
     elif component == 'U': i = 2
     else: raise ValueError("Only Q/U are allowed")
-    return np.arcsinh(m[i]/200)
+    # return np.arcsinh(m[i]/200)
+    return m[i]
 # box of interests in format: [[fromy, fromx],[toy, tox]]
 box = np.array([[-1,2],[1,-2]]) / 180*np.pi
 
@@ -28,8 +29,8 @@ fig, axes = plt.subplots(3,2,figsize=(9,7))
 plot_opts = {
     'origin': 'lower',
     'cmap': 'planck',
-    'vmin': -2,
-    'vmax': 2,
+    'vmin': -400,
+    'vmax': 400,
     'extent': [2,-2,-1,1]
 }
 # row 0: f090
