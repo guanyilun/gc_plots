@@ -50,3 +50,22 @@ python plot_mag.py -o plots --freq f090 --oname mag_f090.pdf
 python plot_mag.py -o plots --freq f150 --oname mag_f150.pdf
 python plot_mag.py -o plots --freq f220 --oname mag_f220.pdf
 #+END_SRC
+** plot one coadd map only
+This is to facilitate object identification work
+#+BEGIN_SRC bash
+python plot_map_1band.py --freq f090 --oname coadd_f090.pdf
+python plot_map_1band.py --freq f150 --oname coadd_f150.pdf
+python plot_map_1band.py --freq f220 --oname coadd_f220.pdf --max 6
+#+END_SRC
+** plot mouse object
+Mouse is a pulsar travelling at ~300km/s in interstellar medium
+creating a cometary feature. This script plots it in different frequency
+with the option to substract a dust template using f220.
+#+BEGIN_SRC bash
+python plot_mouse.py
+#+END_SRC
+** plot multi-frequency
+This uses f090 as red, f150 as green, f220 as blue.
+#+BEGIN_SRC bash
+python plot_multifreq.py --oname multifreq.pdf -Q 0 -s 1.5
+#+END_SRC
