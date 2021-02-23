@@ -49,7 +49,7 @@ bmap_f150 = np.exp(-0.5*l**2*(fwhms['f150']*u.fwhm*u.arcmin)**2)
 bmap_f220 = np.exp(-0.5*l**2*(fwhms['f220']*u.fwhm*u.arcmin)**2)
 
 rmap_f090 = imap_f090
-if args.beam_match:
+if not args.beam_match:
     rmap_f150 = imap_f150
     rmap_f220 = imap_f220
 else:

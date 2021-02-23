@@ -2,7 +2,7 @@
 
 from pixell import enmap
 from pixell.utils import arcmin
-import os.path as op
+import os.path as op, numpy as np
 import glob
 
 # Input files
@@ -48,3 +48,7 @@ def load_ivar(path, box=None):
     else: raise ValueError("Unknown format")
     if box is not None: return imap.submap(box)
     else: return imap
+
+def box2extent(box):
+    """convert pixell box to plt extent"""
+    return np.array([box[0][1], box[1][1], box[0][0], box[1][0]])

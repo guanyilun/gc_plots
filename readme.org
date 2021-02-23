@@ -69,3 +69,22 @@ This uses f090 as red, f150 as green, f220 as blue.
 #+BEGIN_SRC bash
 python plot_multifreq.py --oname multifreq.pdf -Q 0 -s 1.5
 #+END_SRC
+** plot magnetic field of some region of interests
+The mouse object with temperature as underlay
+#+BEGIN_SRC bash
+  python plot_mag.py -o plots --freq f090 --oname mag_mouse_f090.pdf \
+         --underlay T --min 2500 --max 7000 --downgrade 2 --box [[-0.9,-0.65],[-0.7,-0.8]]
+#+END_SRC
+Around Sag A*
+#+BEGIN_SRC bash
+  python plot_mag.py -o plots --freq f090 --oname mag_SagA_f090_P.pdf \
+         --underlay P --min 0 --max 3e3 --box [[-0.17,0.08],[0.10,-0.20]] --downgrade 1
+  python plot_mag.py -o plots --freq f150 --oname mag_SagA_f150_P.pdf \
+         --underlay P --min 0 --max 2e3 --box [[-0.17,0.08],[0.10,-0.20]] --downgrade 1
+#+END_SRC
+Around the tornado object: 357.65 -0.08
+#+BEGIN_SRC bash
+  python plot_region.py -o plots --oname map_tornado.pdf \
+         --box "[[-0.25, -2.15],[0.05, -2.45]]" --dust-removal \
+         --tmax 7000,5000 --pmax 500,300
+#+END_SRC
