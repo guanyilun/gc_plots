@@ -25,7 +25,7 @@ filedb = {
     },
 }
 
-def load_map(path, box=None):
+def load_map(path, box=None, mJy=False, fcode=None, cib_monopole=False):
     files = glob.glob(path)
     if len(files) == 1:
         imap = enmap.read_map(files[0])
@@ -34,6 +34,27 @@ def load_map(path, box=None):
         imap2 = enmap.read_map(files[1])
         imap  = (imap1 + imap2) / 2
     else: raise ValueError("Unknown format")
+    # optionally convert everything to mJy beam^-1
+    # numbers taken from Table 6 from Planck IX (2013)
+    if mJy:
+        if fcode == 'f090':
+            imap *= 244.1*1e3
+        elif fcode == 'f150':
+            imap *= 371.74*1e3
+        elif fcode == 'f220':
+            imap *= 483.69*1e3
+        else: raise ValueError("Unknow fcode")
+        # since the numbers below are given in mJy, I will only
+        # correct cib monopole when data has been converted to mJy
+        # see Planck 2018 III table 12
+        if cib_monopole:
+            if fcode == 'f090':
+                imap[0] -= 0.003 * 1e9  # mJy
+            elif fcode == 'f150':
+                imap[0] -= 0.079 * 1e9
+            elif fcode == 'fcode':
+                imap[0] -= 0.033 * 1e9
+            else: raise ValueError("Unknow fcode")
     if box is not None: return imap.submap(box)
     else: return imap
 
@@ -49,6 +70,6 @@ def load_ivar(path, box=None):
     if box is not None: return imap.submap(box)
     else: return imap
 
-def box2extent(box):
+def box2extent(box, pad=0.25*arcmin):
     """convert pixell box to plt extent"""
-    return np.array([box[0][1], box[1][1], box[0][0], box[1][0]])
+    return np.array([box[0][1]+pad, box[1][1]-pad, box[0][0]-pad, box[1][0]+pad])
