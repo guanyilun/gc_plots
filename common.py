@@ -75,4 +75,10 @@ def box2extent(box, pad=0.25*arcmin):
     return np.array([box[0][1]+pad, box[1][1]-pad, box[0][0]-pad, box[1][0]+pad])
 
 # common boxes
-half_box = np.array([[-1,2],[1,-2]]) / 180*np.pi
+boxes = {}
+boxes['half']  = np.array([[-1,2],[1,-2]]) / 180*np.pi
+boxes['full']  = np.array([[-2,4],[2,-4]]) / 180*np.pi
+boxes['gismo'] = np.array([[-0.27,0.92],[0.235,-0.73]]) / 180*np.pi
+boxes['saga']  = np.array([[-0.17,0.08],[0.10,-0.20]]) / 180*np.pi
+boxes['mouse'] = np.array([[-0.9,-0.65],[-0.7,-0.8]]) / 180*np.pi
+boxes['tndo']  = np.array([[-0.25, -2.15],[0.05, -2.45]]) / 180*np.pi

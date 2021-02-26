@@ -12,13 +12,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-o', '--odir', default='plots')
 parser.add_argument('-v', action='store_true', default=False)
 parser.add_argument("--oname", default="spec.pdf")
+parser.add_argument("--area", default='half')
 args = parser.parse_args()
 
 if not op.exists(args.odir): os.makedirs(args.odir)
 
 # first load maps from different frequencies
 # define a box of interests
-box = np.array([[-1,2],[1,-2]]) / 180*np.pi
+box = boxes[args.area]
 
 imap_f090 = load_map(filedb['f090']['coadd'], fcode='f090', box=box)
 imap_f150 = load_map(filedb['f150']['coadd'], fcode='f150', box=box)
@@ -45,7 +46,7 @@ beta = -3.1
 #   \beta_s = log(T(90GHz)/T(150GHz)) / log(90/150)
 #
 # and we want to plot the spectral index normalized to \beta_s = 1
-# hence,
+# hence, (using Planck frequency)
 omap = np.log(imap_f090[0]/imap_f150[0])/np.log(100/143)
 omap /= beta
 
