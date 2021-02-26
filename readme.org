@@ -84,6 +84,10 @@ This uses f090 as red, f150 as green, f220 as blue.
 #+BEGIN_SRC bash
 python plot_multifreq.py --oname multifreq.pdf -Q 0 -s 1.5
 #+END_SRC
+color balance
+#+BEGIN_SRC bash
+python plot_multifreq.py --oname multifreq_balance.pdf --min 2e8 --max 2e9 --norm 3 -Q 10 -s 2 --area half
+#+END_SRC
 ** plot magnetic field of some region of interests
 The mouse object with temperature as underlay
 #+BEGIN_SRC bash
