@@ -111,7 +111,12 @@ Around the tornado object: 357.65 -0.08
 ** plot radio arc magnetic field orientation
 TBD
 ** plot spectral indices
-ratio of f090 and f150
+ratio of f090 and f150, and the resulting spectral index is compared to
+a fiducial index of synchrotron radiation beta = -3.1
 #+BEGIN_SRC bash
 python plot_spectral_indices.py
+#+END_SRC
+this plots the spectral index instead of its different with synchtrotron
+#+BEGIN_SRC bash
+python plot_spectral_indices2.py --area dust1 --cmap magma --freq f150
 #+END_SRC

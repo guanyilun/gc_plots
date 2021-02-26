@@ -1,7 +1,4 @@
-"""This script aims to plot a map of spectral indices
-in terms of difference to synchtrotron radiation
-
-"""
+"""This script aims to plot a map of spectral indices"""
 
 import argparse, os, os.path as op
 import numpy as np
@@ -41,29 +38,24 @@ elif args.freq == 'f150':
     map2 = imap_f220
     f1 = 143
     f2 = 217
-else: raise ValueError("Unknown spectral index")
-# fiducial synchrotron spectral index
 
-# suppose synchrontron radiation has a power law behavior
+# beta = 1.59
+
+# suppose map has a power law behavior
 #
-#   T(\nu) = T(\nu_0) (\nu / \nu_0)^\beta_s,
+#   T(\nu) = T(\nu_0) (\nu / \nu_0)^\beta,
 # 
 # then we have,
 # 
 #   T(90GHz) / T(150GHz) ~ (90 / 150)^\beta_s. 
 #
-# With a fiducial value of \beta_s, which we take
-# from Choi and Page (2015).
-beta = -3.1
-# beta = 1.59
 # we can plot a map of spectral index with
 #
-#   \beta_s = log(T(90GHz)/T(150GHz)) / log(90/150)
+#   \beta = log(T(90GHz)/T(150GHz)) / log(90/150)
 #
 # and we want to plot the spectral index normalized to \beta_s = 1
 # hence, (using Planck frequency)
 omap = np.log(map1[0]/map2[0])/np.log(f1/f2)
-omap -= beta
 
 opts = {
     'origin': 'lower',
@@ -71,7 +63,7 @@ opts = {
     'extent': box2extent(box)/np.pi * 180,
 }
 plt.imshow(omap, **opts)
-plt.colorbar(shrink=0.55).set_label(r'$\beta - \beta_s$')
+plt.colorbar(shrink=0.55).set_label(r'$\beta$')
 plt.xlabel('l [deg]')
 plt.ylabel('b [deg]')
 ofile = op.join(args.odir, args.oname)

@@ -2,6 +2,7 @@
 
 from pixell import enmap
 from pixell.utils import arcmin
+from pixell import utils as u
 import os.path as op, numpy as np
 import glob
 
@@ -82,3 +83,14 @@ boxes['gismo'] = np.array([[-0.27,0.92],[0.235,-0.73]]) / 180*np.pi
 boxes['saga']  = np.array([[-0.17,0.08],[0.10,-0.20]]) / 180*np.pi
 boxes['mouse'] = np.array([[-0.9,-0.65],[-0.7,-0.8]]) / 180*np.pi
 boxes['tndo']  = np.array([[-0.25, -2.15],[0.05, -2.45]]) / 180*np.pi
+boxes['dust1'] = np.array([[-0.8,0.4],[-0.5,0.7]]) / 180*np.pi
+boxes['dust2'] = np.array([[-0.125,-0.1],[0,-0.2]]) / 180*np.pi
+boxes['dust3'] = np.array([[-1,3.5],[1,2.5]]) / 180*np.pi
+# boxes['dust1'] = np.array([[0,3.7],[0.2,3.5]]) / 180*np.pi
+# boxes['dust1'] = np.array([[0,3.4],[0.6,3]]) / 180*np.pi
+
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("-o", "--odir", default='plots')
+parser.add_argument("-v", "--verbose", action='store_true')
+parser.add_argument("--area", default='full')

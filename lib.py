@@ -1,5 +1,4 @@
 import numpy as np
-import lic
 
 # from https://github.com/astrosica/misc-functions/blob/master/functions_lic.py
 def Bangle(Q_data,U_data,toIAU=False):
@@ -40,7 +39,7 @@ def LIC_texture(Bangle,length=0.25):
     Output
     texture : LIC texture                                              [float]
     '''
-
+    import lic
     # LIC measures angles from the horizontal while IAU polarization angles are 
     # measured from the vertical; this translates the magnetic field angle accordingly
     Bangle += (np.pi/2.)
