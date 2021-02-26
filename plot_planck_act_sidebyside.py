@@ -26,32 +26,31 @@ box = np.array([[-1,2],[1,-2]]) / 180*np.pi
 plot_opts = {
     'origin': 'lower',
     'cmap': 'planck',
-    'vmin': 1.5,
-    'vmax': 5
+    'vmin': 7,
+    'vmax': 10.5
 }
 # row 0: f090
-imap = load_map(filedb['f090']['planck'], box)
+imap = load_map(filedb['f090']['planck'], box, fcode='f090')
 imap = process_map(imap)
 axes[0,0].imshow(imap, **plot_opts)
-imap = load_map(filedb['f090']['coadd'], box)
+imap = load_map(filedb['f090']['coadd'], box, fcode='f090')
 imap = process_map(imap)
 axes[0,1].imshow(imap, **plot_opts)
 
 # row 1: f150
-plot_opts.update({'vmin':2, 'vmax': 4.5})
-imap = load_map(filedb['f150']['planck'], box)
+imap = load_map(filedb['f150']['planck'], box, fcode='f150')
 imap = process_map(imap)
 axes[1,0].imshow(imap, **plot_opts)
-imap = load_map(filedb['f150']['coadd'], box)
+imap = load_map(filedb['f150']['coadd'], box, fcode='f150')
 imap = process_map(imap)
 axes[1,1].imshow(imap, **plot_opts)
 
 # row 2: f220
-plot_opts.update({'vmin':2.5, 'vmax': 5})
-imap = load_map(filedb['f220']['planck'], box)
+plot_opts.update({'vmin':8, 'vmax': 11})
+imap = load_map(filedb['f220']['planck'], box, fcode='f220')
 imap = process_map(imap)
 axes[2,0].imshow(imap, **plot_opts)
-imap = load_map(filedb['f220']['coadd'], box)
+imap = load_map(filedb['f220']['coadd'], box, fcode='f220')
 imap = process_map(imap)
 axes[2,1].imshow(imap, **plot_opts)
 
@@ -69,13 +68,13 @@ axes[0,1].text(0.35, 1.05, 'ACT+Planck',
                transform=axes[0,1].transAxes, fontsize=12)
 
 # setup labels: f090, f150, f220
-axes[0,0].text(-0.05, 0.35, 'f090', rotation=90,
+axes[0,0].text(-0.05, 0.40, 'f090', rotation=90,
                verticalalignment='bottom', horizontalalignment='left',
                transform=axes[0,0].transAxes, fontsize=12)
-axes[1,0].text(-0.05, 0.35, 'f150', rotation=90,
+axes[1,0].text(-0.05, 0.40, 'f150', rotation=90,
                verticalalignment='bottom', horizontalalignment='left',
                transform=axes[1,0].transAxes, fontsize=12)
-axes[2,0].text(-0.05, 0.35, 'f220', rotation=90,
+axes[2,0].text(-0.05, 0.40, 'f220', rotation=90,
                verticalalignment='bottom', horizontalalignment='left',
                transform=axes[2,0].transAxes, fontsize=12)
 plt.tight_layout(w_pad=0.2, h_pad=0.2)

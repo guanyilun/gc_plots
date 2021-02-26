@@ -9,7 +9,6 @@ paper.
   #+BEGIN_SRC bash
   python plot_planck_act_sidebyside.py -o plots --oname planck_coadd_sidebyside.pdf
   #+END_SRC
-
 ** QU in 3 bands
 - script: plot_qu_in_3bands.py
 - data: coadd
@@ -17,7 +16,6 @@ paper.
   #+BEGIN_SRC bash
   python plot_qu_in_3bands.py -o plots
   #+END_SRC
-
 ** magnetic field in 3 bands
 - script: plot_mag_in_3bands.py
 - data: coadd
@@ -25,15 +23,23 @@ paper.
   #+BEGIN_SRC bash
   python plot_mag_in_3bands.py -o plots
   #+END_SRC
-
 ** polarization fraction
 - plot polarization fraction per frequency
 - script: plot_polfrac.py
 - run script
   #+BEGIN_SRC bash
-  python plot_polfrac.py -o plots --freq f090 --oname polfrac_f090.pdf
-  python plot_polfrac.py -o plots --freq f150 --oname polfrac_f150.pdf
-  python plot_polfrac.py -o plots --freq f220 --oname polfrac_f220.pdf
+  python plot_polfrac.py -o plots --freq f090 --oname polfrac_f090.pdf --log
+  python plot_polfrac.py -o plots --freq f150 --oname polfrac_f150.pdf --log
+  python plot_polfrac.py -o plots --freq f220 --oname polfrac_f220.pdf --log
+  #+END_SRC
+  smooth version
+  #+BEGIN_SRC bash
+    python plot_polfrac.py -o plots --freq f090 --oname polfrac_f090_s2.pdf \
+           --smooth 2 --cmap jet --min 0 --max 0.2
+    python plot_polfrac.py -o plots --freq f150 --oname polfrac_f150_s2.pdf \
+           --smooth 2 --cmap jet --min 0 --max 0.2
+    python plot_polfrac.py -o plots --freq f220 --oname polfrac_f220_s2.pdf \
+           --smooth 2 --cmap jet --min 0 --max 0.2
   #+END_SRC
 ** polarization uncertainties
 - script plot_polangle_error.py
@@ -42,6 +48,15 @@ paper.
   python plot_polangle_error.py -o plots --freq f090 --oname polang_err_f090.pdf
   python plot_polangle_error.py -o plots --freq f150 --oname polang_err_f150.pdf
   python plot_polangle_error.py -o plots --freq f220 --oname polang_err_f220.pdf
+  #+END_SRC
+  fix colormap
+  #+BEGIN_SRC bash
+    python plot_polangle_error.py -o plots --freq f090 --oname polang_err_f090.pdf \
+           --downgrade 4 --max 20 --cmap gray
+    python plot_polangle_error.py -o plots --freq f150 --oname polang_err_f150.pdf \
+           --downgrade 4 --max 20 --cmap gray
+    python plot_polangle_error.py -o plots --freq f220 --oname polang_err_f220.pdf \
+           --downgrade 4 --max 20 --cmap gray
   #+END_SRC
 ** plot magnetic field orientation
 - script plot_mag.py
@@ -82,9 +97,17 @@ Around Sag A*
   python plot_mag.py -o plots --freq f150 --oname mag_SagA_f150_P.pdf \
          --underlay P --min 0 --max 2e3 --box [[-0.17,0.08],[0.10,-0.20]] --downgrade 1
 #+END_SRC
+** plot multi panel view of tornado object
 Around the tornado object: 357.65 -0.08
 #+BEGIN_SRC bash
   python plot_region.py -o plots --oname map_tornado.pdf \
          --box "[[-0.25, -2.15],[0.05, -2.45]]" --dust-removal \
          --tmax 7000,5000 --pmax 500,300
+#+END_SRC
+** plot radio arc magnetic field orientation
+TBD
+** plot spectral indices
+ratio of f090 and f150
+#+BEGIN_SRC bash
+python plot_spectral_indices.py
 #+END_SRC

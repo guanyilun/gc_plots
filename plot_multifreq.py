@@ -38,9 +38,9 @@ else:
     box = None  # full view
     
 
-imap_f090 = load_map(filedb['f090']['coadd'], box)
-imap_f150 = load_map(filedb['f150']['coadd'], box)
-imap_f220 = load_map(filedb['f220']['coadd'], box)
+imap_f090 = load_map(filedb['f090']['coadd'], box, mJy=False)
+imap_f150 = load_map(filedb['f150']['coadd'], box, mJy=False)
+imap_f220 = load_map(filedb['f220']['coadd'], box, mJy=False)
 
 # convert to the same beam as f090
 l = imap_f220.modlmap()
@@ -60,7 +60,7 @@ else:
 s_f090 = np.std(rmap_f090)
 s_f150 = np.std(rmap_f150)
 s_f220 = np.std(rmap_f220)
-
+print(s_f090,s_f150,s_f220)
 omap = make_lupton_rgb(
     colors.Normalize(vmin=args.min, vmax=args.max)(rmap_f090[0]),
     colors.Normalize(vmin=args.min, vmax=args.max)(rmap_f150[0]*s_f090/s_f150),

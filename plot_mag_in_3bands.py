@@ -23,11 +23,13 @@ if not op.exists(args.odir): os.makedirs(args.odir)
 
 # initialize figure
 fig, axes = plt.subplots(3,1,figsize=(8,8))
+fig, axes = plt.subplots(3,1)
 box = np.array([[-1,2],[1,-2]]) / 180*np.pi
+# box = np.array([[-2,4],[2,-4]]) / 180*np.pi
 
 for i, fcode in zip(range(3), ['f090','f150','f220']):
     # load data
-    imap = load_map(filedb[fcode]['coadd'], box)
+    imap = load_map(filedb[fcode]['coadd'], box, fcode=fcode)
     tmap = process_map(imap)
     if args.smooth > 0: pmap = enmap.smooth_gauss(imap, sigma=args.smooth/2.355*u.arcmin)[1:]
     else:               pmap = imap[1:]
@@ -37,10 +39,12 @@ for i, fcode in zip(range(3), ['f090','f150','f220']):
     plot_opts = {
         'origin': 'lower',
         'cmap': 'planck',
-        'vmin': 1.5,
-        'vmax': 5,
-        'extent': [2,-2,-1,1]
+        'vmin': 7,
+        'vmax': 10.5,
+        'extent': box2extent(box)/np.pi*180,
     }
+    if fcode == 'f220':
+        plot_opts.update({'vmin':8,'vmax':11})
     axes[i].imshow(tmap, **plot_opts)
     axes[i].axis('off')
     ax = fig.add_subplot(3,1,i+1)
@@ -50,7 +54,7 @@ for i, fcode in zip(range(3), ['f090','f150','f220']):
                  verticalalignment='bottom', horizontalalignment='left',
                  transform=axes[i].transAxes, fontsize=10)
 
-plt.tight_layout(h_pad=0.5)
+plt.tight_layout(h_pad=0.2)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
 plt.savefig(ofile, bbox_inches='tight')
