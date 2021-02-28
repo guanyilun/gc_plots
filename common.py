@@ -45,12 +45,12 @@ def load_map(path, box=None, mJy=True, fcode=None, cib_monopole=True):
         elif fcode == 'f220':
             imap *= 483.69*1e3
         else: raise ValueError("Unknown fcode")
-        # since the numbers below are given in mJy, I will only
+        # since the numbers below are given in mJy sr^-1, I will only
         # correct cib monopole when data has been converted to mJy
         # see Planck 2018 III table 12
         if cib_monopole:
             if fcode == 'f090':
-                imap[0] -= 0.003 * 1e9  # mJy
+                imap[0] -= 0.003 * 1e9  # mJy sr^-1
             elif fcode == 'f150':
                 imap[0] -= 0.079 * 1e9
             elif fcode == 'f220':

@@ -88,6 +88,10 @@ color balance
 #+BEGIN_SRC bash
 python plot_multifreq.py --oname multifreq_balance.pdf --min 2e8 --max 2e9 --norm 3 -Q 10 -s 2 --area half
 #+END_SRC
+paper plot
+#+BEGIN_SRC bash
+python plot_multifreq.py --oname multifreq.pdf --min 2e8 --max 2e9 --norm 1 -Q 3 -s 3 --area full
+#+END_SRC
 ** plot magnetic field of some region of interests
 The mouse object with temperature as underlay
 #+BEGIN_SRC bash
