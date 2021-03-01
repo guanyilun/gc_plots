@@ -86,14 +86,29 @@ def Pangle_error(data, ivar, method=1, deg=True):
     Q, U = data[1], data[2]
     P = np.sqrt(Q**2+U**2)
     if method == 1:
-        QQ = ivar[1,1]**-1
-        UU = ivar[2,2]**-1
+        QQ = ivar[1]**-1
+        UU = ivar[2]**-1
         QU = 0
     elif method == 2:
-        QQ = 2*ivar[0,0]**-1
-        UU = 2*ivar[0,0]**-1
+        QQ = 2*ivar[0]**-1
+        UU = 2*ivar[0]**-1
         QU = 0
     if deg: factor = 28.65  # 0.5 (in radian) converted to deg
     else:   factor = 0.5    # in radian
     err = factor*np.sqrt(U**2*QQ + Q**2*UU - 2*Q*U*QU) / (P**2)
     return err
+
+def P_error(data, ivar, method=1):
+    Q, U = data[1], data[2]
+    P = np.sqrt(Q**2+U**2)
+    if method == 1:
+        QQ = ivar[1]**-1
+        UU = ivar[2]**-1
+        QU = 0
+    elif method == 2:
+        QQ = 2*ivar[0]**-1
+        UU = 2*ivar[0]**-1
+        QU = 0
+    Perr = np.sqrt((Q**2*QQ + U**2*UU + 2*Q*U*QU)/(P**2))
+    return Perr
+

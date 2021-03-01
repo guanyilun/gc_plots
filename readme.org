@@ -124,3 +124,11 @@ this plots the spectral index instead of its different with synchtrotron
 #+BEGIN_SRC bash
 python plot_spectral_indices2.py --area dust1 --cmap magma --freq f150
 #+END_SRC
+** plot signal to noise
+#+BEGIN_SRC bash
+python plot_snr.py --area full --min 3 --max 50
+#+END_SRC
+** plot planck ivar map for debug
+#+BEGIN_SRC bash
+python plot_ivar.py
+#+END_SRC

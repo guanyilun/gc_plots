@@ -12,17 +12,21 @@ filedb = {
     'f090': {
         'coadd':  op.join(map_dir, 'coadd_corr', 'gc_f090_map.fits'),
         'coadd_ivar':  op.join(map_dir, 'coadd_corr', 'gc_f090_ivar.fits'),
-        'planck': op.join(map_dir, 'planck', 'planck_npipe_100_split*_map.fits')
+        'planck': op.join(map_dir, 'planck', 'planck_npipe_100_split*_map.fits'),
+        'planck_ivar': op.join(map_dir, 'planck', 'planck_npipe_100_split*_ivar.fits')
     },
     'f150': {
         'coadd':  op.join(map_dir, 'coadd_corr', 'gc_f150_map.fits'),
         'coadd_ivar':  op.join(map_dir, 'coadd_corr', 'gc_f150_ivar.fits'),
-        'planck': op.join(map_dir, 'planck', 'planck_npipe_143_split*_map.fits')        
+        'planck': op.join(map_dir, 'planck', 'planck_npipe_143_split*_map.fits'),
+        'planck_ivar': op.join(map_dir, 'planck', 'planck_npipe_143_split*_ivar.fits')
     },
     'f220': {
         'coadd':  op.join(map_dir, 'coadd_corr', 'gc_f220_map.fits'),
         'coadd_ivar':  op.join(map_dir, 'coadd_corr', 'gc_f220_ivar.fits'),
-        'planck': op.join(map_dir, 'planck', 'planck_npipe_217_split*_map.fits')        
+        'planck': op.join(map_dir, 'planck', 'planck_npipe_217_split*_map.fits'),
+        'planck_ivar': op.join(map_dir, 'planck', 'planck_npipe_217_split*_ivar.fits')
+        # 'planck_ivar': '/home/yilung/work/daily/201116_gal/out/planck_npipe_217_split*_ivar.fits'
     },
 }
 
@@ -59,7 +63,7 @@ def load_map(path, box=None, mJy=True, fcode=None, cib_monopole=True):
     if box is not None: return imap.submap(box)
     else: return imap
 
-def load_ivar(path, box=None):
+def load_ivar(path, box=None, mJy=True, fcode=None):
     files = glob.glob(path)
     if len(files) == 1:
         imap = enmap.read_map(files[0])
@@ -68,6 +72,14 @@ def load_ivar(path, box=None):
         imap2 = enmap.read_map(files[1])
         imap  = (1/4*imap1**-1 + 1/4*imap2**-1)**-1
     else: raise ValueError("Unknown format")
+    if mJy:
+        if fcode == 'f090':
+            imap /= (244.1*1e3)**2
+        elif fcode == 'f150':
+            imap /= (371.74*1e3)**2
+        elif fcode == 'f220':
+            imap /= (483.69*1e3)**2
+        else: raise ValueError("Unknown fcode")        
     if box is not None: return imap.submap(box)
     else: return imap
 
@@ -94,3 +106,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-o", "--odir", default='plots')
 parser.add_argument("-v", "--verbose", action='store_true')
 parser.add_argument("--area", default='full')
+parser.add_argument("--min", type=float, default=None)
+parser.add_argument("--max", type=float, default=None)
+parser.add_argument("--cmap", default='planck')
+
+# beam parameters
+fwhms = {
+    'f090': 2.05,
+    'f150': 1.40,
+    'f220': 0.98
+}
