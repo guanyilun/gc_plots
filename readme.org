@@ -92,6 +92,16 @@ paper plot
 #+BEGIN_SRC bash
 python plot_multifreq.py --oname multifreq.pdf --min 2e8 --max 2e9 --norm 1 -Q 3 -s 3 --area full
 #+END_SRC
+polarization
+#+BEGIN_SRC bash
+python plot_multifreq.py --oname multifreq.pdf --min 2e8 --max 2e9 --norm 1 -Q 3 -s 3 --area full --pol
+#+END_SRC
+polarization multifrequency with masks
+#+BEGIN_SRC bash
+  python plot_multifreq.py --oname multifreq_pol_trim.png --min 2e7 \
+         --max 1e8 --norm 1 -Q 3 -s 3 --area trim --pol --snr 3 --downgrade 2 \
+         --mask-method 1 --mask-alpha 0.7
+#+END_SRC
 ** plot magnetic field of some region of interests
 The mouse object with temperature as underlay
 #+BEGIN_SRC bash
@@ -126,8 +136,13 @@ python plot_spectral_indices2.py --area dust1 --cmap magma --freq f150
 #+END_SRC
 ** plot signal to noise
 #+BEGIN_SRC bash
-python plot_snr.py --area full --min 3 --max 50 --save out
-python plot_snr.py --area full --min 0 --max 3 --pol --save out
+python plot_snr.py --area full --min 3 --max 50
+python plot_snr.py --area full --min 0 --max 6 --pol
+#+END_SRC
+save mask (after smoothing with fwhm=2')
+#+BEGIN_SRC
+python plot_snr.py --area full --min 0 --max 100 --smooth 2 --save out
+python plot_snr.py --area full --min 0 --max 6 --smooth 2 --pol --save out
 #+END_SRC
 ** plot planck ivar map for debug
 comp 0,1,2 -> T,Q,U
@@ -140,5 +155,5 @@ It shows that planck's noise model sill has the werid patterns seen in
 2018 releases
 ** plot snr masks
 #+BEGIN_SRC bash
-enplot out/mask_{I,P}_{f090,f150,f220}_snr3.fits --odir plots
+enplot out/snr_{f090,f150,f220}{,_pol}.fits --odir plots
 #+END_SRC

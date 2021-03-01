@@ -96,10 +96,20 @@ def box2extent(box, pad=0.25*arcmin):
     """convert pixell box to plt extent"""
     return np.array([box[0][1]+pad, box[1][1]-pad, box[0][0]-pad, box[1][0]+pad])
 
+def load_snr(fcode=None, box=None, pol=False, downgrade=1):
+    if not pol: snr = enmap.read_map(f'out/snr_{fcode}.fits')
+    else: snr = enmap.read_map(f'out/snr_{fcode}_pol.fits')
+    # optionally downgrade
+    if downgrade > 1:
+        snr = snr.downgrade(downgrade)*downgrade
+    if box is not None: return snr.submap(box)
+    else: return snr
+
 # common boxes
 boxes = {}
 boxes['half']  = np.array([[-1,2],[1,-2]]) / 180*np.pi
 boxes['full']  = np.array([[-2,4],[2,-4]]) / 180*np.pi
+boxes['trim']  = np.array([[-1,3.8],[1,-3.8]]) / 180*np.pi
 boxes['gismo'] = np.array([[-0.27,0.92],[0.235,-0.73]]) / 180*np.pi
 boxes['saga']  = np.array([[-0.17,0.08],[0.10,-0.20]]) / 180*np.pi
 boxes['mouse'] = np.array([[-0.9,-0.65],[-0.7,-0.8]]) / 180*np.pi

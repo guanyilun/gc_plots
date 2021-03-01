@@ -31,6 +31,10 @@ parser.add_argument("--area", default='full')
 parser.add_argument("--norm", help="normalization method", type=int, default=1)
 parser.add_argument("--pol", help="plot polarization intensity instead", action='store_true')
 parser.add_argument("--smooth", help="optionally apply a smoothing kernel", type=float, default=0)
+parser.add_argument("--downgrade", help="downgrade the map", type=int, default=1)
+parser.add_argument("--snr", help="snr mask", type=float, default=None)
+parser.add_argument("--mask-method", help="snr mask method", type=int, default=1)
+parser.add_argument("--mask-alpha", help='show masked region with alpha=0.5', type=float, default=0)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 
@@ -95,6 +99,13 @@ print(s_f090,s_f150,s_f220)
 print("f090:", np.percentile(rmap_f090/s_f090, [25,50,75]))
 print("f150:", np.percentile(rmap_f150/s_f150, [25,50,75]))
 print("f220:", np.percentile(rmap_f220/s_f220, [25,50,75]))
+
+if args.downgrade > 1:
+    rmap_f090 = rmap_f090.downgrade(args.downgrade)
+    rmap_f150 = rmap_f150.downgrade(args.downgrade)
+    rmap_f220 = rmap_f220.downgrade(args.downgrade)
+
+# make rgb image from these maps
 omap = make_lupton_rgb(
     colors.Normalize(vmin=args.min, vmax=args.max)(rmap_f090/s_f090),
     colors.Normalize(vmin=args.min, vmax=args.max)(rmap_f150/s_f150),
@@ -102,10 +113,30 @@ omap = make_lupton_rgb(
     stretch=args.s,
     Q=args.Q,
 )
+
+# optionally apply a mask
+if args.snr is not None:
+    # load snr and mask a given ratio
+    mask_f090 = load_snr('f090', pol=args.pol, box=box, downgrade=args.downgrade) < args.snr
+    mask_f150 = load_snr('f150', pol=args.pol, box=box, downgrade=args.downgrade) < args.snr
+    mask_f220 = load_snr('f220', pol=args.pol, box=box, downgrade=args.downgrade) < args.snr
+    # apply the mask by masking maps through alpha
+    # first add an alpha channel to the output image
+    alpha = np.ones(omap.shape[:-1]+(1,), dtype=float)
+    omap = np.concatenate([omap/256, alpha], axis=-1)
+    # change the alpha of masked region to args.mask_alpha
+    if args.mask_method == 1:
+        mask = np.logical_and.reduce([mask_f090, mask_f150, mask_f220])
+        omap[mask,3] = args.mask_alpha
+    elif args.mask_method == 2:
+        omap[mask_f090,0] = 0
+        omap[mask_f150,1] = 0
+        omap[mask_f220,2] = 0
+
+# start plotting
 popts = {
     'origin': 'lower',
 }
-
 plt.figure()
 plt.imshow(omap, **popts)
 plt.axis('off')

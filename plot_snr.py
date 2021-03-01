@@ -28,8 +28,8 @@ box = boxes[args.area]
 # load maps
 for fcode in ['f090', 'f150','f220']:
     # load map and inverse variance map
-    imap = load_map(filedb[fcode]['coadd'], fcode=fcode, mJy=True)
-    ivar = load_ivar(filedb[fcode]['coadd_ivar'], fcode=fcode, mJy=True)
+    imap = load_map(filedb[fcode]['coadd'], fcode=fcode, mJy=True, box=box)
+    ivar = load_ivar(filedb[fcode]['coadd_ivar'], fcode=fcode, mJy=True, box=box)
     # calculate in uK unit, should give the same result apart from
     # the cib monopole part
     # imap = load_map(filedb[fcode]['coadd'], fcode=fcode, mJy=False)
@@ -42,7 +42,7 @@ for fcode in ['f090', 'f150','f220']:
     # optionally apply downgrade
     if args.downgrade > 1:
         imap = imap.downgrade(args.downgrade)
-        ivar = ivar.downgrade(args.downgrade)
+        ivar = ivar.downgrade(args.downgrade)*args.downgrade**2
     # decide whether to look at I or P
     if not args.pol:
         snr = imap[0] * ivar[0]**0.5
@@ -52,7 +52,7 @@ for fcode in ['f090', 'f150','f220']:
     # start plotting
     opts = {
         'origin': 'lower',
-        'cmap': 'magma',
+        'cmap': 'jet',
         'extent': box2extent(box)/np.pi*180,
         'vmin': args.min,
         'vmax': args.max
