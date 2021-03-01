@@ -34,7 +34,7 @@ parser.add_argument("--smooth", help="optionally apply a smoothing kernel", type
 parser.add_argument("--downgrade", help="downgrade the map", type=int, default=1)
 parser.add_argument("--snr", help="snr mask", type=float, default=None)
 parser.add_argument("--mask-method", help="snr mask method", type=int, default=1)
-parser.add_argument("--mask-alpha", help='show masked region with alpha=0.5', type=float, default=0)
+parser.add_argument("--mask-alpha", help='show masked region with given alpha', type=float, default=1)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 
