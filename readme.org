@@ -126,9 +126,19 @@ python plot_spectral_indices2.py --area dust1 --cmap magma --freq f150
 #+END_SRC
 ** plot signal to noise
 #+BEGIN_SRC bash
-python plot_snr.py --area full --min 3 --max 50
+python plot_snr.py --area full --min 3 --max 50 --save out
+python plot_snr.py --area full --min 0 --max 3 --pol --save out
 #+END_SRC
 ** plot planck ivar map for debug
+comp 0,1,2 -> T,Q,U
 #+BEGIN_SRC bash
-python plot_ivar.py
+python plot_ivar.py --comp 0
+python plot_ivar.py --comp 1
+python plot_ivar.py --comp 2
+#+END_SRC
+It shows that planck's noise model sill has the werid patterns seen in
+2018 releases
+** plot snr masks
+#+BEGIN_SRC bash
+enplot out/mask_{I,P}_{f090,f150,f220}_snr3.fits --odir plots
 #+END_SRC

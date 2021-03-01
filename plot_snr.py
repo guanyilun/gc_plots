@@ -14,9 +14,11 @@ parser.add_argument('--area', default='full')
 parser.add_argument('--min', type=float, default=0)
 parser.add_argument('--max', type=float, default=30)
 parser.add_argument('--pol', help='use polarization intensity', action='store_true')
+parser.add_argument('--method', help='method used to calculate pol uncertainty', type=int, default=1)
 parser.add_argument('--log', help='plot log10(snr) instead', action='store_true')
-parser.add_argument('--smooth', type=float, default=0)
-parser.add_argument('--save-mask', action='store_true')
+parser.add_argument('--smooth', help='smoothening fwhm in arcmin', type=float, default=0)
+parser.add_argument('--save', help='optionally save the snr fits file in this directory', default=None)
+parser.add_argument('--downgrade', type=int, default=1)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 
@@ -26,30 +28,28 @@ box = boxes[args.area]
 # load maps
 for fcode in ['f090', 'f150','f220']:
     # load map and inverse variance map
-    # imap = load_map(filedb[fcode]['coadd'], fcode=fcode, mJy=True)
-    # ivar = load_ivar(filedb[fcode]['coadd'], fcode=fcode, mJy=True)
-    imap = load_map(filedb[fcode]['coadd'], fcode=fcode, mJy=False)
-    ivar = load_ivar(filedb[fcode]['coadd_ivar'], fcode=fcode, mJy=False)
-    # ugly hack: e.g. f220 ivar is actually div which has shape
-    # 3x3xpixells what we really need is the diagonal components
-    if len(ivar.shape)==4:
-        ivar_correct = enmap.zeros(imap.shape, imap.wcs)
-        ivar_correct[0] = ivar[0,0]
-        ivar_correct[1] = ivar[1,1]
-        ivar_correct[2] = ivar[2,2]
-        del ivar
-        ivar = ivar_correct
+    imap = load_map(filedb[fcode]['coadd'], fcode=fcode, mJy=True)
+    ivar = load_ivar(filedb[fcode]['coadd_ivar'], fcode=fcode, mJy=True)
+    # calculate in uK unit, should give the same result apart from
+    # the cib monopole part
+    # imap = load_map(filedb[fcode]['coadd'], fcode=fcode, mJy=False)
+    # ivar = load_ivar(filedb[fcode]['coadd_ivar'], fcode=fcode, mJy=False)
+
+    # optionally apply smoothing
     if args.smooth > 0:
         imap = enmap.smooth_gauss(imap, args.smooth*u.fwhm*u.arcmin)
         ivar = enmap.smooth_gauss(ivar, args.smooth*u.fwhm*u.arcmin)
+    # optionally apply downgrade
+    if args.downgrade > 1:
+        imap = imap.downgrade(args.downgrade)
+        ivar = ivar.downgrade(args.downgrade)
+    # decide whether to look at I or P
     if not args.pol:
         snr = imap[0] * ivar[0]**0.5
     else:
-        perr = lib.P_error(imap, ivar, method=1)
+        perr = lib.P_error(imap, ivar, method=args.method)
         snr = np.sum(imap[1:]**2,axis=0)**0.5/perr
-    if args.pol: ofile = op.join(args.odir, f'snr_{fcode}_pol.pdf')
-    else: ofile = op.join(args.odir, f'snr_{fcode}.pdf')
-    # plot
+    # start plotting
     opts = {
         'origin': 'lower',
         'cmap': 'magma',
@@ -65,6 +65,16 @@ for fcode in ['f090', 'f150','f220']:
         plt.colorbar(shrink=0.55).set_label('Total intensity S/N')
     else:
         plt.colorbar(shrink=0.55).set_label('Polarization intensity S/N')
+    # save figure: make sure the output file has proper name
+    if args.pol: ofile = op.join(args.odir, f'snr_{fcode}_pol.pdf')
+    else: ofile = op.join(args.odir, f'snr_{fcode}.pdf')
     print("Writing:", ofile)
     plt.savefig(ofile, bbox_inches='tight')
     plt.clf()
+    # optionally save the snr map as a fits file
+    if args.save is not None:
+        if not args.pol: ofile=f'snr_{fcode}.fits'
+        else: ofile = f'snr_{fcode}_pol.fits'
+        ofile = op.join(args.save, ofile)
+        print("Writing:", ofile)
+        enmap.write_map(ofile, snr)

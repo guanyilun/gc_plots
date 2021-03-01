@@ -109,6 +109,7 @@ def P_error(data, ivar, method=1):
         QQ = 2*ivar[0]**-1
         UU = 2*ivar[0]**-1
         QU = 0
+    else: raise ValueError(f"Unknown method: {method}")
     Perr = np.sqrt((Q**2*QQ + U**2*UU + 2*Q*U*QU)/(P**2))
     return Perr
 

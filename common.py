@@ -66,22 +66,31 @@ def load_map(path, box=None, mJy=True, fcode=None, cib_monopole=True):
 def load_ivar(path, box=None, mJy=True, fcode=None):
     files = glob.glob(path)
     if len(files) == 1:
-        imap = enmap.read_map(files[0])
+        ivar = enmap.read_map(files[0])
     elif len(files) == 2:
-        imap1 = enmap.read_map(files[0])
-        imap2 = enmap.read_map(files[1])
-        imap  = (1/4*imap1**-1 + 1/4*imap2**-1)**-1
+        ivar1 = enmap.read_map(files[0])
+        ivar2 = enmap.read_map(files[1])
+        ivar  = (1/4*ivar1**-1 + 1/4*ivar2**-1)**-1
     else: raise ValueError("Unknown format")
+    # ugly hack: e.g. f220 ivar is actually div which has shape
+    # 3x3xpixells what we really need is the diagonal components
+    if len(ivar.shape)==4:
+        ivar_correct = enmap.zeros(ivar.shape[1:], ivar.wcs)
+        ivar_correct[0] = ivar[0,0]
+        ivar_correct[1] = ivar[1,1]
+        ivar_correct[2] = ivar[2,2]
+        del ivar
+        ivar = ivar_correct
     if mJy:
         if fcode == 'f090':
-            imap /= (244.1*1e3)**2
+            ivar /= (244.1*1e3)**2
         elif fcode == 'f150':
-            imap /= (371.74*1e3)**2
+            ivar /= (371.74*1e3)**2
         elif fcode == 'f220':
-            imap /= (483.69*1e3)**2
-        else: raise ValueError("Unknown fcode")        
-    if box is not None: return imap.submap(box)
-    else: return imap
+            ivar /= (483.69*1e3)**2
+        else: raise ValueError("Unknown fcode")
+    if box is not None: return ivar.submap(box)
+    else: return ivar
 
 def box2extent(box, pad=0.25*arcmin):
     """convert pixell box to plt extent"""
