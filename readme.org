@@ -52,18 +52,24 @@ paper.
   fix colormap
   #+BEGIN_SRC bash
     python plot_polangle_error.py -o plots --freq f090 --oname polang_err_f090.pdf \
-           --downgrade 4 --max 20 --cmap gray
+           --downgrade 4 --max 20 --cmap magma --smooth 2 --area quat
     python plot_polangle_error.py -o plots --freq f150 --oname polang_err_f150.pdf \
-           --downgrade 4 --max 20 --cmap gray
+           --downgrade 4 --max 20 --cmap magma --smooth 2 --area quat
     python plot_polangle_error.py -o plots --freq f220 --oname polang_err_f220.pdf \
-           --downgrade 4 --max 20 --cmap gray
+           --downgrade 4 --max 20 --cmap magma --smooth 2 --area quat
   #+END_SRC
 ** plot magnetic field orientation
 - script plot_mag.py
-#+BEGIN_SRC 
-python plot_mag.py -o plots --freq f090 --oname mag_f090.pdf
-python plot_mag.py -o plots --freq f150 --oname mag_f150.pdf
-python plot_mag.py -o plots --freq f220 --oname mag_f220.pdf
+#+BEGIN_SRC
+python plot_mag.py -o plots --freq f090 --oname mag_f090.pdf --downgrade 4 --underlay plin --cmap binary --min 0 --max 0.2
+python plot_mag.py -o plots --freq f150 --oname mag_f150.pdf --downgrade 4 --underlay plin --cmap binary --min 0 --max 0.2
+python plot_mag.py -o plots --freq f220 --oname mag_f220.pdf --downgrade 4 --underlay plin --cmap binary --min 0 --max 0.1
+#+END_SRC
+A better visualization: (used in the paper atm)
+#+BEGIN_SRC
+python plot_mag.py -o plots --freq f090 --oname mag_f090.pdf --downgrade 4 --underlay plog --cmap binary --min -2 --max 0
+python plot_mag.py -o plots --freq f150 --oname mag_f150.pdf --downgrade 4 --underlay plog --cmap binary --min -2 --max 0
+python plot_mag.py -o plots --freq f220 --oname mag_f220.pdf --downgrade 4 --underlay plog --cmap binary --min -2 --max 0
 #+END_SRC
 ** plot one coadd map only
 This is to facilitate object identification work
@@ -98,9 +104,9 @@ python plot_multifreq.py --oname multifreq.pdf --min 2e8 --max 2e9 --norm 1 -Q 3
 #+END_SRC
 polarization multifrequency with masks
 #+BEGIN_SRC bash
-  python plot_multifreq.py --oname multifreq_pol_trim.png --min 2e7 \
-         --max 1e8 --norm 1 -Q 3 -s 3 --area trim --pol --snr 3 --downgrade 2 \
-         --mask-method 1 --mask-alpha 0.7
+  python plot_multifreq.py --oname multifreq_pol_trim.pdf --min 2e7 \
+         --max 8e7 --norm 1 -Q 0 -s 3.5 --area trim --pol --smooth 2 --snr 3 --downgrade 4 \
+         --mask-method 1 --mask-alpha 0.3
 #+END_SRC
 ** plot magnetic field of some region of interests
 The mouse object with temperature as underlay
@@ -128,11 +134,16 @@ TBD
 ratio of f090 and f150, and the resulting spectral index is compared to
 a fiducial index of synchrotron radiation beta = -3.1
 #+BEGIN_SRC bash
-python plot_spectral_indices.py
+python plot_spectral_indices.py --cmap magma --freq f090 --oname spec_sync.pdf --area trim
+python plot_spectral_indices.py --cmap magma --freq f150 --oname spec_dust.pdf --area trim
 #+END_SRC
 this plots the spectral index instead of its different with synchtrotron
 #+BEGIN_SRC bash
 python plot_spectral_indices2.py --area dust1 --cmap magma --freq f150
+#+END_SRC
+two panel plots up (f090/f150) and down (f150/f220), (used in the paper)
+#+BEGIN_SRC bash
+python plot_spectral_indices_2panel.py --cmap magma --oname spec_2panel.pdf --area trim --figsize "(8,4)" --beam-match
 #+END_SRC
 ** plot signal to noise
 #+BEGIN_SRC bash
@@ -156,4 +167,10 @@ It shows that planck's noise model sill has the werid patterns seen in
 ** plot snr masks
 #+BEGIN_SRC bash
 enplot out/snr_{f090,f150,f220}{,_pol}.fits --odir plots
+#+END_SRC
+** plot spectrum of a given pixel
+#+BEGIN_SRC bash
+  python plot_pixel_spectra.py -l -3 -b "np.linspace(-1.5,1.5,100)" \
+         --oname pix_spec_m3.pdf --color y --use planck \
+         --title "l=-3 b=linspace(-1.5,1.5,100)" --cmap magma
 #+END_SRC

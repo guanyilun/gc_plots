@@ -74,12 +74,23 @@ if args.smooth > 0:
     rmap_f090 = enmap.smooth_gauss(rmap_f090, args.smooth*u.fwhm*u.arcmin)
     rmap_f150 = enmap.smooth_gauss(rmap_f150, args.smooth*u.fwhm*u.arcmin)
     rmap_f220 = enmap.smooth_gauss(rmap_f220, args.smooth*u.fwhm*u.arcmin)
+
 if args.norm == 1:
     # normalization method 1:
     # -> calibrate such that each map has the same variance
-    s_f090 = 1
-    s_f150 = np.std(rmap_f150)/np.std(rmap_f090)
-    s_f220 = np.std(rmap_f220)/np.std(rmap_f090)
+    # load mask first to test calculating std in the masked region
+    if args.snr is not None:
+        # load snr and mask a given ratio
+        mask_f090 = load_snr('f090', pol=args.pol, box=box) < args.snr
+        mask_f150 = load_snr('f150', pol=args.pol, box=box) < args.snr
+        mask_f220 = load_snr('f220', pol=args.pol, box=box) < args.snr
+        s_f090 = 1
+        s_f150 = np.std(rmap_f150[~mask_f150])/np.std(rmap_f090[~mask_f090])
+        s_f220 = np.std(rmap_f220[~mask_f220])/np.std(rmap_f090[~mask_f090])
+    else:
+        s_f090 = 1
+        s_f150 = np.std(rmap_f150)/np.std(rmap_f090)
+        s_f220 = np.std(rmap_f220)/np.std(rmap_f090)
 elif args.norm == 2:
     # normalization method 2:
     # -> calibrate such that synchrotron appears white
@@ -123,7 +134,7 @@ if args.snr is not None:
     # apply the mask by masking maps through alpha
     # first add an alpha channel to the output image
     alpha = np.ones(omap.shape[:-1]+(1,), dtype=float)
-    omap = np.concatenate([omap/256, alpha], axis=-1)
+    omap = np.concatenate([omap/255, alpha], axis=-1)
     # change the alpha of masked region to args.mask_alpha
     if args.mask_method == 1:
         mask = np.logical_and.reduce([mask_f090, mask_f150, mask_f220])

@@ -20,18 +20,16 @@ parser.add_argument("--cmap", default='planck')
 parser.add_argument("--min", type=float, default=None)
 parser.add_argument("--max", type=float, default=None)
 parser.add_argument("--downgrade", help="magnetic field downgrade", type=int, default=None)
+parser.add_argument("--area", default='quat')
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 
-# load map and ivar from the specified
-# box = np.array([[-1,2],[1,-2]]) / 180*np.pi
 if args.box is None:
-    box = np.array([[-0.5,1],[0.5,-1]]) / 180*np.pi
+    box = boxes[args.area]
 else:
     box = np.array(eval(args.box)) / 180*np.pi
 
-imap = load_map(filedb[args.freq]['coadd'], box)
-ivar = load_ivar(filedb[args.freq]['coadd_ivar'], box)
+imap = load_map(filedb[args.freq]['coadd'], fcode=args.freq, box=box)
 
 if args.underlay == 'T':
     back  = imap[0]
@@ -40,19 +38,23 @@ elif args.underlay == 'P':
     P     = np.sum(imap[1:]**2,axis=0)**0.5
     back  = enmap.smooth_gauss(P, 1*u.arcmin*u.fwhm)
     label = 'Polarization Intensity'
-elif args.underlay == 'p':
+elif args.underlay == 'plog':
     P     = np.sum(imap[1:]**2,axis=0)**0.5
     p     = P / imap[0]
     back  = np.log10(p)
     label = r"$\log_{10}$P/I"
-
+elif args.underlay == 'plin':
+    P     = np.sum(imap[1:]**2,axis=0)**0.5
+    p     = P / imap[0]
+    back  = p
+    label = r"P/I"
 if args.downgrade is None:
-    print("No downgrade")
     imap_ds = imap
 else:
-    print("Downgrade with:", args.downgrade)
+    # smooth before downgrade
     imap_ds = enmap.smooth_gauss(
         imap, args.downgrade*0.5*arcmin/2.355).downgrade(args.downgrade)
+    
 Y, X = imap_ds.posmap()
 plot_opts = {
     'origin': 'lower',
@@ -66,7 +68,7 @@ fig = plt.figure()
 plt.imshow(back, **plot_opts)
 plt.xlabel('l [deg]')
 plt.ylabel('b [deg]')
-plt.colorbar().set_label(label)
+plt.colorbar(shrink=0.48).set_label(label)
 # add magnetic field
 ax = fig.add_subplot(1,1,1)
 
