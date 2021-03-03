@@ -26,7 +26,10 @@ filedb = {
         'coadd_ivar':  op.join(map_dir, 'coadd_corr', 'gc_f220_ivar.fits'),
         'planck': op.join(map_dir, 'planck', 'planck_npipe_217_split*_map.fits'),
         'planck_ivar': op.join(map_dir, 'planck', 'planck_npipe_217_split*_ivar.fits')
-        # 'planck_ivar': '/home/yilung/work/daily/201116_gal/out/planck_npipe_217_split*_ivar.fits'
+    },
+    'f350': {
+        'planck': op.join(map_dir, 'planck', 'planck_npipe_353_split*_map.fits'),
+        'planck_ivar': op.join(map_dir, 'planck', 'planck_npipe_353_split*_ivar.fits')
     },
 }
 
@@ -48,6 +51,8 @@ def load_map(path, box=None, mJy=True, fcode=None, cib_monopole=True):
             imap *= 371.74*1e3
         elif fcode == 'f220':
             imap *= 483.69*1e3
+        elif fcode == 'f350':
+            imap *= 287.5*1e3
         else: raise ValueError("Unknown fcode")
         # since the numbers below are given in mJy sr^-1, I will only
         # correct cib monopole when data has been converted to mJy
@@ -56,9 +61,11 @@ def load_map(path, box=None, mJy=True, fcode=None, cib_monopole=True):
             if fcode == 'f090':
                 imap[0] -= 0.003 * 1e9  # mJy sr^-1
             elif fcode == 'f150':
-                imap[0] -= 0.079 * 1e9
+                imap[0] -= 0.0079 * 1e9
             elif fcode == 'f220':
                 imap[0] -= 0.033 * 1e9
+            elif fcode == 'f350':
+                imap[0] -= 0.13 * 1e9
             else: raise ValueError("Unknown fcode")
     if box is not None: return imap.submap(box)
     else: return imap
@@ -88,6 +95,8 @@ def load_ivar(path, box=None, mJy=True, fcode=None):
             ivar /= (371.74*1e3)**2
         elif fcode == 'f220':
             ivar /= (483.69*1e3)**2
+        elif fcode == 'f350':
+            ivar /= (287.5*1e3)**2
         else: raise ValueError("Unknown fcode")
     if box is not None: return ivar.submap(box)
     else: return ivar
@@ -107,8 +116,9 @@ def load_snr(fcode=None, box=None, pol=False, downgrade=1):
 
 # common boxes
 boxes = {}
-boxes['half']  = np.array([[-1,2],[1,-2]]) / 180*np.pi
 boxes['full']  = np.array([[-2,4],[2,-4]]) / 180*np.pi
+boxes['half']  = np.array([[-1,2],[1,-2]]) / 180*np.pi
+boxes['quat']  = np.array([[-0.5,1],[0.5,-1]]) / 180*np.pi
 boxes['trim']  = np.array([[-1,3.8],[1,-3.8]]) / 180*np.pi
 boxes['gismo'] = np.array([[-0.27,0.92],[0.235,-0.73]]) / 180*np.pi
 boxes['saga']  = np.array([[-0.17,0.08],[0.10,-0.20]]) / 180*np.pi
@@ -128,10 +138,18 @@ parser.add_argument("--area", default='full')
 parser.add_argument("--min", type=float, default=None)
 parser.add_argument("--max", type=float, default=None)
 parser.add_argument("--cmap", default='planck')
+parser.add_argument("--oname", default=None)
 
 # beam parameters
 fwhms = {
     'f090': 2.05,
     'f150': 1.40,
     'f220': 0.98
+}
+
+fcenters = {
+    'f090': 100,
+    'f150': 143,
+    'f220': 217,
+    'f350': 353
 }
