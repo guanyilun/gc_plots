@@ -1,5 +1,6 @@
 import numpy as np
 from pixell import enmap
+from common import *
 
 # from https://github.com/astrosica/misc-functions/blob/master/functions_lic.py
 def Bangle(Q_data,U_data,toIAU=False):
@@ -122,6 +123,7 @@ def beam_match(imap, f1, f2):
     assumes that the first one (f1) has larger beam, so f2 will be matched
     to it.
     """
+    from common import fwhms
     l = imap.modlmap()
     bmap_f1 = np.exp(-0.5*l**2*(fwhms[f1]*u.fwhm*u.arcmin)**2)
     bmap_f2 = np.exp(-0.5*l**2*(fwhms[f2]*u.fwhm*u.arcmin)**2)

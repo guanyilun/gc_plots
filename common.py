@@ -4,7 +4,7 @@ from pixell import enmap
 from pixell.utils import arcmin
 from pixell import utils as u
 import os.path as op, numpy as np
-import glob
+import glob, lib
 
 # Input files
 map_dir = "/projects/ACT/yilung/work/galactic_center"
@@ -105,14 +105,27 @@ def box2extent(box, pad=0.25*arcmin):
     """convert pixell box to plt extent"""
     return np.array([box[0][1]+pad, box[1][1]-pad, box[0][0]-pad, box[1][0]+pad])
 
-def load_snr(fcode=None, box=None, pol=False, downgrade=1):
-    if not pol: snr = enmap.read_map(f'out/snr_{fcode}.fits')
-    else: snr = enmap.read_map(f'out/snr_{fcode}_pol.fits')
+def load_snr(fcode=None, box=None, pol=False, downgrade=1, use='coadd'):
+    # load map and ivar
+    imap = load_map(filedb[fcode][use], fcode=fcode, box=box)
+    ivar = load_ivar(filedb[fcode][f"{use}_ivar"], fcode=fcode, box=box)
+    if not pol:  # total intensity
+        snr = imap[0] * ivar[0]**0.5
+    else:  # polarization intensity
+        P = np.sum(imap[1:]**2,axis=0)**0.5
+        P_err = lib.P_error(imap, ivar)
+        snr = P / P_err
+    return snr
     # optionally downgrade
     if downgrade > 1:
         snr = snr.downgrade(downgrade)*downgrade
     if box is not None: return snr.submap(box)
     else: return snr
+
+def sfactor(fcode, fwhm):
+    """find signal to noise improvement factor after smoothing, fwhm
+    should be in arcmin"""
+    return np.sqrt(fwhms[fcode]**2+fwhm**2)/fwhms[fcode]
 
 # common boxes
 boxes = {}

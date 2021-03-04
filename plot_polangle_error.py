@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-o","--odir", default="plots")
 parser.add_argument("--freq",default="f090")
 parser.add_argument("--oname", default="polfrac.pdf")
-parser.add_argument("--downgrade", type=float, default=0)
+parser.add_argument("--downgrade", type=float, default=1)
 parser.add_argument("--cmap", default='planck')
 parser.add_argument("--min", type=float, default=0)
 parser.add_argument("--max", type=float, default=20)
@@ -26,7 +26,6 @@ if not op.exists(args.odir): os.makedirs(args.odir)
 
 # load map and ivar from the specified
 box = boxes[args.area]
-# box = np.array([[-0.5,1],[0.5,-1]]) / 180*np.pi
 # this doesn't need to be done in mjy coordinate as the results
 # are dimensionless
 imap = load_map(filedb[args.freq]['coadd'], box=box, fcode=args.freq)
@@ -34,10 +33,12 @@ ivar = load_ivar(filedb[args.freq]['coadd_ivar'], box=box, fcode=args.freq)
 
 # optionally smooth the map
 if args.smooth > 0:
-    imap = enmap.smooth_gauss(imap, args.smooth*u.arcmin*u.fwhm)
-    ivar = enmap.smooth_gauss(ivar, args.smooth*u.arcmin*u.fwhm)
+    imap  = enmap.smooth_gauss(imap, args.smooth*u.arcmin*u.fwhm)
+    ivar  = enmap.smooth_gauss(ivar, args.smooth*u.arcmin*u.fwhm)
+    # weight down noise level by smoothing
+    ivar *= sfactor(args.freq, args.smooth)**2
 # optionally downgrade the map
-if args.downgrade > 0:
+if args.downgrade > 1:
     # smooth with a fwhm equal to the pixel size after downgrade
     imap = imap.downgrade(args.downgrade)
     ivar = ivar.downgrade(args.downgrade)*args.downgrade**2

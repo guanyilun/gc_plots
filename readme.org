@@ -52,24 +52,30 @@ paper.
   fix colormap
   #+BEGIN_SRC bash
     python plot_polangle_error.py -o plots --freq f090 --oname polang_err_f090.pdf \
-           --downgrade 4 --max 20 --cmap magma --smooth 2 --area quat
+           --max 20 --cmap gray --smooth 4 --area half
     python plot_polangle_error.py -o plots --freq f150 --oname polang_err_f150.pdf \
-           --downgrade 4 --max 20 --cmap magma --smooth 2 --area quat
+           --max 20 --cmap gray --smooth 4 --area half
     python plot_polangle_error.py -o plots --freq f220 --oname polang_err_f220.pdf \
-           --downgrade 4 --max 20 --cmap magma --smooth 2 --area quat
+           --max 20 --cmap gray --smooth 4 --area half
   #+END_SRC
 ** plot magnetic field orientation
 - script plot_mag.py
-#+BEGIN_SRC
-python plot_mag.py -o plots --freq f090 --oname mag_f090.pdf --downgrade 4 --underlay plin --cmap binary --min 0 --max 0.2
-python plot_mag.py -o plots --freq f150 --oname mag_f150.pdf --downgrade 4 --underlay plin --cmap binary --min 0 --max 0.2
-python plot_mag.py -o plots --freq f220 --oname mag_f220.pdf --downgrade 4 --underlay plin --cmap binary --min 0 --max 0.1
+#+BEGIN_SRC bash
+  python plot_mag.pyt -o plots --freq f090 --oname mag_f090.pdf \
+         --downgrade 4 --underlay plin --cmap binary --min 0 --max 0.2
+  python plot_mag.py -o plots --freq f150 --oname mag_f150.pdf \
+         --downgrade 4 --underlay plin --cmap binary --min 0 --max 0.2
+  python plot_mag.py -o plots --freq f220 --oname mag_f220.pdf \
+         --downgrade 4 --underlay plin --cmap binary --min 0 --max 0.1
 #+END_SRC
 A better visualization: (used in the paper atm)
-#+BEGIN_SRC
-python plot_mag.py -o plots --freq f090 --oname mag_f090.pdf --downgrade 4 --underlay plog --cmap binary --min -2 --max 0
-python plot_mag.py -o plots --freq f150 --oname mag_f150.pdf --downgrade 4 --underlay plog --cmap binary --min -2 --max 0
-python plot_mag.py -o plots --freq f220 --oname mag_f220.pdf --downgrade 4 --underlay plog --cmap binary --min -2 --max 0
+#+BEGIN_SRC bash
+  python plot_mag.py -o plots --freq f090 --oname mag_f090.pdf \
+         --downgrade 4 --underlay plog --cmap binary --min -2 --max 0
+  python plot_mag.py -o plots --freq f150 --oname mag_f150.pdf \
+         --downgrade 4 --underlay plog --cmap binary --min -2 --max 0
+  python plot_mag.py -o plots --freq f220 --oname mag_f220.pdf \
+         --downgrade 4 --underlay plog --cmap binary --min -2 --max 0
 #+END_SRC
 ** plot one coadd map only
 This is to facilitate object identification work
@@ -92,21 +98,37 @@ python plot_multifreq.py --oname multifreq.pdf -Q 0 -s 1.5
 #+END_SRC
 color balance
 #+BEGIN_SRC bash
-python plot_multifreq.py --oname multifreq_balance.pdf --min 2e8 --max 2e9 --norm 3 -Q 10 -s 2 --area half
+  python plot_multifreq.py --oname multifreq_balance.pdf --min 2e8 --max 2e9 \
+         --norm 3 -Q 10 -s 2 --area half
 #+END_SRC
 paper plot
 #+BEGIN_SRC bash
-python plot_multifreq.py --oname multifreq.pdf --min 2e8 --max 2e9 --norm 1 -Q 3 -s 3 --area full
+  python plot_multifreq.py --oname multifreq.pdf --min 2e8 --max 2e9 \
+         --norm 1 -Q 3 -s 3 --area full
 #+END_SRC
 polarization
 #+BEGIN_SRC bash
-python plot_multifreq.py --oname multifreq.pdf --min 2e8 --max 2e9 --norm 1 -Q 3 -s 3 --area full --pol
+  python plot_multifreq.py --oname multifreq.pdf --min 2e8 --max 2e9 \
+         --norm 1 -Q 3 -s 3 --area full --pol
 #+END_SRC
 polarization multifrequency with masks
 #+BEGIN_SRC bash
   python plot_multifreq.py --oname multifreq_pol_trim.pdf --min 2e7 \
          --max 8e7 --norm 1 -Q 0 -s 3.5 --area trim --pol --smooth 2 --snr 3 --downgrade 4 \
          --mask-method 1 --mask-alpha 0.3
+#+END_SRC
+a better written script for polarization with mask: plot_multifreq2.py. First, try different
+normalization
+#+BEGIN_SRC bash
+  python plot_multifreq2.py --oname multifreq_pol_trim.pdf --min 1e7 \
+         --max 1e9 --norm 3 -Q 0 -s 0.1 --area trim --pol --smooth 3.5 --snr 3 \
+         --mask-method 1 --mask-alpha 0.5
+#+END_SRC
+different normalization (method 2)
+#+BEGIN_SRC bash
+  python plot_multifreq2.py --oname multifreq_pol_trim.pdf --min 1e7 \
+         --max 1e9 --norm 2 -Q 0 -s 3 --area trim --pol --smooth 3.5 --snr 3 \
+         --mask-method 1 --mask-alpha 0.5
 #+END_SRC
 ** plot magnetic field of some region of interests
 The mouse object with temperature as underlay
@@ -143,7 +165,8 @@ python plot_spectral_indices2.py --area dust1 --cmap magma --freq f150
 #+END_SRC
 two panel plots up (f090/f150) and down (f150/f220), (used in the paper)
 #+BEGIN_SRC bash
-python plot_spectral_indices_2panel.py --cmap magma --oname spec_2panel.pdf --area trim --figsize "(8,4)" --beam-match
+  python plot_spectral_indices_2panel.py --cmap magma --oname spec_2panel.pdf \
+         --area trim --figsize "(8,4)" --beam-match
 #+END_SRC
 ** plot signal to noise
 #+BEGIN_SRC bash
