@@ -1,4 +1,4 @@
-"""A more generalized version of plot_mouse.py"""
+"""A more source tailored version of plot_region"""
 
 import argparse, os, os.path
 import numpy as np
@@ -16,16 +16,19 @@ parser.add_argument("--oname", default="mouse.pdf")
 parser.add_argument("--smooth", type=float,default=2)
 parser.add_argument("--tonly", action='store_true', default=False)
 parser.add_argument("--dust-removal", action='store_true', default=False)
-parser.add_argument("--dust-removal-f090", type=float, default=0.11)
-parser.add_argument("--dust-removal-f150", type=float, default=0.147)
-parser.add_argument("--box", default=None)
-parser.add_argument("--cmap",default='planck')
+parser.add_argument("--dust-factor-f090", type=float, default=1)
+parser.add_argument("--dust-factor-f150", type=float, default=1)
+parser.add_argument("--auto-adj", action='store_true')
+parser.add_argument("-l", help="in deg", type=float, default=None)
+parser.add_argument("-b", help="in deg", type=float, default=None)
+parser.add_argument("--margin", help="margin in deg", type=float, default=0.1)
+parser.add_argument("--cmap", default='planck')
 parser.add_argument("--title", default=None)
 parser.add_argument("--tmin", default="0,0,0")
-parser.add_argument("--tmax", default="5000,5000,5000")
+parser.add_argument("--tmax", default="1,1,1")
 parser.add_argument("--pmin", default="0,0,0")
-parser.add_argument("--pmax", default="300,300,300")
-parser.add_argument("--figsize", default=None)
+parser.add_argument("--pmax", default="1,1,1")
+parser.add_argument("--figsize", default="(8,7)")
 
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
@@ -33,23 +36,25 @@ tmin = args.tmin.split(",")
 tmax = args.tmax.split(",")
 pmin = args.pmin.split(",")
 pmax = args.pmax.split(",")
-if args.box is None: box = None
-else: box = np.array(eval(args.box)) / 180*np.pi
-if args.figsize is not None:
-    figsize=eval(args.figsize)
+
+# define box
+xmin, xmax = args.l-args.margin, args.l+args.margin
+ymin, ymax = args.b-args.margin, args.b+args.margin
+box = np.array([[ymin, xmax], [ymax, xmin]]) / 180*np.pi
+# set figure size if needed
+if args.figsize is not None: figsize=eval(args.figsize)
 else: figsize=None
-imap_f090 = load_map(filedb['f090']['coadd'])
-imap_f150 = load_map(filedb['f150']['coadd'])
-imap_f220 = load_map(filedb['f220']['coadd'])
+# load maps
+imap_f090 = load_map(filedb['f090']['coadd'], fcode='f090')/1e9
+imap_f150 = load_map(filedb['f150']['coadd'], fcode='f150')/1e9
+imap_f220 = load_map(filedb['f220']['coadd'], fcode='f220')/1e9
 
 # form dust template at each frequency
-fmap = enmap.fft(imap_f220)
-l = imap_f220.modlmap()
-bmap_f090 = np.exp(-0.5*l**2*(fwhms['f090']*u.fwhm*u.arcmin)**2)
-bmap_f150 = np.exp(-0.5*l**2*(fwhms['f150']*u.fwhm*u.arcmin)**2)
-bmap_f220 = np.exp(-0.5*l**2*(fwhms['f220']*u.fwhm*u.arcmin)**2)
-dust_f090 = enmap.ifft(fmap * (bmap_f090 / np.maximum(bmap_f220, 1e-3))).real
-dust_f150 = enmap.ifft(fmap * (bmap_f150 / np.maximum(bmap_f220, 1e-3))).real
+beta = 1.53
+s_f090 = (100/217)**(beta+2)
+s_f150 = (143/217)**(beta+2)
+dust_f090 = lib.beam_match(imap_f220, 'f090', 'f220')*s_f090*args.dust_factor_f090
+dust_f150 = lib.beam_match(imap_f220, 'f150', 'f220')*s_f150*args.dust_factor_f150
 
 def preprocess_T(imap, dust_removal=False, dust_template=None, box=None, auto_adj=False):
     omap = enmap.submap(imap[0], box=box)
@@ -73,22 +78,23 @@ def preprocess_P(imap, dust_removal=None, dust_template=None, smooth=None, box=N
 
 # preprocess
 I_f090 = preprocess_T(imap_f090, dust_removal=args.dust_removal,
-                      dust_template=args.dust_removal_f090*dust_f090, box=box)
+                      dust_template=dust_f090, box=box, auto_adj=args.auto_adj)
 I_f150 = preprocess_T(imap_f150, dust_removal=args.dust_removal,
-                      dust_template=args.dust_removal_f150*dust_f150, box=box)
+                      dust_template=dust_f150, box=box, auto_adj=args.auto_adj)
 I_f220 = preprocess_T(imap_f220, box=box)
 
 P_f090 = preprocess_P(imap_f090, dust_removal=args.dust_removal,
-                      dust_template=args.dust_removal_f090*dust_f090,
+                      dust_template=dust_f090,
                       smooth=args.smooth, box=box)
 P_f150 = preprocess_P(imap_f150, dust_removal=args.dust_removal,
-                      dust_template=args.dust_removal_f150*dust_f150,
+                      dust_template=dust_f150,
                       smooth=args.smooth, box=box)
 P_f220 = preprocess_P(imap_f220, smooth=args.smooth, box=box)
 
 popts = {
     'origin': 'lower',
-    'cmap': args.cmap
+    'cmap': args.cmap,
+    'extent': box2extent(box)/np.pi*180
 }
 if args.dust_removal: names = ['f090 - f220','f150 - f220']
 else: names = ['f090', 'f150', 'f220']
@@ -113,10 +119,10 @@ for i in range(nrow):
                    verticalalignment='bottom', horizontalalignment='left',
                    transform=ax.transAxes, fontsize=14)
         if j == 0:
-            ax.text(-0.1, 0.5, maps[i], rotation=90,
+            ax.text(-0.2, 0.5, maps[i], rotation=90,
                    verticalalignment='bottom', horizontalalignment='left',
                    transform=ax.transAxes, fontsize=14)
-        axes[i,j].axis('off')
+        # axes[i,j].axis('off')
 if args.title is not None: plt.suptitle(args.title, y = 1.02, fontsize=16)
 plt.tight_layout(h_pad=0.1, w_pad=0.1)
 ofile = op.join(args.odir, args.oname)

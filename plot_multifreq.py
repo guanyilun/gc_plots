@@ -35,6 +35,7 @@ parser.add_argument("--downgrade", help="downgrade the map", type=int, default=1
 parser.add_argument("--snr", help="snr mask", type=float, default=None)
 parser.add_argument("--mask-method", help="snr mask method", type=int, default=1)
 parser.add_argument("--mask-alpha", help='show masked region with given alpha', type=float, default=1)
+parser.add_argument("--save", help="save omap as data file", default=None)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 
@@ -143,6 +144,8 @@ if args.snr is not None:
         omap[mask_f090,0] = 0
         omap[mask_f150,1] = 0
         omap[mask_f220,2] = 0
+
+if args.save: np.save(args.save, omap)
 
 # start plotting
 popts = {

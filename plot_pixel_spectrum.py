@@ -1,9 +1,10 @@
+"""Almost the same as plot_pixel_spectra except i will not color the
+different lines"""
+
 from common import *
 import os, os.path as op, numpy as np
 import matplotlib.pyplot as plt
 import plotstyle
-# import matplotlib.ticker as ticker
-from matplotlib import colors
 
 def parse(expr):
     if 'np' in expr:
@@ -17,7 +18,6 @@ def parse(expr):
 # the rest of the parser definition are in common.py
 parser.add_argument('-l', default="0")
 parser.add_argument('-b', default="0")
-parser.add_argument('--color', default='x')
 parser.add_argument('--use', default='coadd')
 parser.add_argument("--title", default=None)
 args = parser.parse_args()
@@ -38,22 +38,12 @@ ys = parse(args.b) / 180*np.pi
 if len(xs) == 1: xs = np.ones_like(ys)*xs[0]
 if len(ys) == 1: ys = np.ones_like(xs)*ys[0] 
 # plot
-if args.color == 'x':
-    norm = colors.Normalize(vmin=0,vmax=xs.max())
-elif args.color == 'y':
-    norm = colors.Normalize(vmin=0,vmax=ys.max())
 fig, ax = plt.subplots(1,1)
-if args.color: cmap = plt.get_cmap(args.cmap)
 for x, y in zip(xs, ys):
     vals = np.array([m.at([y, x])[0] for m in maps])
     errs = np.array([m.at([y, x])[0] for m in ivars])
-    if args.color == 'x': c = x
-    else: c = y
     fc = [fcenters[f] for f in freqs]
-    if args.color is not None:
-        ax.errorbar(fc, vals, yerr=errs**-0.5, color=cmap(norm(np.abs(c))), alpha=0.5)
-    else:
-        ax.errorbar(fc, vals, yerr=errs**-0.5, alpha=0.5)
+    ax.errorbar(fc, vals, yerr=errs**-0.5)
 ax.set_xscale('log')
 ax.set_yscale('log')
 ax.set_ylabel('Total Intensity [MJy/sr]')

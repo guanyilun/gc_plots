@@ -34,7 +34,8 @@ parser.add_argument("--pol", help="plot polarization intensity instead", action=
 parser.add_argument("--downgrade", help="downgrade the map", type=int, default=1)
 parser.add_argument("--snr", help="snr mask", type=float, default=None)
 parser.add_argument("--mask-method", help="snr mask method", type=int, default=1)
-parser.add_argument("--mask-alpha", help='show masked region with given alpha', type=float, default=1)
+parser.add_argument("--mask-alpha", help='show masked region with given alpha', type=float, default=0)
+parser.add_argument("--save", help="a path to save omap data", default=None)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 
@@ -123,25 +124,10 @@ elif args.norm == 3:
     s_f220 = (217/100)**beta
 elif args.norm == 4:
     # normalization method 4:
-    # almost the same as 1 but also measure median matches
-    # -> calibrate such that each map has the same variance
-    # load mask first to test calculating std in the masked region
-    from scipy import stats
-    if args.snr is not None:
-        # load snr and mask a given ratio
-        mask_f090 = snr_f090 < args.snr
-        mask_f150 = snr_f150 < args.snr
-        mask_f220 = snr_f220 < args.snr
-        # import ipdb; ipdb.set_trace()
-        s_f090 = 1
-        # s_f150 = np.std(rmap_f150[~mask_f150])/np.std(rmap_f090[~mask_f090])
-        s_f150 = np.std(rmap_f150)/np.std(rmap_f090)
-        # s_f220 = np.std(rmap_f220[~mask_f220])/np.std(rmap_f090[~mask_f090])
-        s_f220 = np.std(rmap_f220)/np.std(rmap_f090)
-    else:
-        s_f090 = 1
-        s_f150 = np.std(rmap_f150)/np.std(rmap_f090)
-        s_f220 = np.std(rmap_f220)/np.std(rmap_f090)
+    # -> scale such that each color has the same median
+    s_f090 = 1
+    s_f150 = np.median(rmap_f150)/np.median(rmap_f090)
+    s_f220 = np.median(rmap_f220)/np.median(rmap_f090)
 
 print(s_f090,s_f150,s_f220)
 print("f090:", np.percentile(rmap_f090[~mask_f090]/s_f090, [25,50,75]))
@@ -176,6 +162,9 @@ if args.snr is not None:
         omap[mask_f090,0] = 0
         omap[mask_f150,1] = 0
         omap[mask_f220,2] = 0
+
+# optionally save-out image data
+if args.save: np.save(args.save, omap)
 
 # start plotting
 popts = {
