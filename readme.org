@@ -15,6 +15,10 @@ paper.
   #+BEGIN_SRC bash
   python plot_qu_in_3bands.py -o plots
   #+END_SRC
+paper plot
+#+BEGIN_SRC bash
+python plot_qu_in_3bands2.py --oname QU_3bands_new.pdf --figsize "[10,4.7]" --area trim2
+#+END_SRC
 ** magnetic field in 3 bands
 - script: plot_mag_in_3bands.py
 - data: coadd
@@ -238,3 +242,12 @@ enplot out/snr_{f090,f150,f220}{,_pol}.fits --odir plots
          --dust-removal --tmin 0,0 --tmax 4,2 --pmax 0.02,0.1 \
          --dust-factor-f090 1.65 --dust-factor-f150 0.5
 #+END_SRC
+** plot sensitivity
+#+BEGIN_SRC bash
+python plot_sensitivity.py
+#+END_SRC
+Numbers extracted:
+| freq | sens             |
+| f090 | 72.01 uK arcmin  |
+| f150 | 66.51 uK arcmin  |
+| f220 | 539.36 uK arcmin |
