@@ -9,6 +9,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 # parser defined in common
 parser.add_argument("--smooth", type=float, default=0)
 parser.add_argument("--figsize", default=None)
+parser.add_argument("--mjy", action='store_true')
 args = parser.parse_args()
 
 # define area of interests
@@ -16,7 +17,7 @@ box = boxes[args.area]
 # load data
 freqs = ['f090','f150','f220']
 # temperature
-ivars = [load_ivar(filedb[f]['coadd_ivar'], box=box, fcode=f, mJy=False) for f in freqs]
+ivars = [load_ivar(filedb[f]['coadd_ivar'], box=box, fcode=f, mJy=args.mjy) for f in freqs]
 
 if args.figsize: figsize=eval(args.figsize)
 else: figsize=None
@@ -32,10 +33,12 @@ opts = {
 
 for i in range(3):
     ax = axes[i]
-    nlev = ivars[i][0]**-0.5
+    nlev = ivars[i][0]**-0.5/2  # 2 for 0.5 arcmin pixel size
     nlev[np.isinf(nlev)] = 0
-    print(f"{freqs[i]}: {np.median(nlev[nlev!=0]):.2f} uK arcmin")
-    im = ax.imshow(nlev/2, **opts)
+    if args.mjy: print(f"{freqs[i]}: {np.median(nlev[nlev!=0])/1e9:.3f} MJy/sr")
+    else: print(f"{freqs[i]}: {np.median(nlev[nlev!=0]):.2f} uK arcmin")
+    if args.mjy: im = ax.imshow(nlev/1e9, **opts)     
+    else: im = ax.imshow(nlev, **opts)
     divider = make_axes_locatable(ax)
     cax = divider.append_axes('right', size='3%', pad=0.1)
     if i==1: fig.colorbar(im, cax=cax, orientation='vertical').set_label("Noise level [$\mu$K arcmin]")

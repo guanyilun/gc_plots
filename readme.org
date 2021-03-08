@@ -243,11 +243,20 @@ enplot out/snr_{f090,f150,f220}{,_pol}.fits --odir plots
          --dust-factor-f090 1.65 --dust-factor-f150 0.5
 #+END_SRC
 ** plot sensitivity
+for uK arcmin unit
 #+BEGIN_SRC bash
-python plot_sensitivity.py
+python plot_sensitivity.py --area trim2 --cmap binary --oname sens.pdf
+#+END_SRC
+for MJy sr^-1 unit
+#+BEGIN_SRC bash
+python plot_sensitivity.py --area trim2 --cmap binary --oname sens.pdf --mjy
 #+END_SRC
 Numbers extracted:
-| freq | sens             |
-| f090 | 72.01 uK arcmin  |
-| f150 | 66.51 uK arcmin  |
-| f220 | 539.36 uK arcmin |
+|------+------------------+------------------|
+| freq | sens [uK arcmin] | sens [MJy sr^-1] |
+|------+------------------+------------------|
+| f090 |            36.01 |            0.009 |
+| f150 |            33.26 |            0.012 |
+| f220 |           269.68 |            0.130 |
+|------+------------------+------------------|
+
