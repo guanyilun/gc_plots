@@ -1,13 +1,16 @@
 * ACT GC Paper Plots
 Here I collect the scripts to make all kinds of plots in the act gc
 paper.
-** planck vs. act temperature map
-- script: plot_planck_act_sidebyside.py
-- data: planck, coadd
-- run script:
-  #+BEGIN_SRC bash
-  python plot_planck_act_sidebyside.py -o plots --oname planck_coadd_sidebyside.pdf
-  #+END_SRC
+** planck vs. act
+temperature map (3x2 pannel plot)
+#+BEGIN_SRC bash
+python plot_planck_act_sidebyside.py -o plots --oname planck_coadd_sidebyside.pdf
+#+END_SRC
+polarization map (1x2 panel plot, choose one freq)
+#+BEGIN_SRC bash
+python plot_planck_act_sidebyside_pol.py --oname planck_coadd_sidebyside_pol.pdf --min -0.4 --max 0.4
+#+END_SRC
+
 ** QU in 3 bands
 - script: plot_qu_in_3bands.py
 - data: coadd
