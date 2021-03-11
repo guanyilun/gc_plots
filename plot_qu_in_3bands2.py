@@ -112,7 +112,7 @@ for i, label in zip(range(3), ['f090','f150','f220']):
                    transform=axes[i,0].transAxes, fontsize=12)
 
 # add colorbar
-fig.subplots_adjust(right=0.83,wspace=0.02, hspace=0.02)
+fig.subplots_adjust(right=0.83,wspace=0.02,hspace=0.02)
 # left, bottom, width, height
 # cb_f090 = fig.add_axes([0.83, 0.6, 0.02, 0.3])
 # cb_f150 = fig.add_axes([0.83, 0.3, 0.02, 0.3])

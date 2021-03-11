@@ -15,17 +15,20 @@ def process_map(imap):
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-o","--odir",default="plots")
-parser.add_argument('--smooth', help='fwhm of smoothing kernel in arcmin', type=float, default=5)
+parser.add_argument('--smooth', help='fwhm of smoothing kernel in arcmin', type=float, default=3.5)
 parser.add_argument('--len', help='length as a fraction of input data shape', type=float, default=0.25)
+parser.add_argument('--area', default='half')
 parser.add_argument('--oname',default='mag_3bands.pdf')
+parser.add_argument('--figsize', default=None)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
+if args.figsize: figsize = eval(args.figsize)
+else: figsize = None
 
+# define box of interests
+box = boxes[args.area]
 # initialize figure
-fig, axes = plt.subplots(3,1,figsize=(8,8))
-fig, axes = plt.subplots(3,1)
-box = np.array([[-1,2],[1,-2]]) / 180*np.pi
-# box = np.array([[-2,4],[2,-4]]) / 180*np.pi
+fig, axes = plt.subplots(3,1,figsize=figsize)
 
 for i, fcode in zip(range(3), ['f090','f150','f220']):
     # load data
@@ -50,9 +53,9 @@ for i, fcode in zip(range(3), ['f090','f150','f220']):
     ax = fig.add_subplot(3,1,i+1)
     ax.imshow(texture, origin='lower', cmap='binary', alpha=0.5)
     ax.axis('off')
-    axes[i].text(-0.05, 0.4, fcode, rotation=90,
+    axes[i].text(-0.03, 0.4, fcode, rotation=90,
                  verticalalignment='bottom', horizontalalignment='left',
-                 transform=axes[i].transAxes, fontsize=10)
+                 transform=axes[i].transAxes, fontsize=12)
 
 plt.tight_layout(h_pad=0.2)
 ofile = op.join(args.odir, args.oname)
