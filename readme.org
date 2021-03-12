@@ -31,23 +31,20 @@ paper plot
 python plot_mag_in_3bands.py -o plots --figsize "[8,8]" --oname mag_3bands2.pdf --area trim2
 #+END_SRC
 ** polarization fraction
-- plot polarization fraction per frequency
-- script: plot_polfrac.py
-- run script
-  #+BEGIN_SRC bash
-  python plot_polfrac.py -o plots --freq f090 --oname polfrac_f090.pdf --log
-  python plot_polfrac.py -o plots --freq f150 --oname polfrac_f150.pdf --log
-  python plot_polfrac.py -o plots --freq f220 --oname polfrac_f220.pdf --log
-  #+END_SRC
-  smooth version
-  #+BEGIN_SRC bash
-    python plot_polfrac.py -o plots --freq f090 --oname polfrac_f090_s2.pdf \
-           --smooth 2 --cmap jet --min 0 --max 0.2
-    python plot_polfrac.py -o plots --freq f150 --oname polfrac_f150_s2.pdf \
-           --smooth 2 --cmap jet --min 0 --max 0.2
-    python plot_polfrac.py -o plots --freq f220 --oname polfrac_f220_s2.pdf \
-           --smooth 2 --cmap jet --min 0 --max 0.2
-  #+END_SRC
+#+BEGIN_SRC bash
+python plot_polfrac.py -o plots --freq f090 --oname polfrac_f090.pdf --log
+python plot_polfrac.py -o plots --freq f150 --oname polfrac_f150.pdf --log
+python plot_polfrac.py -o plots --freq f220 --oname polfrac_f220.pdf --log
+#+END_SRC
+smooth version
+#+BEGIN_SRC bash
+  python plot_polfrac.py -o plots --freq f090 --oname polfrac_f090_s2.pdf \
+         --smooth 2 --cmap jet --min 0 --max 0.2
+  python plot_polfrac.py -o plots --freq f150 --oname polfrac_f150_s2.pdf \
+         --smooth 2 --cmap jet --min 0 --max 0.2
+  python plot_polfrac.py -o plots --freq f220 --oname polfrac_f220_s2.pdf \
+         --smooth 2 --cmap jet --min 0 --max 0.2
+#+END_SRC
 ** polarization uncertainties
 #+BEGIN_SRC bash
 python plot_polangle_error.py -o plots --freq f090 --oname polang_err_f090.pdf
@@ -169,6 +166,11 @@ paper plot 2panel
   python plot_multifreq_2panel.py -T out/multifreq_I_trim.npy \
          -P out/multifreq_P_trim_median.npy --oname multifreq_2panel_new.pdf
 #+END_SRC
+fun experiment
+#+BEGIN_SRC bash
+  python plot_multifreq2.py --oname multifreq_expt.pdf --min 2e8 --max 2e9 \
+         --norm 1 -Q 3 -s 3 --area trim2--snr 3
+#+END_SRC
 ** plot annotation (with multifreq)
 #+BEGIN_SRC python
     python plot_multifreq_pag.py --oname multifreq_annot.pdf --min 2e8 --max 2e9 \
@@ -271,3 +273,13 @@ Numbers extracted:
 | f220 |           269.68 |            0.130 |
 |------+------------------+------------------|
 
+** plot dust sightline
+This box is defined as 
+#+BEGIN_SRC python
+boxes['dust4'] = np.array([[-0.82, 0.38],[-0.76,0.34]]) / 180*np.pi
+#+END_SRC
+script to run
+#+BEGIN_SRC bash
+  python plot_dust.py --area dust4 --beam-match --oname spec_dust4.pdf \
+         --cmap magma
+#+END_SRC

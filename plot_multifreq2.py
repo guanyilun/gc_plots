@@ -153,7 +153,17 @@ if args.snr is not None:
     # apply the mask by masking maps through alpha
     # first add an alpha channel to the output image
     alpha = np.ones(omap.shape[:-1]+(1,), dtype=float)
-    omap = np.concatenate([omap/255, alpha], axis=-1)
+    omap = np.concatenate([omap/255, alpha], axis=-1)  # fun
+    # playing for fun
+    if 0:
+        omap[...,0]=1-omap[...,0]
+        omap[...,1]=1-omap[...,1]
+        omap[...,2]=1-omap[...,2]
+    if 0:
+        maxs = np.max(omap[...,:-1],axis=-1)
+        omap[...,0]=1-maxs
+        omap[...,1]=1-maxs
+        omap[...,2]=1-maxs
     # change the alpha of masked region to args.mask_alpha
     if args.mask_method == 1:
         mask = np.logical_and.reduce([mask_f090, mask_f150, mask_f220])
