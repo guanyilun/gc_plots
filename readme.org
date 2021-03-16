@@ -287,3 +287,7 @@ script to run
   python plot_dust.py --area dust4 --beam-match --oname spec_dust4.pdf \
          --cmap magma
 #+END_SRC
+** dispersion
+#+BEGIN_SRC bash
+python plot_angle_dispersion.py --oname dispersion_f090.pdf --freq f090 --area quat
+#+END_SRC

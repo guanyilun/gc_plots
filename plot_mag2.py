@@ -5,6 +5,7 @@ update: plot three freqs together
 """
 import argparse, os, os.path as op
 from matplotlib import pyplot as plt
+from matplotlib.colors import Normalize
 import numpy as np
 import plotstyle
 from common import *
@@ -26,6 +27,7 @@ parser.add_argument("--contour", action='store_true')
 parser.add_argument("--smooth", type=float, default=None)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
+norm  = Normalize(vmin=args.min, vmax=args.max)
 
 # define box of interests
 if args.box is None:
@@ -57,6 +59,20 @@ for i, freq in enumerate(freqs):
         p     = P / imap[0]
         back  = p
         label = r"P/I"
+        # for contour plot
+        level = np.array([0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.2,0.3])
+        color = plt.get_cmap(args.cmap)(norm(level**0.5))
+    elif args.underlay == 'Perr':
+        ivar    = load_ivar(filedb[freq]['coadd_ivar'], fcode=freq, box=box)
+        # not accurate but close
+        imap_   = enmap.smooth_gauss(imap, args.downgrade*0.5*u.fwhm*u.arcmin)
+        ivar_   = enmap.smooth_gauss(ivar, args.downgrade*0.5*u.fwhm*u.arcmin)
+        s       = sfactor(freq, 0.5*args.downgrade)
+        P_err   = lib.Pangle_error(imap_, ivar_*s**2, deg=True)
+        back    = P_err
+        label   = r'$\delta \psi$ [deg]'
+        level   = [0,5,10,15,30,45,60]
+        color   = plt.get_cmap(args.cmap)(norm(level))
     # smooth if necessary
     if args.smooth:
         imap_ds = enmap.smooth_gauss(imap, args.smooth*u.arcmin*u.fwhm)
@@ -77,12 +93,8 @@ for i, freq in enumerate(freqs):
         }
         im = axes[i].imshow(back, **plot_opts)
     else:
-        from matplotlib.colors import Normalize
-        norm = Normalize(vmin=args.min, vmax=args.max)
         Y_, X_ = imap.posmap()/np.pi*180
-        levels = np.array([0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.2,0.3])
-        im = axes[i].contourf(X_, Y_, back, colors=plt.get_cmap(args.cmap)(norm(levels**0.5)),
-                              levels=levels)
+        im = axes[i].contourf(X_, Y_, back, colors=color, levels=level)
         xmin, xmax = box2extent(box)[:2]/np.pi*180
         axes[i].set_xlim([xmin, xmax])  # revert x axis
     theta = lib.Bangle(imap_ds[1], imap_ds[2], toIAU=True)
