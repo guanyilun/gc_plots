@@ -26,14 +26,30 @@ delta, ddelta = args.delta*u.arcmin, args.ddelta*u.arcmin
 annulus = np.abs(rmap-delta) <= ddelta/2
 print(np.sum(annulus))
 annulus = annulus.astype(float)
+
 # S^2 = <psi_i^2>+<psi>^2-2 psi_i psi
 psi    = lib.Bangle(imap[1], imap[2], toIAU=True)/np.pi*180
 psi2   = psi**2
-psi_i  = enmap.ifft(enmap.fft(enmap.fftshift(annulus))*enmap.fft(psi)).real
-psi_i2 = enmap.ifft(enmap.fft(enmap.fftshift(annulus))*enmap.fft(psi2)).real
-# dispersion
-S2 = (psi_i2+psi2-2*psi_i*psi)/np.sum(annulus)
+# psi_i  = enmap.ifft(enmap.fft(enmap.fftshift(annulus))*enmap.fft(psi)).real
+# psi_i2 = enmap.ifft(enmap.fft(enmap.fftshift(annulus))*enmap.fft(psi2)).real
+# calculate dispersion
+# n = np.sum(annulus)
+# S2 = (psi_i2+psi2-2*psi_i*psi)/np.sum(annulus)
+# S2 = (psi_i2/n-(psi_i/n)**2)
 
+# method 2: manual convolve
+k = np.array([
+    [0,0,0,0,0],
+    [0,1,1,1,0],
+    [0,1,1,1,0],
+    [0,1,1,1,0],
+    [0,0,0,0,0],
+])
+from scipy.signal import convolve2d
+psi_i  = convolve2d(psi, k, mode='same')
+psi_i2 = convolve2d(psi**2, k, mode='same')
+n = np.sum(k)
+S2 = (psi_i2/n-(psi_i/n)**2)
 opts = {
     'origin': 'lower',
     'extent': box2extent(box)/np.pi*180,
@@ -42,7 +58,10 @@ opts = {
     'vmax': args.max
 }
 plt.imshow(np.sqrt(S2), **opts)
+# plt.imshow(enmap.ifft(enmap.fft(enmap.fftshift(annulus))*enmap.fft(psi**2)).real, **opts)
 plt.xlabel('l [deg]')
 plt.ylabel('b [deg]')
-plt.colorbar().set_label(r'$S$ [deg]')
-plt.savefig("test.png", bbox_inches='tight')
+plt.colorbar(shrink=0.55).set_label(r'$S$ [deg]')
+ofile = op.join(args.odir, args.oname)
+print("Writing:", ofile)
+plt.savefig(ofile, bbox_inches='tight')
