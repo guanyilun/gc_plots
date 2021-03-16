@@ -2,7 +2,9 @@
 
 import argparse, os, os.path as op
 import numpy as np, glob
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+from matplotlib import colors
 from pixell import enmap, colorize
 
 # setup common plotstyle
@@ -12,6 +14,13 @@ from common import *
 
 def process_map(imap):
     return np.log10(imap[0])
+
+def truncate_colormap(cmap, minval=0.0, maxval=1.0, n=100):
+    """build a colormap by truncating a known colormap"""
+    new_cmap = colors.LinearSegmentedColormap.from_list(
+        'trunc({n},{a:.2f},{b:.2f})'.format(n=cmap.name, a=minval, b=maxval),
+        cmap(np.linspace(minval, maxval, n)))
+    return new_cmap
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-o","--odir", default='plots')
@@ -23,10 +32,12 @@ if not op.exists(args.odir): os.makedirs(args.odir)
 fig, axes = plt.subplots(3, 2, figsize=(9,7))
 box = np.array([[-1,2],[1,-2]]) / 180*np.pi
 
+planck_half = truncate_colormap(plt.get_cmap('planck'), minval=0.5)
+
 plot_opts = {
     'origin': 'lower',
-    'cmap': 'planck',
-    'vmin': 7,
+    'cmap': planck_half,
+    'vmin': 8.5,
     'vmax': 10.5
 }
 # row 0: f090
@@ -46,7 +57,7 @@ imap = process_map(imap)
 axes[1,1].imshow(imap, **plot_opts)
 
 # row 2: f220
-plot_opts.update({'vmin':8, 'vmax': 11})
+plot_opts.update({'vmin':9.5, 'vmax': 11})
 imap = load_map(filedb['f220']['planck'], box, fcode='f220')
 imap = process_map(imap)
 axes[2,0].imshow(imap, **plot_opts)
