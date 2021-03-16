@@ -23,6 +23,7 @@ parser.add_argument("--max", type=float, default=None)
 parser.add_argument("--downgrade", help="magnetic field downgrade", type=int, default=1)
 parser.add_argument("--area", default='quat')
 parser.add_argument("--contour", action='store_true')
+parser.add_argument("--smooth", type=float, default=None)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 
@@ -56,13 +57,14 @@ for i, freq in enumerate(freqs):
         p     = P / imap[0]
         back  = p
         label = r"P/I"
-    # doengrade if necessary
-    if args.downgrade == 1:
-        imap_ds = imap
+    # smooth if necessary
+    if args.smooth:
+        imap_ds = enmap.smooth_gauss(imap, args.smooth*u.arcmin*u.fwhm)
     else:
-        # smooth before downgrade
-        imap_ds = enmap.smooth_gauss(
-            imap, args.downgrade*0.5*arcmin/2.355).downgrade(args.downgrade)
+        imap_ds = imap
+    # doengrade if necessary
+    if args.downgrade > 1:
+        imap_ds = imap_ds.downgrade(args.downgrade)
     # get meshgrid to plot
     Y, X = imap_ds.posmap()/np.pi*180
     if not args.contour:

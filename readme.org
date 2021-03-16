@@ -64,6 +64,10 @@ contour plot (3 panel)
 #+BEGIN_SRC bash
 python plot_polangle_error2.py -o plots --oname polangc_err.pdf --smooth 3.5 --area trim2 --cmap magma
 #+END_SRC
+test using full covariance matrix from ACT-only
+#+BEGIN_SRC bash
+python plot_polangle_error3.py -o plots --oname polangc_err_cov.pdf --smooth 3.5 --area trim2 --cmap magma
+#+END_SRC
 ** plot magnetic field orientation
 - script plot_mag.py
 #+BEGIN_SRC bash

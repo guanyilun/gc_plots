@@ -1,7 +1,11 @@
 """This script aims to produce a polarization fraction plot for a
 given frequency
 
-update: this script will be making a contour plot instead
+update: this script tests the use of full covariance matrix from ACT
+only maps result: no noticable difference. This can also be used to
+estimate the error from ignoring covariance between Q and U, so the
+script is worth keeping.
+
 """
 
 import argparse, os, os.path as op
@@ -28,6 +32,28 @@ parser.add_argument("--method", type=int, default=1)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 
+# not pretty
+divs = {
+    'f090': enmap.read_map("/home/yilung/work/mapdata/gc_8x4_201018/gc_f090_night/sky_div.fits"),
+    'f150': enmap.read_map("/home/yilung/work/mapdata/gc_8x4_201018/gc_f150_night/sky_div.fits"),
+    'f220': enmap.read_map("/home/yilung/work/mapdata/gc_8x4_201018/gc_f220_night/sky_div.fits")
+}
+
+def Pangle_error(imap, div, deg=True):
+    """modofied from the lib version, uses covariance matrix instead"""
+    Q, U = imap[1], imap[2]
+    P = np.sqrt(Q**2+U**2)
+    cov = enmap.multi_pow(div, -1)  # might be slow
+    QQ = cov[1,1]
+    UU = cov[2,2]
+    QU = cov[1,2]
+    # QU = 0
+    # import ipdb; ipdb.set_trace()
+    if deg: factor = 28.65  # 0.5 (in radian) converted to deg
+    else:   factor = 0.5    # in radian
+    err = factor*np.sqrt(U**2*QQ + Q**2*UU - 2*Q*U*QU) / (P**2)
+    return err    
+    
 # define area of interests
 box = boxes[args.area]
 # define levels to show
@@ -35,27 +61,21 @@ levels = [0,5,10,15,30,45]
 fig, axes = plt.subplots(3, 1, sharex=True, figsize=(7,7))
 for fi, freq in enumerate(['f090','f150','f220']):
     # load map and ivar from the specified
-    imap = load_map(filedb[freq][args.use], box=box, fcode=freq)
-    ivar = load_ivar(filedb[freq][f'{args.use}_ivar'], box=box, fcode=freq)
+    imap = load_map(filedb[freq]['coadd'], box=box, fcode=freq, mJy=False)
+    # ivar = load_ivar(filedb[freq]['coadd_ivar'], box=box, fcode=freq, mJy=False)
+    div = divs[freq].submap(box)
     # optionally smooth the map
     if args.smooth > 0:
-        imap  = enmap.smooth_gauss(imap, args.smooth*u.arcmin*u.fwhm)
-        ivar  = enmap.smooth_gauss(ivar, args.smooth*u.arcmin*u.fwhm)
+        imap = enmap.smooth_gauss(imap, args.smooth*u.arcmin*u.fwhm)
+        div  = enmap.smooth_gauss(div, args.smooth*u.arcmin*u.fwhm)
         # weight down noise level by smoothing
-        ivar *= sfactor(freq, args.smooth)**2
+        div *= sfactor(freq, args.smooth)**2
     # compute polarization angle error
-    P_err = lib.Pangle_error(imap, ivar, deg=True, method=args.method)
+    P_err = Pangle_error(imap, div, deg=True)
     # get meshgrid
     y, x = imap.posmap()/np.pi*180
     ax = axes[fi]
     cf = ax.contourf(x, y, P_err, cmap=args.cmap, levels=levels)
-    # divider = make_axes_locatable(ax)
-    # cax = divider.append_axes('right', size='3%', pad=0.1)
-    # cx = ax.contour(x, y, P_err, cmap=args.cmap, levels=levels)
-    # ax.set_xlabel('l [deg]')
-    # ax.set_ylabel('b [deg]')
-    # if fi == 1: fig.colorbar(cf, cax=cax, orientation='vertical').set_label(r"$\delta \psi$ [deg]")
-    # else: fig.colorbar(cf, cax=cax, orientation='vertical')
     ax.set_aspect(1)
     ax.set_xlim([x.max(), x.min()])
 # plt.tight_layout(h_pad=-0.5)
