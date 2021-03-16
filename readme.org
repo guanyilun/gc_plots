@@ -147,13 +147,13 @@ different normalization (method 2)
 #+END_SRC
 multifreq two panels:
 #+BEGIN_SRC bash
-    python plot_multifreq.py --oname multifreq.pdf --min 2e8 --max 2e9 \
-           --norm 1 -Q 3 -s 3 --area trim --save out/multifreq_I_trim.npy
+    python plot_multifreq2.py --oname multifreq.pdf --min 2e8 --max 2e9 \
+           --norm 4 -Q 3 -s 3 --area trim --save out/multifreq_I_trim.npy --snr 3
     python plot_multifreq2.py --oname multifreq_pol_trim.pdf --min 1e7 \
            --max 1e9 --norm 3 -Q 0 -s 0.1 --area trim --pol --smooth 3.5 --snr 3 \
-           --mask-method 4 --mask-alpha 0.5 --save out/multifreq_P_trim_median.npy
+           --mask-method 1 --mask-alpha 0.5 --save out/multifreq_P_trim_median.npy
     python plot_multifreq_2panel.py -T out/multifreq_I_trim.npy \
-           -P out/multifreq_P_trim_dust.npy --oname multifreq_2panel.pdf
+           -P out/multifreq_P_trim_median.npy --oname multifreq_2panel.pdf
 #+END_SRC
 Some more scaling tests
 #+BEGIN_SRC bash
@@ -163,7 +163,7 @@ Some more scaling tests
 paper plot 2panel
 #+BEGIN_SRC bash
   python plot_multifreq2.py --oname multifreq_trim.pdf --min 2e8 --max 2e9 \
-         --norm 1 -Q 3 -s 3 --area trim2 --save out/multifreq_I_trim.npy --snr 3
+         --norm 4 -Q 3 -s 3 --area trim2 --save out/multifreq_I_trim.npy --snr 3
   python plot_multifreq2.py --oname multifreq_pol_trim.pdf --min 1e7 \
          --max 1e9 --norm 4 -Q 0 -s 0.1 --area trim2 --pol --smooth 3.5 --snr 3 \
          --mask-method 1 --mask-alpha 0.5 --save out/multifreq_P_trim_median.npy
