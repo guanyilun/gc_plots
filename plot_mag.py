@@ -1,6 +1,7 @@
 """This script plots the magnetic field orientation on top of some
 other plots
 
+Mar 17, 2021
 """
 import argparse, os, os.path as op
 from matplotlib import pyplot as plt
@@ -21,6 +22,7 @@ parser.add_argument("--min", type=float, default=None)
 parser.add_argument("--max", type=float, default=None)
 parser.add_argument("--downgrade", help="magnetic field downgrade", type=int, default=None)
 parser.add_argument("--area", default='quat')
+parser.add_argument("--color", default='k')
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 
@@ -35,9 +37,9 @@ if args.underlay == 'T':
     back  = imap[0]
     label = 'Temperature'
 elif args.underlay == 'P':
-    P     = np.sum(imap[1:]**2,axis=0)**0.5
+    P     = np.sum(imap[1:]**2,axis=0)**0.5 / 1e9
     back  = enmap.smooth_gauss(P, 1*u.arcmin*u.fwhm)
-    label = 'Polarization Intensity'
+    label = 'Polarization Intensity [MJy/sr]'
 elif args.underlay == 'plog':
     P     = np.sum(imap[1:]**2,axis=0)**0.5
     p     = P / imap[0]
@@ -48,6 +50,7 @@ elif args.underlay == 'plin':
     p     = P / imap[0]
     back  = p
     label = r"P/I"
+
 if args.downgrade is None:
     imap_ds = imap
 else:
@@ -77,9 +80,11 @@ theta += (np.pi/2.)
 # x- and y-components of magnetic field
 Bx = np.cos(theta)
 By = np.sin(theta)
-ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0)
+ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0, color=args.color)
 plt.tight_layout()
-plt.axis('off')
+plt.xlabel('l [deg]')
+plt.xlabel('b [deg]')
+# plt.axis('off')
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
 plt.savefig(ofile, bbox_inches='tight')

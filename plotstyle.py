@@ -3,6 +3,7 @@ import matplotlib as mpl
 from matplotlib import colors, cm
 import matplotlib.pyplot as plt
 import numpy as np
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 mpl.rcParams['font.size']=10
 mpl.rcParams['figure.dpi']=180
@@ -24,3 +25,8 @@ def truncate_colormap(cmap, minval=0.0, maxval=1.0, n=100):
 
 planck_half = truncate_colormap(plt.get_cmap('planck'), minval=0.5)
 cm.register_cmap(name='planck_half', cmap=planck_half)
+
+def add_colorbar(fig, ax, size="5%", pad=0.1, **kwargs):
+    divider = make_axes_locatable(ax)
+    cb = divider.append_axes('right', size=size, pad=pad, **kwargs)
+    return cb
