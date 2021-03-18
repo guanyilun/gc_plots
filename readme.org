@@ -248,17 +248,36 @@ enplot out/snr_{f090,f150,f220}{,_pol}.fits --odir plots
          --title "l=-3 b=linspace(-1.5,1.5,100)" --cmap magma
 #+END_SRC
 ** plot source
+SNR G1.9+0.3
 #+BEGIN_SRC bash
   python plot_source.py -o plots --oname source_snr_1903.pdf -l 1.87550 \
          -b 0.32423 --dust-removal --tmin 0,0 --tmax 0.5,0.5 --pmax 0.03,0.06 \
          --dust-factor-f090 1.6 --dust-factor-f150 0.6
 #+END_SRC
-
+SNR G0.9+0.1
 #+BEGIN_SRC bash
   python plot_source.py -o plots --oname source_snr_0901.pdf -l 0.85 -b 0.075 \
          --dust-removal --tmin 0,0 --tmax 4,2 --pmax 0.02,0.1 \
          --dust-factor-f090 1.65 --dust-factor-f150 0.5
 #+END_SRC
+try with new script
+#+BEGIN_SRC bash
+  python plot_source2.py -o plots --oname source_test.pdf -l 0.85 -b 0.075 \
+         --tmin 0,0 --tmax 4,2 --pmax 0.1,0.3 --dust-removal --method 2 --cmap magma --dust-area quat
+#+END_SRC
+latest plot on SNR 0.9+0.1
+#+BEGIN_SRC bash
+  python plot_source2.py -o plots --oname source_test.pdf -l 0.85 -b 0.075 \
+         --tmin 0,0 --tmax 2.5,2 --dust-removal --method 3 --tonly \
+         --cmap planck_half --margin 0.2 --figsize "(7,4)"
+#+END_SRC
+latest plot on SNR 1.9+0.3
+#+BEGIN_SRC bash
+  python plot_source2.py -o plots --oname source_test.pdf -l 1.87550 -b 0.32423 \
+         --tmin 0,0 --tmax 0.2,0.25 --dust-removal --method 3 --tonly \
+         --cmap planck_half --margin 0.1 --figsize "(7,4)"
+#+END_SRC
+
 ** plot sensitivity
 for uK arcmin unit
 #+BEGIN_SRC bash

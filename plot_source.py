@@ -45,7 +45,7 @@ box = np.array([[ymin, xmax], [ymax, xmin]]) / 180*np.pi
 if args.figsize is not None: figsize=eval(args.figsize)
 else: figsize=None
 # load maps
-imap_f090 = load_map(filedb['f090']['coadd'], fcode='f090')/1e9
+imap_f090 = load_map(filedb['f090']['coadd'], fcode='f090')/1e9  # MJy/sr
 imap_f150 = load_map(filedb['f150']['coadd'], fcode='f150')/1e9
 imap_f220 = load_map(filedb['f220']['coadd'], fcode='f220')/1e9
 
