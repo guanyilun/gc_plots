@@ -89,8 +89,15 @@ A better visualization:
 #+END_SRC
 3 in one plot: paper plot at the moment
 #+BEGIN_SRC bash
-  python plot_mag2.py --oname polfrac_mag.pdf --cmap binary --downgrade 4 \
-         --underlay plin --area quat --contour --cmap magma --min 0 --max 0.5
+  python plot_mag2.py --oname polfrac_mag.pdf --smooth 2 --downgrade 4 \
+         --underlay plin --area quat --contour --cmap magma --min 0 --max 0.5 \
+         --figsize "(6,9)" --alpha 0.7 --mask 20
+#+END_SRC
+underlay: Pangle error
+#+BEGIN_SRC bash
+  python plot_mag2.py --oname polfrac_mag_perr2.pdf --smooth 2 \
+         --downgrade 4 --underlay Perr --area quat --contour --cmap plasma \
+         --min 0 --max 60 --figsize "(6,9)" --alpha 0.7 --color black
 #+END_SRC
 ** plot one coadd map only
 This is to facilitate object identification work
@@ -202,6 +209,12 @@ updates on [2021-03-17 Wed]: update paper plot to this version
          --underlay P --min 0 --max 1 --area saga \
          --figsize "(6.5,6)" --cmap magma --mask 10
 #+END_SRC
+GCRA
+#+BEGIN_SRC bash
+  python plot_mag2.py -o plots --freq f090 --oname mag_GCRA_f090.pdf \
+         --underlay P --min 0 --max 0.8 --area quad \
+         --figsize "(6.5,6)" --cmap magma --mask 10
+#+END_SRC
 ** plot multi panel view of tornado object
 Around the tornado object: 357.65 -0.08
 #+BEGIN_SRC bash
@@ -286,7 +299,15 @@ latest plot on SNR 1.9+0.3
          --tmin 0,0 --tmax 0.2,0.25 --dust-removal --method 3 --tonly \
          --cmap planck_half --margin 0.1 --figsize "(7,4)"
 #+END_SRC
-
+GCRA
+#+BEGIN_SRC bash
+  python plot_mag2.py --oname mag_gcra_f090.pdf --underlay P --area gcra \
+         --cmap magma --min 0 --max 5 --figsize "(2,7)" --alpha 0.9 \
+         --freq f090 --mask 10
+  python plot_mag2.py --oname mag_gcra_f150.pdf --underlay P --area gcra \
+         --cmap magma --min 0 --max 5 --figsize "(2,7)" --alpha 0.9 \
+         --freq f150 --mask 10
+#+END_SRC
 ** plot sensitivity
 for uK arcmin unit
 #+BEGIN_SRC bash

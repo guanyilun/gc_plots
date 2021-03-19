@@ -12,11 +12,10 @@ import plotstyle
 from common import *
 import lib
 from pixell import utils as u
-mpl.rcParams['font.size'] = 18
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-o","--odir", default="plots")
-parser.add_argument("--freq",default="f090")
+parser.add_argument("--freq",default=None)
 parser.add_argument("--oname", default="polfrac.pdf")
 parser.add_argument("--box", default=None)
 parser.add_argument("--underlay", default='T')
@@ -30,10 +29,14 @@ parser.add_argument("--smooth", type=float, default=None)
 parser.add_argument("--figsize", default=None)
 parser.add_argument("--mask", help='mask Pangle err > x degree', type=float, default=None)
 parser.add_argument("--color", default='white')
+parser.add_argument("--alpha", type=float, default=1)
+parser.add_argument("--largefont", action="store_true")
+parser.add_argument("--scale", type=int, default=None)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 if args.figsize: figsize=eval(args.figsize)
 else: figsize=None
+if args.largefont: mpl.rcParams['font.size'] = 18
 norm = Normalize(vmin=args.min, vmax=args.max)
 
 # define box of interests
@@ -128,10 +131,14 @@ for i, freq in enumerate(freqs):
         cmap_ = plt.get_cmap('gray')  # actual cmap doesn't matter
         color = cmap_(np.ones_like(X))
         color[mask,-1] = 0
+        color[~mask,-1] = args.alpha
         color=color.reshape(color.shape[0]*color.shape[1],4)
+        ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0, color=color, scale=args.scale)
     else:
         color = args.color
-    ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0, color=color)
+        ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0,
+                  headaxislength=0, color=color, alpha=args.alpha, scale=args.scale)
+    ax.set_aspect('equal')
 if len(freqs) == 1:
     axes.set_xlabel('l [deg]')
     axes.set_ylabel('b [deg]')
@@ -139,7 +146,7 @@ else:
     axes[-1].set_xlabel('l [deg]')
     axes[-2].set_ylabel('b [deg]')
 fig.subplots_adjust(right=0.9, hspace=0.02, wspace=0.02)
-cax = fig.add_axes([0.93,0.11, 0.02,0.77])
+cax = fig.add_axes([0.93,0.11, 0.04,0.77])
 fig.colorbar(im, cax=cax, orientation='vertical').set_label(label)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
