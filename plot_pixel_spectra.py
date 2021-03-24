@@ -20,6 +20,7 @@ parser.add_argument('-b', default="0")
 parser.add_argument('--color', default='x')
 parser.add_argument('--use', default='coadd')
 parser.add_argument("--title", default=None)
+parser.add_argument("--logy", action="store_true")
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir) 
 
@@ -55,7 +56,7 @@ for x, y in zip(xs, ys):
     else:
         ax.errorbar(fc, vals, yerr=errs**-0.5, alpha=0.5)
 ax.set_xscale('log')
-ax.set_yscale('log')
+if args.logy: ax.set_yscale('log')
 ax.set_ylabel('Total Intensity [MJy/sr]')
 ax.set_xlabel('frequency [GHz]')
 if args.title: plt.title(args.title)

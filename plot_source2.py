@@ -26,6 +26,7 @@ parser.add_argument("--dust-factor-f150", type=float, default=1)
 parser.add_argument("--auto-adj", action='store_true')
 parser.add_argument("-l", help="in deg", type=float, default=None)
 parser.add_argument("-b", help="in deg", type=float, default=None)
+parser.add_argument("--area", default=None)
 parser.add_argument("--margin", help="margin in deg", type=float, default=0.1)
 parser.add_argument("--cmap", default='planck')
 parser.add_argument("--title", default=None)
@@ -36,6 +37,7 @@ parser.add_argument("--pmax", default="1,1,1")
 parser.add_argument("--dust-area", help='an area used for dust factor estimation', default=None)
 parser.add_argument("--figsize", default="(8,7)")
 parser.add_argument("--colorbar", action='store_true')
+parser.add_argument("--use", default='coadd')
 
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
@@ -45,9 +47,12 @@ pmin = args.pmin.split(",")
 pmax = args.pmax.split(",")
 
 # define box
-xmin, xmax = args.l-args.margin, args.l+args.margin
-ymin, ymax = args.b-args.margin, args.b+args.margin
-box = np.array([[ymin, xmax], [ymax, xmin]]) / 180*np.pi
+if args.area:
+    box = boxes[args.area]
+else:
+    xmin, xmax = args.l-args.margin, args.l+args.margin
+    ymin, ymax = args.b-args.margin, args.b+args.margin
+    box = np.array([[ymin, xmax], [ymax, xmin]]) / 180*np.pi
 # set figure size if needed
 if args.figsize is not None: figsize=eval(args.figsize)
 else: figsize=None
@@ -58,9 +63,9 @@ if args.dust_removal:
     # load map for dust area only
     if args.dust_area: dust_box = boxes[args.dust_area]
     else: dust_box = box
-    imap_f090 = load_map(filedb['f090']['coadd'], fcode='f090', box=dust_box)/1e9  # MJy/sr
-    imap_f150 = load_map(filedb['f150']['coadd'], fcode='f150', box=dust_box)/1e9
-    imap_f220 = load_map(filedb['f220']['coadd'], fcode='f220', box=dust_box)/1e9    
+    imap_f090 = load_map(filedb['f090'][args.use], fcode='f090', box=dust_box)/1e9  # MJy/sr
+    imap_f150 = load_map(filedb['f150'][args.use], fcode='f150', box=dust_box)/1e9
+    imap_f220 = load_map(filedb['f220'][args.use], fcode='f220', box=dust_box)/1e9    
     # form fiducial dust template at each frequency
     beta = 1.53
     s_f090 = (100/217)**(beta+2)
@@ -92,15 +97,15 @@ if args.dust_removal:
         res = minimize(lambda x: np.abs(np.median(imap_f150[0]-x*dust_f150[0])), x0=1, method="Nelder-Mead")
         x_f150 = res.x[0]
 else:
-    x_f090 = f150 = 0
+    x_f090 = x_f150 = 0
     
 print("dust factor in f090:", x_f090)
 print("dust factor in f150:", x_f150)
 
 # reload maps in the actual box of interests
-imap_f090 = load_map(filedb['f090']['coadd'], fcode='f090', box=box)/1e9  # MJy/sr
-imap_f150 = load_map(filedb['f150']['coadd'], fcode='f150', box=box)/1e9
-imap_f220 = load_map(filedb['f220']['coadd'], fcode='f220', box=box)/1e9    
+imap_f090 = load_map(filedb['f090'][args.use], fcode='f090', box=box)/1e9  # MJy/sr
+imap_f150 = load_map(filedb['f150'][args.use], fcode='f150', box=box)/1e9
+imap_f220 = load_map(filedb['f220'][args.use], fcode='f220', box=box)/1e9    
 # form fiducial dust template at each frequency
 beta = 1.53
 s_f090 = (100/217)**(beta+2)
@@ -123,7 +128,8 @@ popts = {
     'extent': box2extent(box)/np.pi*180
 }
 if args.dust_removal: names = ['f090 - f220','f150 - f220']
-else: names = ['f090', 'f150', 'f220']
+# else: names = ['f090', 'f150', 'f220']
+else: names = ['f090', 'f150']
 maps = ['T','P']
 if args.tonly:
     nrow, ncol = 1, len(names)

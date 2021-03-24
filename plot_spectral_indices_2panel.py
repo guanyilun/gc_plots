@@ -42,6 +42,7 @@ parser.add_argument("--max1", type=float, default=None)
 parser.add_argument("--min2", type=float, default=None)
 parser.add_argument("--max2", type=float, default=None)
 parser.add_argument("--beam-match", action='store_true')
+parser.add_argument("--use", default='coadd')
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 if args.figsize: figsize = eval(args.figsize)
@@ -64,8 +65,8 @@ label = r"$\beta$"
 
 # upper pannel:
 # calculate the ratio between f1 and f2
-map_1 = load_map(filedb[args.f1]['coadd'], fcode=args.f1, box=box)
-map_2 = load_map(filedb[args.f2]['coadd'], fcode=args.f2, box=box)
+map_1 = load_map(filedb[args.f1][args.use], fcode=args.f1, box=box)
+map_2 = load_map(filedb[args.f2][args.use], fcode=args.f2, box=box)
 if args.beam_match: map_2 = beam_match(map_2, args.f1, args.f2)
 f1    = fcenters[args.f1]
 f2    = fcenters[args.f2]
@@ -85,7 +86,7 @@ opts = {
 }
 # lower pannel f2/f3
 # map_2 loaded previously
-map_3 = load_map(filedb[args.f3]['coadd'], fcode=args.f3, box=box)
+map_3 = load_map(filedb[args.f3][args.use], fcode=args.f3, box=box)
 if args.beam_match: map_3 = beam_match(map_3, args.f2, args.f3)
 f3    = fcenters[args.f3]
 bmap  = calc_beta(map_2, map_3, f2, f3)

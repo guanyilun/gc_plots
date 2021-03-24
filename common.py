@@ -13,19 +13,25 @@ filedb = {
         'coadd':  op.join(map_dir, 'coadd_corr', 'gc_f090_map.fits'),
         'coadd_ivar':  op.join(map_dir, 'coadd_corr', 'gc_f090_ivar.fits'),
         'planck': op.join(map_dir, 'planck', 'planck_npipe_100_split*_map.fits'),
-        'planck_ivar': op.join(map_dir, 'planck', 'planck_npipe_100_split*_ivar.fits')
+        'planck_ivar': op.join(map_dir, 'planck', 'planck_npipe_100_split*_ivar.fits'),
+        'act': op.join(map_dir, 'act_coadd', 'gc_f090_map.fits'),
+        'act_ivar': op.join(map_dir, 'act_coadd', 'gc_f090_div.fits')
     },
     'f150': {
         'coadd':  op.join(map_dir, 'coadd_corr', 'gc_f150_map.fits'),
         'coadd_ivar':  op.join(map_dir, 'coadd_corr', 'gc_f150_ivar.fits'),
         'planck': op.join(map_dir, 'planck', 'planck_npipe_143_split*_map.fits'),
-        'planck_ivar': op.join(map_dir, 'planck', 'planck_npipe_143_split*_ivar.fits')
+        'planck_ivar': op.join(map_dir, 'planck', 'planck_npipe_143_split*_ivar.fits'),
+        'act': op.join(map_dir, 'act_coadd', 'gc_f150_map.fits'),
+        'act_ivar': op.join(map_dir, 'act_coadd', 'gc_f150_div.fits')        
     },
     'f220': {
         'coadd':  op.join(map_dir, 'coadd_corr', 'gc_f220_map.fits'),
         'coadd_ivar':  op.join(map_dir, 'coadd_corr', 'gc_f220_ivar.fits'),
         'planck': op.join(map_dir, 'planck', 'planck_npipe_217_split*_map.fits'),
-        'planck_ivar': op.join(map_dir, 'planck', 'planck_npipe_217_split*_ivar.fits')
+        'planck_ivar': op.join(map_dir, 'planck', 'planck_npipe_217_split*_ivar.fits'),
+        'act': op.join(map_dir, 'act_coadd', 'gc_f220_map.fits'),
+        'act_ivar': op.join(map_dir, 'act_coadd', 'gc_f220_div.fits')
     },
     'f350': {
         'planck': op.join(map_dir, 'planck', 'planck_npipe_353_split*_map.fits'),

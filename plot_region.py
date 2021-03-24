@@ -25,7 +25,9 @@ parser.add_argument("--tmin", default="0,0,0")
 parser.add_argument("--tmax", default="5000,5000,5000")
 parser.add_argument("--pmin", default="0,0,0")
 parser.add_argument("--pmax", default="300,300,300")
+parser.add_argument("--area", default="full")
 parser.add_argument("--figsize", default=None)
+parser.add_argument("--use", default='coadd')
 
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
@@ -33,14 +35,14 @@ tmin = args.tmin.split(",")
 tmax = args.tmax.split(",")
 pmin = args.pmin.split(",")
 pmax = args.pmax.split(",")
-if args.box is None: box = None
+if args.area: box  = boxes[args.area]
 else: box = np.array(eval(args.box)) / 180*np.pi
 if args.figsize is not None:
     figsize=eval(args.figsize)
 else: figsize=None
-imap_f090 = load_map(filedb['f090']['coadd'])
-imap_f150 = load_map(filedb['f150']['coadd'])
-imap_f220 = load_map(filedb['f220']['coadd'])
+imap_f090 = load_map(filedb['f090'][args.use])
+imap_f150 = load_map(filedb['f150'][args.use])
+imap_f220 = load_map(filedb['f220'][args.use])
 
 # form dust template at each frequency
 fmap = enmap.fft(imap_f220)
