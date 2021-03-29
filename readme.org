@@ -363,3 +363,7 @@ python plot_angle_dispersion.py --oname dispersion_f090.pdf --freq f090 --area q
 #+BEGIN_SRC bash
 python plot_angle_dispersion.py --oname dispersion_f090.png --freq f090 --area quat --cmap plasma --max 60 --smooth 2 --figsize "(12,6)"
 #+END_SRC
+** uncertainties
+#+BEGIN_SRC bash
+python plot_uncertainties.py --freq f090 --area quat --cmap plasma --smooth 2 --oname uncertainties_f090_Q.pdf --max 0.3
+#+END_SRC
