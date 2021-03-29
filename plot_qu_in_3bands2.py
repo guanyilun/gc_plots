@@ -7,6 +7,7 @@ From original script: this script plots Q/U maps in 3 bands
 
 import argparse, os, os.path as op
 import numpy as np
+import matplotlib as mpl
 from matplotlib import pyplot as plt
 import matplotlib.ticker as ticker
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -30,7 +31,13 @@ parser.add_argument("--cmap", default="planck")
 parser.add_argument("--axis", action='store_true')
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
-
+if args.axis:
+    mpl.rcParams['xtick.direction']='in'
+    mpl.rcParams['ytick.direction']='in'
+    mpl.rcParams["xtick.major.size"]=2
+    mpl.rcParams["ytick.major.size"]=2
+    mpl.rcParams["xtick.minor.size"]=1
+    mpl.rcParams["ytick.minor.size"]=1
 # load datafile
 def process_map(m, component='Q'):
     if   component == 'Q': i = 1
@@ -86,16 +93,20 @@ for i in range(3):
         if not args.axis:
             ax.set_axis_off()
         else:
-            if j>0:
+            if j == 0: ax.yaxis.set_ticks_position('left')
+            if j == 1: ax.yaxis.set_ticks_position('right')
+
+            if (j!=0) or (i !=2):
                 ax.axes.yaxis.set_ticklabels([])
-            if i<2:
                 ax.axes.xaxis.set_ticklabels([])
-            if i==2:
-                ax.xaxis.set_major_locator(ticker.FixedLocator([1.5,1,0.5,0,-0.5,-1,-1.5]))
+            else:
                 ax.set_xlabel('l [deg]')
-            if j==0:
-                ax.yaxis.set_major_locator(ticker.FixedLocator([-0.5,0,0.5]))
                 ax.set_ylabel('b [deg]')
+            # if i==2:
+                # ax.xaxis.set_major_locator(ticker.FixedLocator([1.5,1,0.5,0,-0.5,-1,-1.5]))
+            # if j==0:
+                # ax.yaxis.set_major_locator(ticker.FixedLocator([-0.5,0,0.5]))
+
 
 # labels
 axes[0,0].text(0.5, 1.05, 'Q',
@@ -106,21 +117,22 @@ axes[0,1].text(0.5, 1.05, 'U',
                transform=axes[0,1].transAxes, fontsize=12)
 
 # setup labels: f090, f150, f220
-for i, label in zip(range(3), ['f090','f150','f220']):
-    axes[i,0].text(-0.05, 0.35, label, rotation=90,
-                   verticalalignment='bottom', horizontalalignment='left',
-                   transform=axes[i,0].transAxes, fontsize=12)
+# for i, label in zip(range(3), ['f090','f150','f220']):
+#     axes[i,0].text(-0.05, 0.35, label, rotation=90,
+#                    verticalalignment='bottom', horizontalalignment='left',
+#                    transform=axes[i,0].transAxes, fontsize=12)
+props = dict(alpha=1, facecolor='white')
+plt.text(0.47, 0.82, 'f090', transform=fig.transFigure, fontsize=12,
+         usetex=True, horizontalalignment='left', bbox=props)
+plt.text(0.47, 0.56, 'f150', transform=fig.transFigure, fontsize=12,
+         usetex=True, horizontalalignment='left', bbox=props)
+plt.text(0.47, 0.31, 'f220', transform=fig.transFigure, fontsize=12,
+         usetex=True, horizontalalignment='left', bbox=props)
 
 # add colorbar
-fig.subplots_adjust(right=0.83,wspace=0.02,hspace=0.02)
-# left, bottom, width, height
-# cb_f090 = fig.add_axes([0.83, 0.6, 0.02, 0.3])
-# cb_f150 = fig.add_axes([0.83, 0.3, 0.02, 0.3])
-# cb_f220 = fig.add_axes([0.83, 0.03, 0.02, 0.3])
-# fig.colorbar(im_f090_q, cax=cb_f090, orientation='vertical')
-# fig.colorbar(im_f150_q, cax=cb_f150, orientation='vertical')
-# fig.colorbar(im_f220_q, cax=cb_f220, orientation='vertical')
-cb_f090 = fig.add_axes([0.85, 0.12, 0.02, 0.76])
+fig.subplots_adjust(right=0.85,wspace=0,hspace=0.)
+
+cb_f090 = fig.add_axes([0.86, 0.11, 0.02, 0.77])
 fig.colorbar(im_f090_q, cax=cb_f090, orientation='vertical').set_label("MJy/sr")
 # fig.colorbar(im, ax=axes, shrink=0.8).set_label(label="mJy/sr")
 

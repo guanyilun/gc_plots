@@ -25,6 +25,11 @@ paper plot
 #+BEGIN_SRC bash
 python plot_qu_in_3bands2.py --oname QU_3bands_new.pdf --figsize "[10,4.7]" --area trim2
 #+END_SRC
+[2021-03-29 Mon]: add coordinates
+#+BEGIN_SRC bash
+  python plot_qu_in_3bands2.py --oname QU_3bands_new.pdf \
+         --figsize "[9.5,4.5]" --area trim2 --axis
+#+END_SRC
 ** magnetic field in 3 bands
 #+BEGIN_SRC bash
 python plot_mag_in_3bands.py -o plots
