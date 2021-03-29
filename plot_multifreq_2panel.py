@@ -19,8 +19,14 @@ import plotstyle
 # parser defined in common
 parser.add_argument("-T", default=None)
 parser.add_argument("-P", default=None)
+parser.add_argument("--axis", action='store_true')
+parser.add_argument("--figsize", default="(8,4)")
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
+if args.figsize: figsize=eval(args.figsize)
+else: figsize=None
+# define box of interests
+box = boxes[args.area]
 
 # load two maps
 tmap = np.load(args.T)
@@ -29,15 +35,30 @@ pmap = np.load(args.P)
 # start plotting
 popts = {
     'origin': 'lower',
+    'extent': box2extent(box)/np.pi * 180
 }
 
 # plots:
 # -> upper panel: temperature
-fig, axes = plt.subplots(2, 1, figsize=(8,4))
+fig, axes = plt.subplots(2, 1, figsize=figsize)
 axes[0].imshow(tmap, **popts)
 axes[1].imshow(pmap, **popts)
-for ax in axes.flat: ax.axis('off')
-plt.tight_layout(h_pad=0.5)
+if not args.axis:
+    for ax in axes.flat: ax.axis('off')
+    plt.tight_layout(h_pad=0.5)
+else:
+    for ax in axes:
+        for side in ['left','right','top','bottom']:
+            ax.spines[side].set_color('white')
+        ax.tick_params(axis='x', colors='white', which='both', labelcolor='black')
+        ax.tick_params(axis='y', colors='white', which='both', labelcolor='black')
+        ax.set_aspect('equal')
+    axes[0].set_xticklabels([])
+    axes[0].set_yticklabels([])
+    axes[1].set_xlabel('l [deg]')
+    axes[1].set_ylabel('b [deg]')
+    plt.tight_layout(h_pad=0.1)
+
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
 plt.savefig(ofile, bbox_inches='tight')

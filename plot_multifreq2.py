@@ -3,6 +3,7 @@ for having a transluscent mask for polarization is becoming really
 messy. I will write a new one with support of snr masking more
 natively, and this one is meant for polarization maps only
 
+2021 Mar 29: add coordinates
 """
 
 import argparse, os, os.path as op
