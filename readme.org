@@ -44,6 +44,11 @@ paper plot
 #+BEGIN_SRC bash
 python plot_mag_in_3bands.py -o plots --figsize "[8,8]" --oname mag_3bands2.pdf --area trim2
 #+END_SRC
+[2021-03-29 Mon]: add coordinates
+#+BEGIN_SRC bash
+  python plot_mag_in_3bands.py -o plots --figsize "[8,7]" \
+         --oname mag_3bands2.pdf --area trim2 --cmap planck_half -L 0.5 --axis
+#+END_SRC
 ** polarization fraction
 #+BEGIN_SRC bash
 python plot_polfrac.py -o plots --freq f090 --oname polfrac_f090.pdf --log

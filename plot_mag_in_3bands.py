@@ -6,6 +6,7 @@ frequency band
 import argparse, os, os.path as op
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib import colors
 from pixell import utils as u
 from common import *
 import lib, plotstyle
@@ -17,47 +18,64 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-o","--odir",default="plots")
 parser.add_argument('--smooth', help='fwhm of smoothing kernel in arcmin', type=float, default=3.5)
 parser.add_argument('--len', help='length as a fraction of input data shape', type=float, default=0.25)
+parser.add_argument('-L', help='absolute length in degree', type=float)
 parser.add_argument('--area', default='half')
 parser.add_argument('--oname',default='mag_3bands.pdf')
+parser.add_argument('--cmap', default='planck')
+parser.add_argument('--axis', action='store_true')
 parser.add_argument('--figsize', default=None)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 if args.figsize: figsize = eval(args.figsize)
 else: figsize = None
-
+if args.L: L = args.L * 120  # assuming 0.5 arcmin pixel size
+else: L = None
 # define box of interests
 box = boxes[args.area]
 # initialize figure
-fig, axes = plt.subplots(3,1,figsize=figsize)
+fig, axes = plt.subplots(3,1,figsize=figsize, sharex=True)
 
+plot_opts = {
+    'origin': 'lower',
+    'cmap': args.cmap,
+    'interpolation': 'nearest',
+    'extent': box2extent(box)/np.pi*180,
+}
+def process_map(imap, fill=1e-5):
+    imap[0,imap[0]<=0] = fill
+    return imap[0]
 for i, fcode in zip(range(3), ['f090','f150','f220']):
     # load data
-    imap = load_map(filedb[fcode]['coadd'], box, fcode=fcode)
-    tmap = process_map(imap)
+    imap = load_map(filedb[fcode]['coadd'], box, fcode=fcode)/1e9
+    # plotstyle
+    if   i == 0: norm = colors.LogNorm(vmin=10**-0.5, vmax=10**1.5)
+    elif i == 1: norm = colors.LogNorm(vmin=10**-0.5, vmax=10**1.5)
+    else:        norm = colors.LogNorm(vmin=10**0.5,  vmax=10**2)
+    tmap = imap[0]
+    # print(np.sum(tmap<=0))
+    # continue
     if args.smooth > 0: pmap = enmap.smooth_gauss(imap, sigma=args.smooth/2.355*u.arcmin)[1:]
     else:               pmap = imap[1:]
     # compute texture
     theta = lib.Bangle(pmap[0], pmap[1], toIAU=True)
-    texture = lib.LIC_texture(theta, length=args.len)
-    plot_opts = {
-        'origin': 'lower',
-        'cmap': 'planck',
-        'vmin': 7,
-        'vmax': 10.5,
-        'extent': box2extent(box)/np.pi*180,
-    }
-    if fcode == 'f220':
-        plot_opts.update({'vmin':8,'vmax':11})
-    axes[i].imshow(tmap, **plot_opts)
-    axes[i].axis('off')
-    ax = fig.add_subplot(3,1,i+1)
-    ax.imshow(texture, origin='lower', cmap='binary', alpha=0.5)
-    ax.axis('off')
-    axes[i].text(-0.03, 0.4, fcode, rotation=90,
+    # if L is not None, it will be used, otherwise length (fraction) will be used
+    texture = lib.LIC_texture(theta, length=args.len, L=L)
+    im = axes[i].imshow(tmap, norm=norm, **plot_opts)
+    cbar = plotstyle.add_colorbar(fig, axes[i], size="3%")
+    if i == 1: fig.colorbar(im, cax=cbar).set_label("Total Intensity [MJy/sr]")
+    else:      fig.colorbar(im, cax=cbar)
+    if not args.axis: axes[i].axis('off')
+    else:
+        if i == 2:
+            axes[i].set_xlabel('l [deg]')
+            axes[i].set_ylabel('b [deg]')
+    axes[i].imshow(texture, origin='lower', cmap='binary', alpha=0.7, interpolation='nearest', extent=box2extent(box)/np.pi*180)
+    props = dict(alpha=1, facecolor='white')
+    axes[i].text(0.03, 0.85, fcode, bbox=props,
                  verticalalignment='bottom', horizontalalignment='left',
-                 transform=axes[i].transAxes, fontsize=12)
+                 transform=axes[i].transAxes, fontsize=14)
 
-plt.tight_layout(h_pad=0.2)
+plt.tight_layout(h_pad=0.01)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
 plt.savefig(ofile, bbox_inches='tight')

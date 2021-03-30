@@ -32,7 +32,7 @@ def Bangle(Q_data,U_data,toIAU=False):
 
     return Bangle
 
-def LIC_texture(Bangle,length=0.25):
+def LIC_texture(Bangle,length=0.25,L=None):
     '''
     Computes the LIC texture to be overplotted on an image using LicPy.
     Input
@@ -51,8 +51,11 @@ def LIC_texture(Bangle,length=0.25):
     b_y = np.cos(Bangle)
 
     # length scale; typically 25% of image size but can be adjusted
-    L_z = np.shape(Bangle)
-    L   = int(length*L_z[0])
+    if not L:
+        L_z = np.shape(Bangle)
+        L   = int(length*L_z[0])
+    else:
+        L   = int(L)
 
     # run lic to get texture
     texture = lic.lic(b_x,b_y,length=L)
