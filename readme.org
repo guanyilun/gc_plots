@@ -124,6 +124,12 @@ mask out pixels with $\delta \psi > 15^\circ$,
          --underlay plin --area quat --contour --cmap magma --min 0 --max 0.5 \
          --figsize "(6,9)" --alpha 0.7 --mask 15
 #+END_SRC
+[2021-03-29 Mon]: reduce colorbar
+#+BEGIN_SRC bash
+  python plot_mag2.py --oname polfrac_mag_masked.pdf --smooth 2 --downgrade 4 \
+         --underlay plin --area quat --contour --cmap magma --min 0 --max 0.5 \
+         --figsize "(6,9)" --alpha 0.7 --mask 15
+#+END_SRC
 ** plot one coadd map only
 This is to facilitate object identification work
 #+BEGIN_SRC bash
