@@ -27,7 +27,8 @@ if args.figsize: figsize=eval(args.figsize)
 else: figsize=None
 # define box of interests
 box = boxes[args.area]
-
+# load a map for wcs only
+imap = load_map(filedb['f090']['coadd'], box=box, fcode='f090')
 # load two maps
 tmap = np.load(args.T)
 pmap = np.load(args.P)
@@ -35,12 +36,12 @@ pmap = np.load(args.P)
 # start plotting
 popts = {
     'origin': 'lower',
-    'extent': box2extent(box)/np.pi * 180
+    # 'extent': box2extent(box)/np.pi * 180
 }
 
 # plots:
 # -> upper panel: temperature
-fig, axes = plt.subplots(2, 1, figsize=figsize)
+fig, axes = plt.subplots(2, 1, figsize=figsize, subplot_kw={'projection':imap.wcs})
 axes[0].imshow(tmap, **popts)
 axes[1].imshow(pmap, **popts)
 if not args.axis:
@@ -48,15 +49,20 @@ if not args.axis:
     plt.tight_layout(h_pad=0.5)
 else:
     for ax in axes:
-        for side in ['left','right','top','bottom']:
-            ax.spines[side].set_color('white')
         ax.tick_params(axis='x', colors='white', which='both', labelcolor='black')
         ax.tick_params(axis='y', colors='white', which='both', labelcolor='black')
         ax.set_aspect('equal')
+        for side in ['left','right','top','bottom']:
+            ax.spines[side].set_visible(True)    
+            ax.spines[side].set_color('white')    
+    plotstyle.setup_axis(axes[0])
+    plotstyle.setup_axis(axes[1])
+    axes[0].set_ylabel(" ")
+    axes[1].set_ylabel(" ")
     axes[0].set_xticklabels([])
     axes[0].set_yticklabels([])
-    axes[1].set_xlabel('l [deg]')
-    axes[1].set_ylabel('b [deg]')
+    axes[1].set_xlabel('l')
+    axes[1].set_ylabel('b')
     plt.tight_layout(h_pad=0.1)
 
 ofile = op.join(args.odir, args.oname)

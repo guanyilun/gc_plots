@@ -30,3 +30,17 @@ def add_colorbar(fig, ax, size="5%", pad=0.1, **kwargs):
     divider = make_axes_locatable(ax)
     cb = divider.append_axes('right', size=size, pad=pad, **kwargs)
     return cb
+
+def setup_axis(ax):
+    ax.set_aspect('equal')
+    ax.coords[0].set_format_unit('deg')
+    ax.coords[0].set_ticks(number=10)
+    ax.coords[1].set_format_unit('deg')
+    ax.coords[1].set_ticks(number=5)
+    ax.coords[0].display_minor_ticks(True)
+    ax.coords[1].display_minor_ticks(True)
+    ax.coords[0].set_minor_frequency(10)
+    ax.coords[1].set_minor_frequency(5)
+    ax.coords[0].set_major_formatter('d.d')
+    ax.coords[1].set_major_formatter('d.d')
+    return ax

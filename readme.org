@@ -229,6 +229,10 @@ fun experiment
     python plot_multifreq_pag.py --oname multifreq_annot.pdf --min 2e8 --max 2e9 \
            --norm 1 -Q 3 -s 3 --area trim2
 #+END_SRC
+[2021-03-29 Mon]: new annotation
+#+BEGIN_SRC python
+python plot_multifreq_annot.py --oname multifreq_annot2.pdf --area trim2 -T out/multifreq_I_trim.npy --axis
+#+END_SRC
 ** plot magnetic field of some region of interests
 The mouse object with temperature as underlay
 #+BEGIN_SRC bash
@@ -256,6 +260,15 @@ GCRA
   python plot_mag2.py -o plots --freq f090 --oname mag_GCRA_f090.pdf \
          --underlay P --min 0 --max 0.8 --area quad \
          --figsize "(6.5,6)" --cmap magma --mask 10
+#+END_SRC
+[2021-03-29 Mon]: sag a* add title
+#+BEGIN_SRC bash
+  python plot_mag2.py -o plots --freq f090 --oname mag_SagA_f090_P.pdf \
+         --underlay P --min 0 --max 0.8 --area saga \
+         --figsize "(6.5,6)" --cmap magma --mask 10 --largefont
+  python plot_mag2.py -o plots --freq f150 --oname mag_SagA_f150_P.pdf \
+         --underlay P --min 0 --max 1 --area saga \
+         --figsize "(6.5,6)" --cmap magma --mask 10 --largefont
 #+END_SRC
 ** plot multi panel view of tornado object
 Around the tornado object: 357.65 -0.08
