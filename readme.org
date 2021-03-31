@@ -224,6 +224,15 @@ fun experiment
            -P out/multifreq_P_trim_median.npy --oname multifreq_2panel_new.pdf \
            --axis --figsize "(8,4)" --area trim2
 #+END_SRC
+[2021-03-30 Tue]: use var scaling for temperature
+#+BEGIN_SRC bash
+  python plot_multifreq2.py --oname multifreq_trim.pdf --min 2e8 --max 2e9 \
+         --norm 1 -Q 3 -s 3 --area trim2 --save out/multifreq_I_trim_var.npy --snr 3
+
+  python plot_multifreq_2panel.py -T out/multifreq_I_trim_var.npy \
+         -P out/multifreq_P_trim_median.npy --oname multifreq_2panel_new.pdf \
+         --axis --figsize "(8,4)" --area trim2
+#+END_SRC
 ** plot annotation (with multifreq)
 #+BEGIN_SRC python
     python plot_multifreq_pag.py --oname multifreq_annot.pdf --min 2e8 --max 2e9 \

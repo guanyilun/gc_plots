@@ -148,7 +148,9 @@ omap = make_lupton_rgb(
     stretch=args.s,
     Q=args.Q,
 )
-
+print(f"f090: min={args.min*s_f090/1e9:.2e}, max={args.max*s_f090/1e9:.2e}")
+print(f"f150: min={args.min*s_f150/1e9:.2e}, max={args.max*s_f150/1e9:.2e}")
+print(f"f220: min={args.min*s_f220/1e9:.2e}, max={args.max*s_f220/1e9:.2e}")
 # optionally apply a mask
 if args.snr is not None:
     # apply the mask by masking maps through alpha

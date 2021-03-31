@@ -46,6 +46,7 @@ else:
     ax.tick_params(axis='x', colors='white', which='both', labelcolor='black')
     ax.tick_params(axis='y', colors='white', which='both', labelcolor='black')
     for side in ['left','right','top','bottom']:
+        ax.spines[side].set_visible(True)
         ax.spines[side].set_color('white')
     ax.set_aspect('equal')
     ax.set_xlabel('l')
