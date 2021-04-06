@@ -17,7 +17,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 parser = argparse.ArgumentParser()
 parser.add_argument("-o","--odir", default="plots")
 parser.add_argument("--oname", default="mouse.pdf")
-parser.add_argument("--smooth", type=float,default=2)
+parser.add_argument("--smooth", type=float,default=None)
 parser.add_argument("--tonly", action='store_true', default=False)
 parser.add_argument("--method", type=int, default=0)
 parser.add_argument("--dust-removal", action='store_true')
@@ -41,10 +41,15 @@ parser.add_argument("--use", default='coadd')
 
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
-tmin = args.tmin.split(",")
-tmax = args.tmax.split(",")
-pmin = args.pmin.split(",")
-pmax = args.pmax.split(",")
+def parse_expr(expr):
+    if expr:
+        return [float(x) for x in expr.split(',')]
+    else:
+        return [None]
+tmin = parse_expr(args.tmin)
+tmax = parse_expr(args.tmax)
+pmin = parse_expr(args.pmin)
+pmax = parse_expr(args.pmax)
 
 # define box
 if args.area:
@@ -72,7 +77,6 @@ if args.dust_removal:
     s_f150 = (143/217)**(beta+2)
     dust_f090 = lib.beam_match(imap_f220, 'f090', 'f220')*s_f090
     dust_f150 = lib.beam_match(imap_f220, 'f150', 'f220')*s_f150
-    
     if args.method == 0:
         # method 0: simply subtract dust template
         x_f090 = x_f150 = 1
@@ -121,6 +125,13 @@ I_f220 = imap_f220[0]
 P_f090 = np.sum(imap_f090[1:]**2, axis=0)**0.5
 P_f150 = np.sum(imap_f150[1:]**2, axis=0)**0.5
 P_f220 = np.sum(imap_f220[1:]**2, axis=0)**0.5
+if args.smooth:
+    I_f090 = enmap.smooth_gauss(I_f090, args.smooth*u.fwhm*u.arcmin)
+    I_f150 = enmap.smooth_gauss(I_f150, args.smooth*u.fwhm*u.arcmin)
+    I_f220 = enmap.smooth_gauss(I_f220, args.smooth*u.fwhm*u.arcmin)
+    P_f090 = enmap.smooth_gauss(P_f090, args.smooth*u.fwhm*u.arcmin)
+    P_f150 = enmap.smooth_gauss(P_f150, args.smooth*u.fwhm*u.arcmin)
+    P_f220 = enmap.smooth_gauss(P_f220, args.smooth*u.fwhm*u.arcmin)
 # make figure
 popts = {
     'origin': 'lower',
@@ -148,7 +159,9 @@ for i in range(nrow):
         if args.colorbar:
             divider = make_axes_locatable(ax)
             cb = divider.append_axes('right', size="5%", pad=0.1)
-            fig.colorbar(im, cax=cb, orientation='vertical').set_label("MJy/sr")
+            if i == 0: label = "Total intensity [MJy/sr]"
+            else: label = "Polarization intensity [MJy/sr]"
+            fig.colorbar(im, cax=cb, orientation='vertical').set_label(label)
 for i in range(nrow):
     for j in range(ncol):
         if args.tonly: ax = axes[j]
@@ -157,15 +170,14 @@ for i in range(nrow):
             ax.text(0.3, 1.02, names[j],
                    verticalalignment='bottom', horizontalalignment='left',
                    transform=ax.transAxes, fontsize=14)
-        if j == 0:
             # ax.text(-0.2, 0.5, maps[i], rotation=90,
             #        verticalalignment='bottom', horizontalalignment='left',
             #        transform=ax.transAxes, fontsize=14)
+        if i == nrow-1 and j == 0:
             ax.set_ylabel('b [deg]')
-        if i == nrow-1:
             ax.set_xlabel('l [deg]')
 if args.title is not None: plt.suptitle(args.title, y = 1.02, fontsize=16)
-plt.tight_layout(h_pad=0.1, w_pad=0.1)
+plt.tight_layout(h_pad=0, w_pad=0)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
 plt.savefig(ofile, bbox_inches='tight')

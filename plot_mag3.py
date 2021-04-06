@@ -2,6 +2,10 @@
 other plots
 
 update: plot three freqs together
+
+210403 update: masking updates, in order to preserve backwards compatibility
+  I had to use a new script
+ 
 """
 import argparse, os, os.path as op
 import matplotlib as mpl
@@ -14,7 +18,10 @@ import lib
 from pixell import utils as u
 
 def parse_expr(expr):
-    return [float(f) for f in expr.split(',')]
+    if expr:
+        return [float(f) for f in expr.split(',')]
+    else:
+        return [None]
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-o","--odir", default="plots")
@@ -30,7 +37,7 @@ parser.add_argument("--area", default='quat')
 parser.add_argument("--contour", action='store_true')
 parser.add_argument("--smooth", type=float, default=None)
 parser.add_argument("--figsize", default=None)
-parser.add_argument("--mask", help='mask Pangle err > x degree', type=float, default=None)
+parser.add_argument("--mask", help='mask method', default=None)
 parser.add_argument("--color", default='white')
 parser.add_argument("--alpha", type=float, default=1)
 parser.add_argument("--largefont", type=int, default=None)
@@ -43,7 +50,7 @@ args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 if args.figsize: figsize=eval(args.figsize)
 else: figsize=None
-if args.largefont: mpl.rcParams['font.size'] = 14
+if args.largefont: mpl.rcParams['font.size'] = args.largefont
 
 # define box of interests
 if args.box is None:
@@ -63,6 +70,7 @@ if not args.transpose:
 else:
     nrow, ncol = 1, len(freqs)
 fig, axes = plt.subplots(nrow, ncol, figsize=figsize)
+
 for i, freq in enumerate(freqs):
     norm = Normalize(vmin=mins[i], vmax=maxs[i])
     # load map and ivar
@@ -88,10 +96,9 @@ for i, freq in enumerate(freqs):
         p     = P / imap[0]
         back  = p
         label = r"P/I"
-        # for contour plot
         level = np.array([0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.2,0.3])
         color = plt.get_cmap(args.cmap)(norm(level**0.5))
-    elif args.underlay == 'Perr':
+    elif args.underlay == 'Psnr':
         ivar    = load_ivar(filedb[freq]['coadd_ivar'], fcode=freq, box=box)
         # not accurate but close
         imap_   = enmap.smooth_gauss(imap, args.downgrade*0.5*u.fwhm*u.arcmin)
@@ -137,22 +144,25 @@ for i, freq in enumerate(freqs):
     # x- and y-components of magnetic field
     Bx = np.cos(theta)
     By = np.sin(theta)
-    # also compute the angle uncertainty
-    P_err = lib.Pangle_error(imap_ds, ivar_ds*s**2, deg=True)
     # optionally mask regions above certain angular uncertainty level
     # and high the segments through alpha
-    if args.mask:
-        mask = P_err > args.mask
-        cmap_ = plt.get_cmap('gray')  # actual cmap doesn't matter
-        color = cmap_(np.ones_like(X))
-        color[mask,-1] = 0
-        color[~mask,-1] = args.alpha
-        color=color.reshape(color.shape[0]*color.shape[1],4)
-        ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0, color=color, scale=args.scale)
+    if args.mask == 'Psnr':
+        # mask by Polarization intensity SNR
+        P     = np.sum(imap_ds[1:]**2, axis=0)**0.5        
+        P_err = lib.P_error(imap_ds, ivar_ds*s**2)
+        mask  = (P/P_err) <= 3
+    elif args.mask == 'Pangle':
+        Pa_err= lib.Pangle_error(imap_ds, ivar_ds*s**2, deg=True)
+        mask  = Pa_err >= 20
     else:
-        color = args.color
-        ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0,
-                  headaxislength=0, color=color, alpha=args.alpha, scale=args.scale)
+        print("No mask applied")
+        mask  = np.zeros_like(imap_ds) 
+    cmap_ = plt.get_cmap('binary')  # actual cmap doesn't matter
+    color = cmap_(np.ones_like(X))
+    color[mask,-1] = 0.3
+    color[~mask,-1] = args.alpha
+    color=color.reshape(color.shape[0]*color.shape[1],4)
+    ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0, color=color, scale=args.scale)
     ax.set_aspect('equal')
     if args.sep_colorbar:
         cbar = plotstyle.add_colorbar(fig, ax, size="5%")
@@ -163,7 +173,6 @@ for i, freq in enumerate(freqs):
 if len(freqs) == 1:
     axes.set_xlabel('l [deg]')
     axes.set_ylabel('b [deg]')
-    axes.set_title(args.freq)
 else:
     if not args.transpose:
         axes[-1].set_xlabel('l [deg]')

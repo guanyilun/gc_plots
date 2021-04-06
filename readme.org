@@ -15,12 +15,9 @@ test planck + act alone
 python plot_planck_act_sidebyside.py -o plots --oname planck_act_sidebyside.pdf --use act
 #+END_SRC
 ** QU in 3 bands
-- script: plot_qu_in_3bands.py
-- data: coadd
-- run script:
-  #+BEGIN_SRC bash
-  python plot_qu_in_3bands.py -o plots
-  #+END_SRC
+#+BEGIN_SRC bash
+python plot_qu_in_3bands.py -o plots
+#+END_SRC
 paper plot
 #+BEGIN_SRC bash
 python plot_qu_in_3bands2.py --oname QU_3bands_new.pdf --figsize "[10,4.7]" --area trim2
@@ -29,6 +26,15 @@ python plot_qu_in_3bands2.py --oname QU_3bands_new.pdf --figsize "[10,4.7]" --ar
 #+BEGIN_SRC bash
   python plot_qu_in_3bands2.py --oname QU_3bands_new.pdf \
          --figsize "[9.5,4.5]" --area trim2 --axis
+#+END_SRC
+[2021-04-04 Sun]: use IAU
+#+BEGIN_SRC bash
+  python plot_qu_in_3bands2.py --oname QU_3bands_IAU.pdf \
+         --figsize "[9.5,4.5]" --area trim2 --axis --IAU
+#+END_SRC
+[2021-04-06 Tue]: add colorbar per plot
+#+BEGIN_SRC bash
+python plot_qu_in_3bands2.py --oname QU_3bands_IAU.pdf          --figsize "[9,4.5]" --area trim2 --axis --IAU --sep-colorbar 
 #+END_SRC
 polarization add coordinates
 #+BEGIN_SRC bash
@@ -286,6 +292,12 @@ Around the tornado object: 357.65 -0.08
          --box "[[-0.25, -2.15],[0.05, -2.45]]" --dust-removal \
          --tmax 7000,5000 --pmax 500,300
 #+END_SRC
+[2021-04-06 Tue]
+#+BEGIN_SRC bash
+  python plot_source2.py --oname map_tornado2.pdf \
+         --tmin 0,0 --tmax 4,2 --pmax 0.1,0.3 \
+         --dust-removal --method 2 --cmap magma --dust-area quat
+#+END_SRC
 ** plot spectral indices
 ratio of f090 and f150, and the resulting spectral index is compared to
 a fiducial index of synchrotron radiation beta = -3.1
@@ -382,6 +394,38 @@ GCRA
          --cmap magma --min 0 --max 5 --figsize "(2,7)" --alpha 0.9 \
          --freq f150 --mask 10
 #+END_SRC
+[2021-04-01 Thu]: molecular clouds
+Brick
+#+BEGIN_SRC bash
+python plot_mcloud.py -o plots --oname mc_brick.pdf -l 0.253 -b 0.016          --tmin 0,0,0 --tmax 17,25,110 --tonly --cmap planck_half --margin 0.1 --figsize "(9.5,3)" --colorbar --title Brick
+#+END_SRC
+#+BEGIN_SRC bash
+python plot_mag2.py -o plots --oname mc_brick2.pdf --area brick --min 0,0,0 --max 17,25,110 --underlay T --cmap planck_half --mask 30 --title "Bricks" --figsize "(9,3.5)" --transpose --show-freq --sep-colorbar
+#+END_SRC
+polarization in the background
+#+BEGIN_SRC 
+python plot_mag2.py -o plots --oname mc_brick2_P.pdf --area brick --min 0,0,0 --max 0.2,0.2,1 --underlay P --cmap planck_half --mask 30 --title "Bricks" --figsize "(9,3.5)" --transpose --show-freq --sep-colorbar
+#+END_SRC
+test different signal to noise mask (using polarization intensity)
+#+BEGIN_SRC bash
+python plot_mag3.py -o plots --oname mc_brick2.pdf --area brick --min 0,0,0 --max 17,25,110 --underlay T --cmap planck_half --title "Bricks" --figsize "(9,3.5)" --transpose --show-freq --sep-colorbar --mask Perr
+#+END_SRC
+Three little pigs
+#+BEGIN_SRC bash
+python plot_mcloud.py -o plots --oname mc_tlp.pdf -l 0.1 -b -0.086 --tmin 0 --tmax 100 --tonly --cmap planck_half --margin 0.1 --figsize "(9.5,3)" --colorbar --title "Three Little Pigs" --freqs f220
+#+END_SRC
+#+BEGIN_SRC bash
+python plot_mag2.py -o plots --oname mc_tlp2.pdf --area tlp --min 20 --max 100 --underlay T --cmap planck_half --freq f220 --mask 30 --title "Three Little Pigs" --figsize "(6,4.5)" --largefont 14
+#+END_SRC
+Arches
+#+BEGIN_SRC bash
+python plot_mcloud.py -o plots --oname mc_arches.pdf -l 0.054 -b 0.027 --tmin 0,0,0 --tmax 17,25,110 --tonly --cmap planck_half --margin 0.1 --figsize "(9.5,3)" --colorbar --title Arches
+#+END_SRC
+[2021-04-06 Tue]: 
+replot three little pigs
+#+BEGIN_SRC 
+python plot_mag3.py -o plots --oname mc_tlp2.pdf --area tlp --underlay T --cmap planck_half --freq f220 --mask Psnr --title "Three Little Pigs" --figsize "(6,4)" --largefont 14 --alpha 0.8 --sep-colorbar
+#+END_SRC
 ** plot sensitivity
 for uK arcmin unit
 #+BEGIN_SRC bash
@@ -421,4 +465,16 @@ python plot_angle_dispersion.py --oname dispersion_f090.png --freq f090 --area q
 ** uncertainties
 #+BEGIN_SRC bash
 python plot_uncertainties.py --freq f090 --area quat --cmap plasma --smooth 2 --oname uncertainties_f090_Q.pdf --max 0.3
+#+END_SRC
+** brick
+#+BEGIN_SRC 
+python plot_brick.py --area brick --oname mc_brick.pdf
+#+END_SRC
+** tornado
+#+BEGIN_SRC 
+python plot_tornado.py --area tndo --oname tornado.pdf --figsize "(9,4)"
+#+END_SRC
+** mouse
+#+BEGIN_SRC 
+ python plot_mouse2.py --area mouse --oname mouse.pdf --figsize "(8,4.5)" --smooth 1
 #+END_SRC

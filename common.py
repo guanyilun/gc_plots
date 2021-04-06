@@ -39,7 +39,7 @@ filedb = {
     },
 }
 
-def load_map(path, box=None, mJy=True, fcode=None, cib_monopole=True):
+def load_map(path, box=None, mJy=True, fcode=None, cib_monopole=True, IAU=False):
     files = glob.glob(path)
     if len(files) == 1:
         imap = enmap.read_map(files[0])
@@ -73,6 +73,7 @@ def load_map(path, box=None, mJy=True, fcode=None, cib_monopole=True):
             elif fcode == 'f350':
                 imap[0] -= 0.13 * 1e9
             else: raise ValueError("Unknown fcode")
+    if IAU: imap[2] *= -1
     if box is not None: return imap.submap(box)
     else: return imap
 
@@ -148,7 +149,10 @@ boxes['mouse'] = np.array([[-0.9,-0.65],[-0.7,-0.8]]) / 180*np.pi
 boxes['tndo']  = np.array([[-0.25, -2.15],[0.05, -2.45]]) / 180*np.pi
 boxes['dust1'] = np.array([[-0.8,0.4],[-0.5,0.7]]) / 180*np.pi
 boxes['dust2'] = np.array([[-0.125,-0.1],[0,-0.2]]) / 180*np.pi
-boxes['dust3'] = np.array([[-1,3.5],[1,2.5]]) / 180*np.pi
+boxes['dust3'] = np.array([[0,3.5],[1,2.5]]) / 180*np.pi
+# boxes['tlp']   = np.array([[-0.12,0.18],[-0.04,0.025]]) / 180*np.pi
+boxes['tlp']   = np.array([[-0.13,0.18],[-0.02,0.025]]) / 180*np.pi  # enlarged
+boxes['brick'] = np.array([[-0.025,0.30],[0.075,0.2]]) / 180*np.pi
 # boxes['dust1'] = np.array([[0,3.7],[0.2,3.5]]) / 180*np.pi
 # boxes['dust1'] = np.array([[0,3.4],[0.6,3]]) / 180*np.pi
 # boxes['dust4'] = np.array([[-0.9, 0.7],[-0.35,0.2]]) / 180*np.pi
@@ -177,3 +181,7 @@ fcenters = {
     'f220': 217,
     'f350': 353
 }
+
+def texify(text):
+    text = text.replace(" ", "~")
+    return r"${\rm %s}$" % text
