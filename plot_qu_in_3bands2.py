@@ -25,12 +25,6 @@ parser.add_argument("--min-f150",type=float, default=-0.2)
 parser.add_argument("--max-f150",type=float, default= 0.2)
 parser.add_argument("--min-f220",type=float, default=-1)
 parser.add_argument("--max-f220",type=float, default= 1)
-# parser.add_argument("--min-f090",type=float, default=None)
-# parser.add_argument("--max-f090",type=float, default=None)
-# parser.add_argument("--min-f150",type=float, default=None)
-# parser.add_argument("--max-f150",type=float, default=None)
-# parser.add_argument("--min-f220",type=float, default=None)
-# parser.add_argument("--max-f220",type=float, default=None)
 parser.add_argument("--area", default="half")
 parser.add_argument("--figsize", default="(9,7)")
 parser.add_argument("--cmap", default="planck")
@@ -60,16 +54,22 @@ box = boxes[args.area]
 if args.figsize: figsize = eval(args.figsize)
 else: figsize = None
 # initialize plot
+# load temp file to get wcs
+imap = load_map(filedb['f090']['coadd'], box, fcode='f090', IAU=args.IAU)
+spkw = {'projection': imap.wcs}
 if not args.sep_colorbar:
-    fig, axes = plt.subplots(3,2,figsize=figsize)
+    fig, axes = plt.subplots(3,2,figsize=figsize, subplot_kw=spkw)
 else:
-    fig, axes = plt.subplots(3,2,figsize=figsize, gridspec_kw={'width_ratios': [0.942, 1]})    
+    fig, axes = plt.subplots(3,2,figsize=figsize, subplot_kw=spkw,
+                             gridspec_kw={'width_ratios': [0.942, 1]})    
 plot_opts = {
     'origin': 'lower',
     'cmap': args.cmap,
-    'extent': box2extent(box)/np.pi*180
+    # 'extent': box2extent(box)/np.pi*180
 }
 # row 0: f090
+plotstyle.setup_axis(axes[0,0], nticks=[10,5], xticks=False, yticks=True)
+plotstyle.setup_axis(axes[0,1], nticks=[10,5], xticks=False, yticks=False)
 plot_opts.update({'vmin': args.min_f090, 'vmax': args.max_f090})
 imap = load_map(filedb['f090']['coadd'], box, fcode='f090', IAU=args.IAU)
 qmap = process_map(imap, 'Q')
@@ -83,6 +83,8 @@ if args.sep_colorbar:
     cb_f090.yaxis.set_ticks([-0.15,0,0.15]);    
 
 # row 1: f150
+plotstyle.setup_axis(axes[1,0], nticks=[10,5], xticks=False, yticks=True)
+plotstyle.setup_axis(axes[1,1], nticks=[10,5], xticks=False, yticks=False)
 plot_opts.update({'vmin': args.min_f150, 'vmax': args.max_f150})
 imap = load_map(filedb['f150']['coadd'], box, fcode='f150', IAU=args.IAU)
 qmap = process_map(imap, 'Q')
@@ -91,10 +93,12 @@ umap = process_map(imap, 'U')
 im_f150_u = axes[1,1].imshow(umap, **plot_opts)
 if args.sep_colorbar:
     cb_f150 = plotstyle.add_colorbar(fig, axes[1,1], size="3%")
-    fig.colorbar(im_f150_q, cax=cb_f150, orientation='vertical').set_label("MJy/sr")
+    fig.colorbar(im_f150_q, cax=cb_f150, orientation='vertical').set_label(texify("MJy/sr"), fontsize=14)
     cb_f150.yaxis.set_ticks([-0.15,0,0.15]);    
 
 # row 2: f220
+plotstyle.setup_axis(axes[2,0], nticks=[10,5], xticks=True, yticks=True)
+plotstyle.setup_axis(axes[2,1], nticks=[10,5], xticks=True, yticks=False)
 plot_opts.update({'vmin': args.min_f220, 'vmax': args.max_f220})
 imap = load_map(filedb['f220']['coadd'], box, fcode='f220', IAU=args.IAU)
 qmap = process_map(imap, 'Q')
@@ -115,27 +119,30 @@ for i in range(3):
             ax.set_axis_off()
         else:
             if j == 0: ax.yaxis.set_ticks_position('left')
-            if j == 1: ax.yaxis.set_ticks_position('right')
-
-            if (j!=0) or (i !=2):
+            if j == 1:
+                ax.yaxis.set_ticks_position('right')
                 ax.axes.yaxis.set_ticklabels([])
-                ax.axes.xaxis.set_ticklabels([])
+            # if (j!=0) or (i !=2):
+            #     ax.axes.yaxis.set_ticklabels([])
+            #     ax.axes.xaxis.set_ticklabels([])
+            # else:
+            if i == 2 and j == 0:
+                ax.set_xlabel('$l$')
+                ax.set_ylabel('$b$')
             else:
-                ax.set_xlabel('l [deg]')
-                ax.set_ylabel('b [deg]')
+                ax.set_xlabel(' ')
+                ax.set_ylabel(' ')
             # if i==2:
                 # ax.xaxis.set_major_locator(ticker.FixedLocator([1.5,1,0.5,0,-0.5,-1,-1.5]))
             # if j==0:
                 # ax.yaxis.set_major_locator(ticker.FixedLocator([-0.5,0,0.5]))
-
-
 # labels
-axes[0,0].text(0.5, 1.05, 'Q',
+axes[0,0].text(0.5, 1.05, texify('Q'),
                verticalalignment='bottom', horizontalalignment='left',
-               transform=axes[0,0].transAxes, fontsize=12)
-axes[0,1].text(0.5, 1.05, 'U',
+               transform=axes[0,0].transAxes, fontsize=14)
+axes[0,1].text(0.5, 1.05, texify('U'),
                verticalalignment='bottom', horizontalalignment='left',
-               transform=axes[0,1].transAxes, fontsize=12)
+               transform=axes[0,1].transAxes, fontsize=14)
 
 # setup labels: f090, f150, f220
 # for i, label in zip(range(3), ['f090','f150','f220']):
@@ -143,11 +150,11 @@ axes[0,1].text(0.5, 1.05, 'U',
 #                    verticalalignment='bottom', horizontalalignment='left',
 #                    transform=axes[i,0].transAxes, fontsize=12)
 props = dict(alpha=1, facecolor='white')
-plt.text(0.48, 0.82, 'f090', transform=fig.transFigure, fontsize=12,
+plt.text(0.48, 0.82, texify('f090'), transform=fig.transFigure, fontsize=12,
          usetex=True, horizontalalignment='left', bbox=props)
-plt.text(0.48, 0.56, 'f150', transform=fig.transFigure, fontsize=12,
+plt.text(0.48, 0.56, texify('f150'), transform=fig.transFigure, fontsize=12,
          usetex=True, horizontalalignment='left', bbox=props)
-plt.text(0.48, 0.31, 'f220', transform=fig.transFigure, fontsize=12,
+plt.text(0.48, 0.31, texify('f220'), transform=fig.transFigure, fontsize=12,
          usetex=True, horizontalalignment='left', bbox=props)
 
 # add colorbar
@@ -156,7 +163,7 @@ if not args.sep_colorbar:
     cb_f090 = fig.add_axes([0.86, 0.11, 0.02, 0.77])
     fig.colorbar(im_f090_q, cax=cb_f090, orientation='vertical').set_label("MJy/sr")
 else:
-    fig.subplots_adjust(wspace=0,hspace=0.)    
+    fig.subplots_adjust(wspace=0,hspace=0.)
 # fig.colorbar(im, ax=axes, shrink=0.8).set_label(label="mJy/sr")
 
 ofile = op.join(args.odir, args.oname)

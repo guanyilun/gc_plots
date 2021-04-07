@@ -10,7 +10,7 @@ from pixell import enmap, enplot, utils as u
 from matplotlib import colors
 # Open objects database
 import pandas as pd
-
+import matplotlib as mpl
 from common import *
 import lib
 import plotstyle
@@ -19,10 +19,13 @@ import plotstyle
 parser.add_argument("-T", default=None)
 parser.add_argument("--axis", action='store_true')
 parser.add_argument("--figsize", default="(8,4)")
+parser.add_argument("--small", action='store_true')
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 if args.figsize: figsize=eval(args.figsize)
 else: figsize=None
+if args.small:
+    mpl.rcParams['font.size'] = 8
 # define box of interests
 box = boxes[args.area]
 # load a map to get the right wcs 
@@ -49,8 +52,8 @@ else:
         ax.spines[side].set_visible(True)
         ax.spines[side].set_color('white')
     ax.set_aspect('equal')
-    ax.set_xlabel('l')
-    ax.set_ylabel('b')
+    ax.set_xlabel('$l$')
+    ax.set_ylabel('$b$')
     ax.coords[0].set_format_unit('deg')
     ax.coords[0].set_ticks(number=10)
     ax.coords[1].set_format_unit('deg')
@@ -59,8 +62,8 @@ else:
     ax.coords[1].display_minor_ticks(True)
     ax.coords[0].set_minor_frequency(10)
     ax.coords[1].set_minor_frequency(5)
-    ax.coords[0].set_major_formatter('d.dd')
-    ax.coords[1].set_major_formatter('d.dd')    
+    ax.coords[0].set_major_formatter('d.d')
+    ax.coords[1].set_major_formatter('d.d')    
 
 # add annotation
 df_extended = pd.read_csv('extended_sources_from_googledoc.csv')

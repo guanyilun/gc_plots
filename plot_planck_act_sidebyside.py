@@ -31,33 +31,56 @@ parser.add_argument("-o","--odir", default='plots')
 parser.add_argument("--oname", default="test.pdf")
 parser.add_argument("--use", default='coadd')
 parser.add_argument("--area", default='half')
+parser.add_argument("--figsize", default="(9,6.5)")
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
+if args.figsize: figsize = eval(args.figsize)
+else: figsize = None
+box = boxes[args.area]
 
 # Build figure
-fig, axes = plt.subplots(3, 2, figsize=(9,6.5), gridspec_kw={'width_ratios':[0.93,1]})
-box = boxes[args.area]
+# load a temperorary file to get wcs right
+imap = load_map(filedb['f090']['planck'], box, fcode='f090')/1e9
+fig, axes = plt.subplots(3, 2, figsize=figsize, gridspec_kw={'width_ratios':[0.93,1]},
+                         subplot_kw={'projection': imap.wcs})
 
 plot_opts = {
     'origin': 'lower',
     'cmap': 'planck_half',
-    'extent': box2extent(box)/np.pi*180
+    # 'extent': box2extent(box)/np.pi*180
 }
 
 for i, freq in zip(range(3), ['f090','f150','f220']):
-    # plotstyle
-    if   i == 0: norm = colors.LogNorm(vmin=10**-0.5, vmax=10**1.5)
-    elif i == 1: norm = colors.LogNorm(vmin=10**-0.5, vmax=10**1.5)
-    else:        norm = colors.LogNorm(vmin=10**0.5,  vmax=10**2)
-    # load data
-    imap = load_map(filedb[freq]['planck'], box, fcode=freq)/1e9
-    im_p = axes[i,0].imshow(imap[0], norm=norm, **plot_opts)
-    imap = load_map(filedb[freq][args.use], box, fcode=freq)/1e9
-    im_c = axes[i,1].imshow(imap[0], norm=norm, **plot_opts)
-    cb   = plotstyle.add_colorbar(fig, axes[i,1])
-    # only add colorbar label to the middle panel
-    if i == 1: fig.colorbar(im_c, cax=cb).set_label('Total Intensity [MJy/sr]')
-    else: fig.colorbar(im_c, cax=cb)
+    for j in range(2):
+        # plotstyle
+        if   i == 0: norm = colors.LogNorm(vmin=10**-0.5, vmax=10**1.5)
+        elif i == 1: norm = colors.LogNorm(vmin=10**-0.5, vmax=10**1.5)
+        else:        norm = colors.LogNorm(vmin=10**0.5,  vmax=10**2)
+        # setup axes projection
+        ax = axes[i,j]
+        if i == 2 and j == 1:
+            xticks, yticks = True, False
+            ax.set_xlabel(" ")            
+        elif i == 2 and j == 0:
+            xticks, yticks = True, True
+        elif j == 0:
+            xticks, yticks = False, True
+            ax.set_ylabel(" ")
+        else:
+            xticks, yticks = False, False
+        plotstyle.setup_axis(ax, fmt="d.d", xticks=xticks, yticks=yticks, nticks=[10,5])
+        # load data
+        if i == 0: use = 'planck'
+        else: use = args.use
+        imap = load_map(filedb[freq][use], box, fcode=freq)/1e9
+        im = ax.imshow(imap[0], norm=norm, **plot_opts)
+        if j == 1:
+            cb = plotstyle.add_colorbar(fig, axes[i,1])
+            # only add colorbar label to the middle panel            
+            if i == 1:
+                fig.colorbar(im, cax=cb).set_label(texify('Total Intensity [MJy/sr]'), fontsize=14)
+            else:
+                fig.colorbar(im, cax=cb)
 
 for i in range(3):  # row
     for j in range(2):  # col
@@ -67,10 +90,12 @@ for i in range(3):  # row
             ax.axes.yaxis.set_ticklabels([])
             ax.axes.xaxis.set_ticklabels([])
         if j == 0:
-            ax.yaxis.set_ticks_position('left')
+            # ax.yaxis.set_ticks_position('left')
+            ax.coords[1].set_ticks_position('left')
             # ax.spines['right'].set_visible(False)
         if j == 1:
-            ax.yaxis.set_ticks_position('right')
+            # ax.yaxis.set_ticks_position('right')
+            ax.coords[1].set_ticks_position('right')            
             # ax.spines['left'].set_visible(False)
         # if i != 2:
             # ax.yaxis.set_ticks_position('right')
@@ -78,16 +103,16 @@ for i in range(3):  # row
 axes[1,0].axes.yaxis.set_ticklabels([])
 axes[-1,1].axes.xaxis.set_ticklabels([])
 
-axes[-1,0].set_xlabel('l [deg]')
-axes[-1,0].set_ylabel('b [deg]')
+axes[-1,0].set_xlabel('$l$')
+axes[-1,0].set_ylabel('$b$')
 
 # setup labels: Planck, ACT+Planck
-axes[0,0].text(0.4, 1.05, 'Planck',
+axes[0,0].text(0.4, 1.05, texify('Planck'),
                verticalalignment='bottom', horizontalalignment='left',
-               transform=axes[0,0].transAxes, fontsize=12)
-axes[0,1].text(0.35, 1.05, 'ACT+Planck',
+               transform=axes[0,0].transAxes, fontsize=14)
+axes[0,1].text(0.35, 1.05, texify('ACT+Planck'),
                verticalalignment='bottom', horizontalalignment='left',
-               transform=axes[0,1].transAxes, fontsize=12)
+               transform=axes[0,1].transAxes, fontsize=14)
 
 # setup labels: f090, f150, f220
 
@@ -100,13 +125,13 @@ axes[0,1].text(0.35, 1.05, 'ACT+Planck',
 # axes[2,0].text(-0.12, 0.40, 'f220', rotation=90,
 #                verticalalignment='bottom', horizontalalignment='left',
 #                transform=axes[2,0].transAxes, fontsize=12)
-plt.tight_layout(w_pad=-0.3, h_pad=-0.3)
+plt.tight_layout(w_pad=0.01, h_pad=0)
 props = dict(alpha=1, facecolor='white')
-plt.text(0.47, 0.9, 'f090', transform=fig.transFigure, fontsize=12,
+plt.text(0.44, 0.91,  texify('f090'), transform=fig.transFigure, fontsize=12,
          usetex=True, horizontalalignment='left', bbox=props)
-plt.text(0.47, 0.61, 'f150', transform=fig.transFigure, fontsize=12,
+plt.text(0.44, 0.595, texify('f150'), transform=fig.transFigure, fontsize=12,
          usetex=True, horizontalalignment='left', bbox=props)
-plt.text(0.47, 0.32, 'f220', transform=fig.transFigure, fontsize=12,
+plt.text(0.44, 0.29,  texify('f220'), transform=fig.transFigure, fontsize=12,
          usetex=True, horizontalalignment='left', bbox=props)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)

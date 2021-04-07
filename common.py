@@ -141,6 +141,7 @@ boxes['half']  = np.array([[-1,2],[1,-2]]) / 180*np.pi
 boxes['quat']  = np.array([[-0.5,1],[0.5,-1]]) / 180*np.pi
 boxes['trim']  = np.array([[-1,3.8],[1,-3.8]]) / 180*np.pi
 boxes['trim2'] = np.array([[-1.2,3.6],[1.2,-3.6]]) / 180*np.pi
+boxes['trim3'] = np.array([[-1,2],[0.7,-2.7]]) / 180*np.pi
 boxes['gismo'] = np.array([[-0.27,0.92],[0.235,-0.73]]) / 180*np.pi
 boxes['saga']  = np.array([[-0.17,0.08],[0.10,-0.20]]) / 180*np.pi
 # boxes['gcra']  = np.array([[-0.5,0.28],[0.5,0]]) / 180*np.pi

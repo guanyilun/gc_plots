@@ -32,7 +32,7 @@ def add_colorbar(fig, ax, size="5%", pad=0.1, axes_class=Axes, **kwargs):
     cb = divider.append_axes('right', size=size, pad=pad, axes_class=axes_class, **kwargs)
     return cb
 
-def setup_axis(ax, format='d.d', minor=True, nminor=[5,5], nticks=[10,10], xticks=True, yticks=True):
+def setup_axis(ax, fmt='d.d', minor=True, nminor=[5,5], nticks=[10,10], xticks=True, yticks=True):
     ax.set_aspect('equal')
     ax.coords[0].set_format_unit('deg')
     ax.coords[0].set_ticks(number=nticks[0])
@@ -48,9 +48,10 @@ def setup_axis(ax, format='d.d', minor=True, nminor=[5,5], nticks=[10,10], xtick
         ax.coords[0].set_ticklabel_visible(False)        
     if not yticks:
         ax.coords[1].set_axislabel(" ")
-        ax.coords[1].set_ticklabel_visible(False)        
-    # ax.coords[0].set_major_formatter(format)
-    # ax.coords[1].set_major_formatter(format)
+        ax.coords[1].set_ticklabel_visible(False)
+    if fmt is not None:
+        ax.coords[0].set_major_formatter(fmt)
+        ax.coords[1].set_major_formatter(fmt)
     return ax
 
 def setup_colorbar(ax):

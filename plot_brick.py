@@ -3,10 +3,11 @@ as the contour.
 
 """
 
-import plotstyle
+
 from common import *
 import matplotlib.pyplot as plt
 import lib
+import plotstyle
 
 # parser defined in common
 parser.add_argument("--back", default="external/HIGAL_PLW0252p001_500_RM.fits")
@@ -20,8 +21,8 @@ if not op.exists(args.odir): os.makedirs(args.odir)
 box = boxes[args.area]
 
 # load coadd map
-imap = load_map(filedb[args.freq]['coadd'], fcode=args.freq, box=box)
-ivar = load_ivar(filedb[args.freq]['coadd_ivar'], fcode=args.freq, box=box)
+imap = load_map(filedb[args.freq]['coadd'], fcode=args.freq, box=box) / 1e9
+ivar = load_ivar(filedb[args.freq]['coadd_ivar'], fcode=args.freq, box=box) * 1e18
 # smooth if necessary
 if args.smooth:
     imap = enmap.smooth_gauss(imap, args.smooth*u.fwhm*u.arcmin)
@@ -41,32 +42,34 @@ if args.figsize: figsize=eval(args.figsize)
 else: figsize=None
 Y, X = imap.posmap()/np.pi*180
 opts = {
-    'origin': 'lower',
-    'extent': [X.max()+0.25/60, X.min()-0.25/60,
-               Y.min()-0.25/60, Y.max()+0.25/60],
+    # 'origin': 'lower',
+    # 'extent': [X.max()+0.25/60, X.min()-0.25/60,
+    #            Y.min()-0.25/60, Y.max()+0.25/60],
     'cmap': args.cmap,
     'vmin': args.min,
     'vmax': args.max,
-    'interpolation': 'nearest'
+    # 'interpolation': 'nearest'
 }
 fig = plt.figure(figsize=figsize)
 
 # left panel: coadd + contour from herschel
-ax = plt.subplot(121)
+ax = plt.subplot(121, projection=imap.wcs)
+plotstyle.setup_axis(ax, nticks=[5,5], fmt=None)
 im = ax.imshow(imap[0], **opts)
 Y_, X_ = irmap.posmap()/np.pi*180
 # contour plot
 l_ = np.percentile(np.ravel(irmap), [50,70,90])
 levels = [irmap.min(), l_[0], l_[1], l_[2], irmap.max()]
-ax.contour(X_, Y_, irmap, levels=levels, cmap='gray')
-ax.set_xlabel('l [deg]')
-ax.set_ylabel('b [deg]')
+ax.contour(X_, Y_, irmap, levels=levels, cmap='gray', transform=ax.get_transform('world'))
+ax.set_xlabel('$l$')
+ax.set_ylabel('$b$')
 # add colorbar
 cax = plotstyle.add_colorbar(fig, ax)
-fig.colorbar(im, cax=cax).set_label("Total Intensity [MJy/sr]")
+fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=14)
 
 # right panel
-ax = plt.subplot(122)
+ax = plt.subplot(122, projection=irmap.wcs)
+plotstyle.setup_axis(ax, yticks=False, nticks=[5,5], fmt=None)
 im = ax.imshow(irmap, **opts)
 # polarization angle plot
 # reload imap to get the original resolution
@@ -89,14 +92,15 @@ if args.mask:
     color=color.reshape(color.shape[0]*color.shape[1],4)
 else:
     color='k'
-ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0, color=color)
-ax.set_yticklabels([])
+ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0,
+          color=color, transform=ax.get_transform('world'))
+ax.set_xlabel(' ')
 # colorbar
 cax = plotstyle.add_colorbar(fig, ax)
-fig.colorbar(im, cax=cax).set_label("Total Intensity [MJy/sr]")
+fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=14)
 
 plt.subplots_adjust(hspace=0)
-if args.title: plt.suptitle(args.title, fontsize=14)
+if args.title: plt.suptitle(texify(args.title), fontsize=16)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
 plt.savefig(ofile)

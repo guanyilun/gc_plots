@@ -69,7 +69,9 @@ if not args.transpose:
     nrow, ncol = len(freqs), 1
 else:
     nrow, ncol = 1, len(freqs)
-fig, axes = plt.subplots(nrow, ncol, figsize=figsize)
+# temp loading to get wcs
+imap = load_map(filedb['f090']['coadd'], fcode='f090', box=box)
+fig, axes = plt.subplots(nrow, ncol, figsize=figsize, subplot_kw={'projection': imap.wcs})    
 
 for i, freq in enumerate(freqs):
     norm = Normalize(vmin=mins[i], vmax=maxs[i])
@@ -78,6 +80,16 @@ for i, freq in enumerate(freqs):
     ivar = load_ivar(filedb[freq]['coadd_ivar'], fcode=freq, box=box)
     if len(freqs) == 1: ax = axes
     else: ax = axes[i]
+    if len(freqs) == 3:
+        if i != 2:
+            plotstyle.setup_axis(ax, nticks=[10,5], yticks=True, xticks=False)
+        else:
+            plotstyle.setup_axis(ax, nticks=[10,5], yticks=True, xticks=True)
+        if args.axdir == 'out':
+            ax.coords[0].set_ticks_position('b')
+            ax.coords[1].set_ticks_position('l')
+    else:
+        plotstyle.setup_axis(ax, nticks=[5,5], fmt=None)            
     # define underlay to plot under magnetic field orientation
     if args.underlay == 'T':
         back  = imap[0]/1e9
@@ -130,13 +142,13 @@ for i, freq in enumerate(freqs):
             'cmap': args.cmap,
             'vmin': mins[i],
             'vmax': maxs[i],
-            'extent': [X.max()+0.25/60, X.min()-0.25/60,
-                       Y.min()-0.25/60, Y.max()+0.25/60]
+            # 'extent': [X.max()+0.25/60, X.min()-0.25/60,
+            #            Y.min()-0.25/60, Y.max()+0.25/60]
         }
         im = ax.imshow(back, **plot_opts)
     else:
         Y_, X_ = imap.posmap()/np.pi*180
-        im = ax.contourf(X_, Y_, back, colors=color, levels=level)
+        im = ax.contourf(back, colors=color, levels=level)
         xmin, xmax = box2extent(box)[:2]/np.pi*180
         ax.set_xlim([xmin, xmax])  # revert x axis
     theta = lib.Bangle(imap_ds[1], imap_ds[2], toIAU=True)
@@ -162,17 +174,19 @@ for i, freq in enumerate(freqs):
     color[mask,-1] = 0.3
     color[~mask,-1] = args.alpha
     color=color.reshape(color.shape[0]*color.shape[1],4)
-    ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0, color=color, scale=args.scale)
+    ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0,
+              headaxislength=0, color=color, scale=args.scale,
+              transform=ax.get_transform('world'))
     ax.set_aspect('equal')
     if args.sep_colorbar:
         cbar = plotstyle.add_colorbar(fig, ax, size="5%")
-        if i == len(freqs)-1: fig.colorbar(im, cax=cbar).set_label(label)
+        if i == len(freqs)-1: fig.colorbar(im, cax=cbar).set_label(texify(label), fontsize=14)
         else: fig.colorbar(im, cax=cbar)
     if args.show_freq: ax.set_title(freqs[i])
     
 if len(freqs) == 1:
-    axes.set_xlabel('l [deg]')
-    axes.set_ylabel('b [deg]')
+    axes.set_xlabel('$l$')
+    axes.set_ylabel('$b$')
 else:
     if not args.transpose:
         axes[-1].set_xlabel('l [deg]')
@@ -194,7 +208,7 @@ if not args.sep_colorbar:
 else:
     fig.subplots_adjust(right=0.9, hspace=0.02)
 
-if args.title: plt.suptitle(args.title, fontsize=16)
+if args.title: plt.suptitle(texify(args.title), fontsize=16)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
 plt.savefig(ofile, bbox_inches='tight')

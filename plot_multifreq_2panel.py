@@ -55,14 +55,14 @@ else:
         for side in ['left','right','top','bottom']:
             ax.spines[side].set_visible(True)    
             ax.spines[side].set_color('white')    
-    plotstyle.setup_axis(axes[0])
-    plotstyle.setup_axis(axes[1])
+    plotstyle.setup_axis(axes[0], nticks=[10,5])
+    plotstyle.setup_axis(axes[1], nticks=[10,5])
     axes[0].set_ylabel(" ")
     axes[1].set_ylabel(" ")
     axes[0].set_xticklabels([])
     axes[0].set_yticklabels([])
-    axes[1].set_xlabel('l')
-    axes[1].set_ylabel('b')
+    axes[1].set_xlabel('$l$')
+    axes[1].set_ylabel('$b$')
     plt.tight_layout(h_pad=0.1)
 
 ofile = op.join(args.odir, args.oname)

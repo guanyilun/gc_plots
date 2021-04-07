@@ -14,6 +14,11 @@ test planck + act alone
 #+BEGIN_SRC python
 python plot_planck_act_sidebyside.py -o plots --oname planck_act_sidebyside.pdf --use act
 #+END_SRC
+[2021-04-06 Tue]
+add ticks and use tex font
+#+BEGIN_SRC 
+python plot_planck_act_sidebyside.py -o plots --oname planck_coadd_sidebyside2.pdf --use coadd --figsize "(8,5.6)"
+#+END_SRC
 ** QU in 3 bands
 #+BEGIN_SRC bash
 python plot_qu_in_3bands.py -o plots
@@ -36,8 +41,18 @@ python plot_qu_in_3bands2.py --oname QU_3bands_new.pdf --figsize "[10,4.7]" --ar
 #+BEGIN_SRC bash
 python plot_qu_in_3bands2.py --oname QU_3bands_IAU.pdf          --figsize "[9,4.5]" --area trim2 --axis --IAU --sep-colorbar 
 #+END_SRC
+[2021-04-06 Tue]: add ticks on all edges
+#+BEGIN_SRC 
+python plot_qu_in_3bands2.py --oname QU_3bands_IAU.pdf --figsize "[9,4.5]" --area trim2 --axis --IAU --sep-colorbar 
+#+END_SRC
 polarization add coordinates
 #+BEGIN_SRC bash
+  python plot_planck_act_sidebyside_pol.py --oname planck_coadd_sidebyside_pol.pdf \
+         --min 0 --max 0.2 --cmap magma --area half \
+         --figsize "(9.5,3)" --freq f150 --axis
+#+END_SRC
+[2021-04-06 Tue]: polarization side by side add ticks on all edges
+#+BEGIN_SRC 
   python plot_planck_act_sidebyside_pol.py --oname planck_coadd_sidebyside_pol.pdf \
          --min 0 --max 0.2 --cmap magma --area half \
          --figsize "(9.5,3)" --freq f150 --axis
@@ -51,6 +66,11 @@ paper plot
 python plot_mag_in_3bands.py -o plots --figsize "[8,8]" --oname mag_3bands2.pdf --area trim2
 #+END_SRC
 [2021-03-29 Mon]: add coordinates
+#+BEGIN_SRC bash
+  python plot_mag_in_3bands.py -o plots --figsize "[8,7]" \
+         --oname mag_3bands2.pdf --area trim2 --cmap planck_half -L 0.5 --axis
+#+END_SRC
+[2021-04-06 Tue]: tex font and projection
 #+BEGIN_SRC bash
   python plot_mag_in_3bands.py -o plots --figsize "[8,7]" \
          --oname mag_3bands2.pdf --area trim2 --cmap planck_half -L 0.5 --axis
@@ -135,6 +155,10 @@ mask out pixels with $\delta \psi > 15^\circ$,
   python plot_mag2.py --oname polfrac_mag_masked.pdf --smooth 2 --downgrade 4 \
          --underlay plin --area quat --contour --cmap magma --min 0 --max 0.5 \
          --figsize "(6,9)" --alpha 0.7 --mask 15
+#+END_SRC
+[2021-04-06 Tue]: texify and use projection
+#+BEGIN_SRC 
+python plot_mag2.py --oname polfrac_mag_masked.pdf --smooth 2 --downgrade 4          --underlay plin --area quat --contour --cmap magma --figsize "(6,9)" --alpha 0.7 --mask 15 --axdir out
 #+END_SRC
 ** plot one coadd map only
 This is to facilitate object identification work
@@ -239,6 +263,12 @@ fun experiment
          -P out/multifreq_P_trim_median.npy --oname multifreq_2panel_new.pdf \
          --axis --figsize "(8,4)" --area trim2
 #+END_SRC
+[2021-04-06 Tue]: change axis label to tex font
+#+BEGIN_SRC 
+  python plot_multifreq_2panel.py -T out/multifreq_I_trim_var.npy \
+         -P out/multifreq_P_trim_median.npy --oname multifreq_2panel2.pdf \
+         --axis --figsize "(10,5)" --area trim2
+#+END_SRC
 ** plot annotation (with multifreq)
 #+BEGIN_SRC python
     python plot_multifreq_pag.py --oname multifreq_annot.pdf --min 2e8 --max 2e9 \
@@ -246,8 +276,11 @@ fun experiment
 #+END_SRC
 [2021-03-29 Mon]: new annotation
 #+BEGIN_SRC python
-python plot_multifreq_annot.py --oname multifreq_annot2.pdf --area trim2 -T out/multifreq_I_trim.npy --axis
+python plot_multifreq2.py --oname multifreq_trim.pdf --min 2e8 --max 2e9 \
+       --norm 1 -Q 3 -s 3 --area trim3 --save out/multifreq_I_trim3.npy --snr 3
+python plot_multifreq_annot.py --oname multifreq_annot3.pdf --area trim3 -T out/multifreq_I_trim3.npy --axis --small
 #+END_SRC
+[2021-04-06 Tue]: trim and texify
 ** plot magnetic field of some region of interests
 The mouse object with temperature as underlay
 #+BEGIN_SRC bash
@@ -269,6 +302,10 @@ updates on [2021-03-17 Wed]: update paper plot to this version
   python plot_mag2.py -o plots --freq f150 --oname mag_SagA_f150_P.pdf \
          --underlay P --min 0 --max 1 --area saga \
          --figsize "(6.5,6)" --cmap magma --mask 10
+#+END_SRC
+[2021-04-07 Wed]: update saga plot with texify and projection
+#+BEGIN_SRC 
+python plot_mag2.py -o plots --freq f090 --oname mag_SagA_f090_P.pdf          --underlay P --min 0 --max 0.8 --area saga          --figsize "(5,4.5)" --cmap magma --mask 10 --title "Sgr A^*" --sep-colorbar --largefont 14
 #+END_SRC
 GCRA
 #+BEGIN_SRC bash
@@ -397,7 +434,7 @@ GCRA
 [2021-04-01 Thu]: molecular clouds
 Brick
 #+BEGIN_SRC bash
-python plot_mcloud.py -o plots --oname mc_brick.pdf -l 0.253 -b 0.016          --tmin 0,0,0 --tmax 17,25,110 --tonly --cmap planck_half --margin 0.1 --figsize "(9.5,3)" --colorbar --title Brick
+python plot_mcloud.py -o plots --oname mc_brick.pdf -l 0.253 -b 0.016 --tmin 0,0,0 --tmax 17,25,110 --tonly --cmap planck_half --margin 0.1 --figsize "(9.5,3)" --colorbar --title Brick
 #+END_SRC
 #+BEGIN_SRC bash
 python plot_mag2.py -o plots --oname mc_brick2.pdf --area brick --min 0,0,0 --max 17,25,110 --underlay T --cmap planck_half --mask 30 --title "Bricks" --figsize "(9,3.5)" --transpose --show-freq --sep-colorbar
@@ -421,8 +458,11 @@ Arches
 #+BEGIN_SRC bash
 python plot_mcloud.py -o plots --oname mc_arches.pdf -l 0.054 -b 0.027 --tmin 0,0,0 --tmax 17,25,110 --tonly --cmap planck_half --margin 0.1 --figsize "(9.5,3)" --colorbar --title Arches
 #+END_SRC
-[2021-04-06 Tue]: 
-replot three little pigs
+[2021-04-06 Tue]: replot three little pigs
+#+BEGIN_SRC 
+python plot_mag3.py -o plots --oname mc_tlp2.pdf --area tlp --underlay T --cmap planck_half --freq f220 --mask Psnr --title "Three Little Pigs" --figsize "(6,4)" --largefont 14 --alpha 0.8 --sep-colorbar
+#+END_SRC
+[2021-04-07 Wed]: replot 3lp to update texification
 #+BEGIN_SRC 
 python plot_mag3.py -o plots --oname mc_tlp2.pdf --area tlp --underlay T --cmap planck_half --freq f220 --mask Psnr --title "Three Little Pigs" --figsize "(6,4)" --largefont 14 --alpha 0.8 --sep-colorbar
 #+END_SRC
@@ -469,6 +509,10 @@ python plot_uncertainties.py --freq f090 --area quat --cmap plasma --smooth 2 --
 ** brick
 #+BEGIN_SRC 
 python plot_brick.py --area brick --oname mc_brick.pdf
+#+END_SRC
+[2021-04-07 Wed]: texification and projection update
+#+BEGIN_SRC 
+python plot_brick.py --area brick --oname mc_brick.pdf --cmap planck_half --figsize "(9,4)" --mask
 #+END_SRC
 ** tornado
 #+BEGIN_SRC 

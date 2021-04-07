@@ -22,46 +22,52 @@ args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 if args.figsize: figsize = eval(args.figsize)
 else: figsize = None
+box = boxes[args.area]
 
 # Build figure
-fig, axes = plt.subplots(1, 2, figsize=figsize, sharey=True)
-box = boxes[args.area]
+# load temp file for wcs
+imap = load_map(filedb[args.freq]['planck'], box, fcode=args.freq)
+fig, axes = plt.subplots(1, 2, figsize=figsize, sharey=True, subplot_kw={'projection': imap.wcs})
 
 plot_opts = {
     'origin': 'lower',
     'cmap': args.cmap,
     'vmin': args.min,
     'vmax': args.max,
-    'extent': box2extent(box) / np.pi * 180
+    # 'extent': box2extent(box) / np.pi * 180
 }
 # plot planck
 imap = load_map(filedb[args.freq]['planck'], box, fcode=args.freq)
 imap = process_map(imap)
+plotstyle.setup_axis(axes[0], nticks=[10,5])
 axes[0].imshow(imap, **plot_opts)
 imap = load_map(filedb[args.freq]['coadd'], box, fcode=args.freq)
 imap = process_map(imap)
+plotstyle.setup_axis(axes[1], nticks=[10,5], yticks=False)
 im = axes[1].imshow(imap, **plot_opts)
 fig.subplots_adjust(right=0.9, wspace=0)
-cax = fig.add_axes([0.91, 0.2, 0.02, 0.6])
-fig.colorbar(im, cax=cax).set_label('Polarization intensity [MJy/sr]')
+cax = fig.add_axes([0.91, 0.2, 0.01, 0.6])
+fig.colorbar(im, cax=cax).set_label(texify('Polarization intensity [MJy/sr]'))
 # turn-off axis
 if not args.axis:
     for ax in axes.flat: ax.axis('off')
 else:
     for ax in axes:
         for side in ['left','right','top','bottom']:
+            ax.spines[side].set_visible(True)
             ax.spines[side].set_color('white')
         ax.tick_params(axis='x', colors='white', which='both', labelcolor='black')
         ax.tick_params(axis='y', colors='white', which='both', labelcolor='black')
-    axes[1].set_xticklabels([])
-    axes[0].set_xlabel('l [deg]')
-    axes[0].set_ylabel('b [deg]')
+    # axes[1].set_xticklabels([])
+    axes[0].set_xlabel('$l$')
+    axes[0].set_ylabel('$b$')
+    axes[1].set_xlabel(' ')
 
 # setup labels: Planck, ACT+Planck
-axes[0].text(0.4, 1.05, 'Planck',
+axes[0].text(0.4, 1.05, texify('Planck'),
              verticalalignment='bottom', horizontalalignment='left',
              transform=axes[0].transAxes, fontsize=12)
-axes[1].text(0.35, 1.05, 'ACT+Planck',
+axes[1].text(0.35, 1.05, texify('ACT+Planck'),
              verticalalignment='bottom', horizontalalignment='left',
              transform=axes[1].transAxes, fontsize=12)
 
