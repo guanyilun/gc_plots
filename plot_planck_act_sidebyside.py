@@ -44,7 +44,6 @@ fig, axes = plt.subplots(3, 2, figsize=figsize, gridspec_kw={'width_ratios':[0.9
 plot_opts = {
     'origin': 'lower',
     'cmap': 'planck_half',
-    # 'extent': box2extent(box)/np.pi*180
 }
 
 for i, freq in zip(range(3), ['f090','f150','f220']):
