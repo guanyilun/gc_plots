@@ -94,7 +94,7 @@ else:
     color='k'
 ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0,
           color=color, transform=ax.get_transform('world'))
-ax.set_xlabel(' ')
+ax.set_xlabel('$l$')
 # colorbar
 cax = plotstyle.add_colorbar(fig, ax)
 fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=14)

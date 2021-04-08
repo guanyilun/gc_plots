@@ -514,6 +514,7 @@ python plot_brick.py --area brick --oname mc_brick.pdf
 #+BEGIN_SRC 
 python plot_brick.py --area brick --oname mc_brick.pdf --cmap planck_half --figsize "(9,4)" --mask
 #+END_SRC
+[2021-04-07 Wed]: multi-freq view of brick
 ** tornado
 #+BEGIN_SRC 
 python plot_tornado.py --area tndo --oname tornado.pdf --figsize "(9,4)"

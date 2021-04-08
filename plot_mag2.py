@@ -98,7 +98,7 @@ for i, freq in enumerate(freqs):
     elif args.underlay == 'P':
         P     = np.sum(imap[1:]**2,axis=0)**0.5/1e9
         back  = enmap.smooth_gauss(P, 1*u.arcmin*u.fwhm)
-        label = texify('Polarization Intensity [MJy/sr]')
+        label = texify('Polarized Intensity [MJy/sr]')
     elif args.underlay == 'plog':
         P     = np.sum(imap[1:]**2,axis=0)**0.5
         p     = P / imap[0]
@@ -188,8 +188,8 @@ else:
     if not args.transpose:
         axes[-1].set_xlabel('$l$')
         axes[-1].set_ylabel('$b$')
-        axes[0].set_ylabel(' ')
-        axes[1].set_ylabel(' ')
+        axes[0].set_ylabel('$b$')
+        axes[1].set_ylabel('$b$')
     else:
         axes[0].set_ylabel('$b$')
         axes[0].set_xlabel('$l$')

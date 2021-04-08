@@ -126,12 +126,16 @@ for i in range(3):
             #     ax.axes.yaxis.set_ticklabels([])
             #     ax.axes.xaxis.set_ticklabels([])
             # else:
-            if i == 2 and j == 0:
+            if i == 2:
                 ax.set_xlabel('$l$')
+            if j == 0:
                 ax.set_ylabel('$b$')
-            else:
-                ax.set_xlabel(' ')
-                ax.set_ylabel(' ')
+            # if i == 2 and j == 0:
+            #     ax.set_xlabel('$l$')
+            #     ax.set_ylabel('$b$')
+            # el:
+            #     ax.set_xlabel(' ')
+            #     ax.set_ylabel(' ')
             # if i==2:
                 # ax.xaxis.set_major_locator(ticker.FixedLocator([1.5,1,0.5,0,-0.5,-1,-1.5]))
             # if j==0:

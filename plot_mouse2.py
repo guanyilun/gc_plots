@@ -44,7 +44,7 @@ fig, axes = plt.subplots(1, 2, figsize=figsize, subplot_kw={'projection': imap.w
 ##############
 # left panel #
 ##############
-ax   = plotstyle.setup_axis(axes[0], nticks=[5,5])
+ax   = plotstyle.setup_axis(axes[0], nticks=[5,5], fmt=None)
 opts = {
     'cmap': 'planck_half',
     'vmin': args.tmin,
@@ -69,7 +69,7 @@ P     = np.sum(imap[1:]**2,axis=0)**0.5
 P_err = lib.P_error(imap, ivar*s**2)
 P_snr = P / P_err
 mask  = P_snr < 3
-import ipdb; ipdb.set_trace()
+# import ipdb; ipdb.set_trace()
 cmap_ = plt.get_cmap('binary')  # actual cmap doesn't matter
 color = cmap_(np.ones_like(P))
 color[ mask,-1] = 0.3
@@ -78,7 +78,7 @@ color = color.reshape(color.shape[0]*color.shape[1],4)
 ax.quiver(Bx,By,pivot='middle', headlength=0, headaxislength=0, color=color)
 
 # right panel
-ax = plotstyle.setup_axis(axes[1], nticks=[5,5], xticks=True, yticks=False)
+ax = plotstyle.setup_axis(axes[1], nticks=[5,5], xticks=True, yticks=False, fmt=None)
 ax.tick_params(axis='x', colors='white', which='both', labelcolor='black')
 ax.tick_params(axis='y', colors='white', which='both', labelcolor='black')
 for side in ['left','right','top','bottom']:
@@ -94,7 +94,7 @@ opts = {
 P   = np.sum(imap_sm[1:]**2, axis=0)**0.5
 im  = ax.imshow(P, **opts)
 cax = plotstyle.add_colorbar(fig, ax)
-fig.colorbar(im, cax=cax).set_label(texify("Polarization intensity [MJy/sr]"))
+fig.colorbar(im, cax=cax).set_label(texify("Polarized intensity [MJy/sr]"))
 if args.title: plt.suptitle(texify(args.title), fontsize=16)
 fig.subplots_adjust(hspace=0)
 ofile = op.join(args.odir, args.oname)

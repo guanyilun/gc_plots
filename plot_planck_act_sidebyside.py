@@ -23,9 +23,6 @@ import plotstyle
 # load common variables and utility functions
 from common import *
 
-def process_map(imap):
-    return np.log10(imap[0])
-
 parser = argparse.ArgumentParser()
 parser.add_argument("-o","--odir", default='plots')
 parser.add_argument("--oname", default="test.pdf")
@@ -60,17 +57,19 @@ for i, freq in zip(range(3), ['f090','f150','f220']):
         ax = axes[i,j]
         if i == 2 and j == 1:
             xticks, yticks = True, False
-            ax.set_xlabel(" ")            
         elif i == 2 and j == 0:
             xticks, yticks = True, True
         elif j == 0:
             xticks, yticks = False, True
-            ax.set_ylabel(" ")
         else:
             xticks, yticks = False, False
+        if i == 2:
+            ax.set_xlabel('$l$')
+        if j == 0:
+            ax.set_ylabel('$b$')            
         plotstyle.setup_axis(ax, fmt="d.d", xticks=xticks, yticks=yticks, nticks=[10,5])
         # load data
-        if i == 0: use = 'planck'
+        if j == 0: use = 'planck'
         else: use = args.use
         imap = load_map(filedb[freq][use], box, fcode=freq)/1e9
         im = ax.imshow(imap[0], norm=norm, **plot_opts)

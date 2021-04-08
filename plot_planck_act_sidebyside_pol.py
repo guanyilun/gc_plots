@@ -47,7 +47,7 @@ plotstyle.setup_axis(axes[1], nticks=[10,5], yticks=False)
 im = axes[1].imshow(imap, **plot_opts)
 fig.subplots_adjust(right=0.9, wspace=0)
 cax = fig.add_axes([0.91, 0.2, 0.01, 0.6])
-fig.colorbar(im, cax=cax).set_label(texify('Polarization intensity [MJy/sr]'))
+fig.colorbar(im, cax=cax).set_label(texify('Polarized intensity [MJy/sr]'))
 # turn-off axis
 if not args.axis:
     for ax in axes.flat: ax.axis('off')
@@ -61,7 +61,7 @@ else:
     # axes[1].set_xticklabels([])
     axes[0].set_xlabel('$l$')
     axes[0].set_ylabel('$b$')
-    axes[1].set_xlabel(' ')
+    axes[1].set_xlabel('$l$')
 
 # setup labels: Planck, ACT+Planck
 axes[0].text(0.4, 1.05, texify('Planck'),

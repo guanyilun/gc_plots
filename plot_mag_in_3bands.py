@@ -77,7 +77,7 @@ for i, fcode in zip(range(3), ['f090','f150','f220']):
             axes[i].set_xlabel('$l$')
             axes[i].set_ylabel('$b$')
         else:
-            axes[i].set_ylabel(' ')
+            axes[i].set_ylabel('$b$')
     axes[i].imshow(texture, origin='lower', cmap='binary', alpha=0.7, interpolation='nearest')
     props = dict(alpha=1, facecolor='white')
     axes[i].text(0.03, 0.85, texify(fcode), bbox=props,
