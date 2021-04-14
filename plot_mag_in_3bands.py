@@ -41,7 +41,6 @@ plot_opts = {
     'origin': 'lower',
     'cmap': args.cmap,
     'interpolation': 'nearest',
-    # 'extent': box2extent(box)/np.pi*180,
 }
 def process_map(imap, fill=1e-5):
     imap[0,imap[0]<=0] = fill

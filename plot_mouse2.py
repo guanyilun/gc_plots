@@ -10,6 +10,7 @@ f090 polarization fraction, with contours showing polarization fraction
 from common import *
 import matplotlib.pyplot as plt
 import plotstyle, lib
+from matplotlib import colors
 
 # parser defined in common
 parser.add_argument("--tmin", type=float, default=None)
@@ -17,8 +18,10 @@ parser.add_argument("--tmax", type=float, default=None)
 parser.add_argument("--pmin", type=float, default=None)
 parser.add_argument("--pmax", type=float, default=None)
 parser.add_argument("--smooth", type=float, default=None)
+parser.add_argument("--radio", default='external/meerkat/MeerKAT_radio_bubbles.fits')
 parser.add_argument("--freq", default='f090')
 parser.add_argument("--title", default="Mouse PWN")
+parser.add_argument("--mask", action='store_true')
 parser.add_argument("--figsize", default=None)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(argsn.odir)
@@ -39,12 +42,13 @@ else:
     s       = 1
 
 # initialize figure
-fig, axes = plt.subplots(1, 2, figsize=figsize, subplot_kw={'projection': imap.wcs})
+fig = plt.figure(figsize=figsize)
 
 ##############
 # left panel #
 ##############
-ax   = plotstyle.setup_axis(axes[0], nticks=[5,5], fmt=None)
+ax   = plt.subplot(131, projection=imap.wcs)
+ax   = plotstyle.setup_axis(ax, nticks=[5,5], fmt=None)
 opts = {
     'cmap': 'planck_half',
     'vmin': args.tmin,
@@ -69,16 +73,18 @@ P     = np.sum(imap[1:]**2,axis=0)**0.5
 P_err = lib.P_error(imap, ivar*s**2)
 P_snr = P / P_err
 mask  = P_snr < 3
-# import ipdb; ipdb.set_trace()
 cmap_ = plt.get_cmap('binary')  # actual cmap doesn't matter
 color = cmap_(np.ones_like(P))
 color[ mask,-1] = 0.3
 color[~mask,-1] = 1
 color = color.reshape(color.shape[0]*color.shape[1],4)
-ax.quiver(Bx,By,pivot='middle', headlength=0, headaxislength=0, color=color)
+ax.quiver(Bx,By,pivot='middle', headlength=0, headaxislength=0, color=color, scale=30)
 
-# right panel
-ax = plotstyle.setup_axis(axes[1], nticks=[5,5], xticks=True, yticks=False, fmt=None)
+################
+# middle panel #
+################
+ax = plt.subplot(132, projection=imap.wcs)
+ax = plotstyle.setup_axis(ax, nticks=[5,5], xticks=True, yticks=False, fmt=None)
 ax.tick_params(axis='x', colors='white', which='both', labelcolor='black')
 ax.tick_params(axis='y', colors='white', which='both', labelcolor='black')
 for side in ['left','right','top','bottom']:
@@ -95,9 +101,59 @@ P   = np.sum(imap_sm[1:]**2, axis=0)**0.5
 im  = ax.imshow(P, **opts)
 cax = plotstyle.add_colorbar(fig, ax)
 fig.colorbar(im, cax=cax).set_label(texify("Polarized intensity [MJy/sr]"))
+
+###############
+# right panel #
+###############
+# load radio data
+irmap = enmap.read_map(args.radio, box=box)
+ax = plt.subplot(133, projection=irmap.wcs)
+ax = plotstyle.setup_axis(ax, nticks=[5,5], xticks=True, yticks=False, fmt=None)
+opts = {
+    'cmap': 'planck_half',
+    'norm': colors.LogNorm(vmin=1e-5, vmax=5e-3),
+    # 'vmin': -7e-5,
+    # 'vmax': 2e-3
+}
+# fixing irmaps negative
+irmap[irmap<0] = 1e-6
+# T = np.arcsinh(irmap/1e-5)
+# T = np.arcsinh(irmap/1e-5)
+# T = np.arcsinh(irmap/1e-5)
+# import ipdb; ipdb.set_trace()
+# im = ax.imshow(T, **opts)
+im = ax.imshow(irmap, **opts)
+theta = lib.Bangle(imap_sm[1], imap_sm[2], toIAU=True)
+theta += (np.pi/2)  # this gets the B-field angle corrected
+# x- and y-components of magnetic field
+Bx = np.cos(theta)
+By = np.sin(theta)
+Y, X = imap.posmap() / np.pi * 180
+if args.mask:
+    P     = np.sum(imap[1:]**2,axis=0)**0.5
+    P_err = lib.P_error(imap, ivar*s**2)
+    Psnr  = P / P_err
+    mask  = Psnr < 3
+    # Pangle_err = lib.Pangle_error(imap, ivar*s**2, deg=True)    
+    # mask = Pangle_err > 10 
+    cmap_ = plt.get_cmap('binary')  # actual cmap doesn't matter
+    color = cmap_(np.ones_like(X))
+    color[ mask,-1] = 0.3
+    color[~mask,-1] = 1
+    color=color.reshape(color.shape[0]*color.shape[1],4)
+else:
+    color='k'
+
+ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0,
+          scale=25, color=color, transform=ax.get_transform('world'))
+ax.set_xlabel('$l$')
+ax.set_ylabel('$b$')
+ax.set_aspect('equal')
+cax = plotstyle.add_colorbar(fig, ax)
+fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=10)
+
 if args.title: plt.suptitle(texify(args.title), fontsize=16)
 fig.subplots_adjust(hspace=0)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
 plt.savefig(ofile, bbox_inches='tight')
-

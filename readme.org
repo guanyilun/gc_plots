@@ -281,6 +281,11 @@ python plot_multifreq2.py --oname multifreq_trim.pdf --min 2e8 --max 2e9 \
 python plot_multifreq_annot.py --oname multifreq_annot3.pdf --area trim3 -T out/multifreq_I_trim3.npy --axis --small
 #+END_SRC
 [2021-04-06 Tue]: trim and texify
+[2021-04-12 Mon]: zoomed-in
+#+BEGIN_SRC 
+python plot_multifreq2.py --oname multifreq_zoom.pdf --min 2e8 --max 2e9 \
+       --norm 1 -Q 3 -s 3 --area pilot --save out/multifreq_I_zoom.npy --snr 3
+#+END_SRC
 ** plot magnetic field of some region of interests
 The mouse object with temperature as underlay
 #+BEGIN_SRC bash
@@ -305,7 +310,7 @@ updates on [2021-03-17 Wed]: update paper plot to this version
 #+END_SRC
 [2021-04-07 Wed]: update saga plot with texify and projection
 #+BEGIN_SRC 
-python plot_mag2.py -o plots --freq f090 --oname mag_SagA_f090_P.pdf          --underlay P --min 0 --max 0.8 --area saga          --figsize "(5,4.5)" --cmap magma --mask 10 --title "Sgr A^*" --sep-colorbar --largefont 14
+python plot_mag2.py -o plots --freq f090 --oname mag_SagA_f090_P.pdf --underlay P --min 0 --max 0.8 --area saga --figsize "(5,4.5)" --cmap magma --mask 10 --title "Sgr A^*" --sep-colorbar --largefont 14
 #+END_SRC
 GCRA
 #+BEGIN_SRC bash
@@ -522,8 +527,41 @@ python plot_tornado.py --area tndo --oname tornado.pdf --figsize "(9,4)"
 #+BEGIN_SRC 
  python plot_mouse2.py --area mouse --oname mouse.pdf --figsize "(8,4.5)" --smooth 1
 #+END_SRC
+[2021-04-12 Mon]: change negative to 1e-6
+#+BEGIN_SRC 
+python plot_mouse2.py --area mouse --oname mouse.pdf --figsize "(9,3)" --smooth 1 --mask"
+#+END_SRC
+[2021-04-12 Mon]: check polarization fraction
+#+BEGIN_SRC 
+python plot_polfrac.py --area mouse --freq f090 --oname polfrac_mouse.pdf --min 0 --max 0.05 --smooth 1
+#+END_SRC
 ** three little pigs
 [2021-04-08 Thu]
 #+BEGIN_SRC 
 python plot_3lp.py --area tlp2 --oname mc_3lp.pdf --cmap planck_half --figsize "(8,3)" --mask
+#+END_SRC
+** sag astar
+[2021-04-08 Thu]
+#+BEGIN_SRC 
+python plot_saga.py --area saga3 --oname saga_meerkat.pdf --cmap planck_half --figsize "(8,4)" --mask
+#+END_SRC
+[2021-04-08 Thu]: fun experiment -- add LIC
+#+BEGIN_SRC 
+python plot_saga_lic.py --area saga3 --oname saga_fun.pdf --cmap planck_half --figsize "(5,5)" --mask --title "Sgr A^* and GCRA" --smooth 1
+#+END_SRC
+** l=1.3 complex
+** meerkat image alone
+here I plot MeerKAT image alone, in comparison to Coadd multi-color image
+[2021-04-14 Wed]: plot meercat
+#+BEGIN_SRC bash
+python plot_meerkat.py --area quat --oname map_meerkat.png
+#+END_SRC
+[2021-04-14 Wed]: to compare with a multicolor image
+#+BEGIN_SRC 
+  python plot_multifreq2.py --oname map_coadd.png --min 2e8 --max 2e9 \
+         --norm 1 -Q 3 -s 3 --area quat --snr 3
+#+END_SRC
+[2021-04-14 Wed]: transfer to phyact1
+#+BEGIN_SRC bash
+rsync -ai plots/map_{coadd,meerkat}.png yilung@phy-act1:/home/yilung/public_html/galactic/210414/plots/
 #+END_SRC

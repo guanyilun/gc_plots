@@ -1,24 +1,27 @@
-"""This script aims to plot 3lp molecular clouds using external data
+"""This script aims to plot l=1.3 molecular cloud complex using external data
 as the contour.
 
 """
 
 
 from common import *
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import lib
 import plotstyle
 from matplotlib import colors
 
+mpl.rcParams['axes.formatter.useoffset'] = False
 # parser defined in common
-parser.add_argument("--back", default="external/HIGAL_PLW0105n-00_500_RM.fits")
-parser.add_argument("--title", default="Three Little Pigs")
+parser.add_argument("--back", default="external/HIGAL_PLW1299n-00_500_RM.fits")
+parser.add_argument("--title", default="l=1.3 Complex")
 parser.add_argument("--figsize", default=None)
 parser.add_argument("--smooth", type=float, default=None)
 parser.add_argument("--freq", default='f220')
 parser.add_argument("--mask", action='store_true')
 parser.add_argument("--min2", type=float, default=None)
 parser.add_argument("--max2", type=float, default=None)
+parser.add_argument("--scale", type=float, default=100)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 box = boxes[args.area]
@@ -54,19 +57,34 @@ fig = plt.figure(figsize=figsize)
 # left panel: coadd + contour from herschel
 ax = plt.subplot(121, projection=imap.wcs)
 plotstyle.setup_axis(ax, nticks=[5,5], fmt=None)
+opts.update({
+    # 'vmin': args.min2,
+    # 'vmax': args.max2,
+    'vmin': None,
+    'vmax': None,
+    'norm': colors.LogNorm(vmin=30, vmax=80),
+})
 im = ax.imshow(imap[0], **opts)
 # P  = np.sum(imap[1:]**2, axis=0)**0.5
 # im = ax.imshow(P, **opts)
 Y_, X_ = irmap.posmap()/np.pi*180
 # contour plot
-l_ = np.percentile(np.ravel(irmap), [70,80,90])
+# l_ = np.percentile(np.ravel(irmap), [70,80,90])
+l_ = np.percentile(np.ravel(irmap), [50,70,90])
 levels = [irmap.min(), l_[0], l_[1], l_[2], irmap.max()]
 ax.contour(X_, Y_, irmap, levels=levels, cmap='gray', transform=ax.get_transform('world'))
 ax.set_xlabel('$l$')
 ax.set_ylabel('$b$')
 # add colorbar
 cax = plotstyle.add_colorbar(fig, ax)
-fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=12)
+cbar = fig.colorbar(im, cax=cax)
+cbar.set_label(texify("Total Intensity [MJy/sr]"), fontsize=12)
+cbar.set_ticks([30, 40, 60, 80])
+cbar.set_ticklabels([texify("30"), texify("40"), texify("60"), texify("80")])
+
+# ax.ticklabel_format(useOffset=False)
+# cax.axes.get_yaxis().set_major_formatter(mpl.ticker.ScalarFormatter())
+# import ipdb; ipdb.set_trace()
 
 # right panel
 # ax = plt.subplot(122, projection=irmap.wcs)
@@ -75,7 +93,9 @@ plotstyle.setup_axis(ax, yticks=False, nticks=[5,5], fmt=None)
 opts.update({
     # 'vmin': args.min2,
     # 'vmax': args.max2,
-    'norm': colors.LogNorm(vmin=1e-4, vmax=1e-2),
+    'vmin': None,
+    'vmax': None,
+    'norm': colors.LogNorm(vmin=5e2, vmax=3e3),
 })
 im = ax.imshow(irmap, **opts)
 # polarization angle plot
@@ -102,14 +122,14 @@ if args.mask:
 else:
     color='k'
 ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0,
-          color=color, transform=ax.get_transform('world'))
+          color=color, transform=ax.get_transform('world'), scale=args.scale)
 ax.set_xlabel('$l$')
 # colorbar
 cax = plotstyle.add_colorbar(fig, ax)
 fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=12)
 
 plt.subplots_adjust(hspace=0)
-if args.title: plt.suptitle(texify(args.title), fontsize=16)
+if args.title: plt.suptitle(r"$l=1.3$ {\rm Complex}", fontsize=16)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
-plt.savefig(ofile)
+plt.savefig(ofile, bbox_inches='tight')

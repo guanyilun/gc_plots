@@ -39,9 +39,11 @@ parser.add_argument("--mask-alpha", help='show masked region with given alpha', 
 parser.add_argument("--save", help="a path to save omap data", default=None)
 parser.add_argument("--axis", help="whether toshow axis", action='store_true')
 parser.add_argument("--norm-area", help="area used to extract normalization", default=None)
+parser.add_argument("--figsize", default=None)
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
-
+if args.figsize: figsize = eval(args.figsize)
+else: figsize = None
 if args.box is not None:
     box = np.array(eval(args.box)) / 180*np.pi
 else:
@@ -186,9 +188,10 @@ if args.save: np.save(args.save, omap)
 popts = {
     'origin': 'lower',
 }
-fig = plt.figure()
+fig = plt.figure(figsize=figsize)
 if args.axis: ax  = plt.subplot(111, projection=imap_f090.wcs)
 else: ax = plt.subplot(111)
+plotstyle.setup_axis(ax, nticks=[10,5])
 ax.imshow(omap, **popts)
 if not args.axis:
     ax.axis('off')
