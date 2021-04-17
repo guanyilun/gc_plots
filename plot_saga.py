@@ -112,11 +112,11 @@ ax.set_aspect('equal')
 # colorbar
 # fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=12)
 # new colorbar
-cax = plotstyle.add_colorbar_hpad(ax, pad="1%", hpad="50%", loc='right')
+cax = plotstyle.add_colorbar_hpad(ax, pad="1%", hpad="50%")
 fig.colorbar(im, cax=cax, orientation='horizontal').set_label(texify("I [MJy/sr]"), fontsize=12)
 cax.xaxis.set_label_position('top')
 cax.xaxis.set_ticks_position('top')
-ax.text(0.1, 1.03, texify("1.3 GHz"), transform=ax.transAxes, fontsize=14)
+ax.text(0.1, 1.03, texify("1.28 GHz"), transform=ax.transAxes, fontsize=14)
 plt.subplots_adjust(hspace=0, wspace=0.1)
 if args.title: plt.suptitle(texify(args.title), fontsize=16)
 ofile = op.join(args.odir, args.oname)

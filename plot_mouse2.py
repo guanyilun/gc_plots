@@ -57,8 +57,13 @@ opts = {
 }
 # background: total intensity
 im = ax.imshow(imap_sm[0], **opts)
-cax = plotstyle.add_colorbar(fig, ax)
-fig.colorbar(im, cax=cax).set_label(texify("Total intensity [MJy/sr]"))
+# cax = plotstyle.add_colorbar(fig, ax)
+# fig.colorbar(im, cax=cax).set_label(texify("Total intensity [MJy/sr]"))
+cax = plotstyle.add_colorbar_hpad(ax, pad="1%", hpad="50%")
+fig.colorbar(im, cax=cax, orientation='horizontal').set_label(texify("I [MJy/sr]"), fontsize=10)
+cax.xaxis.set_label_position('top')
+cax.xaxis.set_ticks_position('top')
+ax.text(0.1, 1.03, texify("f090"), transform=ax.transAxes, fontsize=12)
 ax.set_xlabel(r"$l$")
 ax.set_ylabel(r"$b$")
 # foreground: magnetic field orientation
@@ -99,8 +104,13 @@ opts = {
 }
 P   = np.sum(imap_sm[1:]**2, axis=0)**0.5
 im  = ax.imshow(P, **opts)
-cax = plotstyle.add_colorbar(fig, ax)
-fig.colorbar(im, cax=cax).set_label(texify("Polarized intensity [MJy/sr]"))
+# cax = plotstyle.add_colorbar(fig, ax)
+# fig.colorbar(im, cax=cax).set_label(texify("Polarized intensity [MJy/sr]"))
+cax = plotstyle.add_colorbar_hpad(ax, pad="1%", hpad="50%")
+fig.colorbar(im, cax=cax, orientation='horizontal').set_label(texify("P [MJy/sr]"), fontsize=10)
+cax.xaxis.set_label_position('top')
+cax.xaxis.set_ticks_position('top')
+ax.text(0.1, 1.03, texify("f090"), transform=ax.transAxes, fontsize=12)
 
 ###############
 # right panel #
@@ -149,11 +159,16 @@ ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0,
 ax.set_xlabel('$l$')
 ax.set_ylabel('$b$')
 ax.set_aspect('equal')
-cax = plotstyle.add_colorbar(fig, ax)
-fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=10)
+# cax = plotstyle.add_colorbar(fig, ax)
+# fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=10)
+cax = plotstyle.add_colorbar_hpad(ax, pad="1%", hpad="50%")
+fig.colorbar(im, cax=cax, orientation='horizontal').set_label(texify("I [MJy/sr]"), fontsize=10)
+cax.xaxis.set_label_position('top')
+cax.xaxis.set_ticks_position('top')
+ax.text(0.1, 1.03, texify("1.28 GHz"), transform=ax.transAxes, fontsize=12)
 
 if args.title: plt.suptitle(texify(args.title), fontsize=16)
-fig.subplots_adjust(hspace=0)
+fig.subplots_adjust(hspace=0, wspace=0.1)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
 plt.savefig(ofile, bbox_inches='tight')

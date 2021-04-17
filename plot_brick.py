@@ -64,8 +64,14 @@ ax.contour(X_, Y_, irmap, levels=levels, cmap='gray', transform=ax.get_transform
 ax.set_xlabel('$l$')
 ax.set_ylabel('$b$')
 # add colorbar
-cax = plotstyle.add_colorbar(fig, ax)
-fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=14)
+# cax = plotstyle.add_colorbar(fig, ax)
+cax = plotstyle.add_colorbar_hpad(ax, hpad='50%', loc='top')
+fig.colorbar(im, cax=cax,
+             orientation='horizontal').set_label(texify("I [MJy/sr]"),
+                                                 fontsize=12)
+cax.xaxis.set_label_position('top')
+cax.xaxis.set_ticks_position('top')
+ax.text(0.15, 1.03, texify("f220"), transform=ax.transAxes, fontsize=14)
 
 # right panel
 ax = plt.subplot(122, projection=irmap.wcs)
@@ -96,11 +102,16 @@ ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0,
           color=color, transform=ax.get_transform('world'))
 ax.set_xlabel('$l$')
 # colorbar
-cax = plotstyle.add_colorbar(fig, ax)
-fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=14)
-
-plt.subplots_adjust(hspace=0)
+# cax = plotstyle.add_colorbar(fig, ax)
+cax = plotstyle.add_colorbar_hpad(ax, hpad='50%', loc='top')
+fig.colorbar(im, cax=cax,
+             orientation='horizontal').set_label(texify("I [MJy/sr]"),
+                                                 fontsize=12)
+cax.xaxis.set_label_position('top')
+cax.xaxis.set_ticks_position('top')
+ax.text(0.15, 1.03, texify("Herschel"), transform=ax.transAxes, fontsize=14)
+plt.subplots_adjust(hspace=0, wspace=0.1)
 if args.title: plt.suptitle(texify(args.title), fontsize=16)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
-plt.savefig(ofile)
+plt.savefig(ofile, bbox_inches='tight')

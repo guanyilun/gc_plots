@@ -40,16 +40,22 @@ opts = {
     'cmap': args.tcmap,
     'interpolation': 'nearest'
 }
-ax = plotstyle.setup_axis(axes[0], nticks=[5,5])
+ax = plotstyle.setup_axis(axes[0], nticks=[5,5], fmt=None)
 im = ax.imshow(imap[0], **opts)
 ax.coords[0].set_axislabel(r"$l$")
 ax.coords[1].set_axislabel(r"$b$")
 # by default, AxesDivider makes new axes class based on the parent axes,
 # for projection based axes this causes problem, so I had to force a
 # non wcs-based Axis here
-cax = plotstyle.add_colorbar(fig, ax)
-fig.colorbar(im, cax=cax).set_label(texify("Total intensity [MJy/sr]"))
-
+# cax = plotstyle.add_colorbar(fig, ax)
+# fig.colorbar(im, cax=cax).set_label(texify("Total intensity [MJy/sr]"))
+cax = plotstyle.add_colorbar_hpad(ax, hpad="50%")
+fig.colorbar(im, cax=cax, orientation='horizontal').set_label(
+    texify("I [MJy/sr]")
+)
+cax.xaxis.set_ticks_position("top")
+cax.xaxis.set_label_position("top")
+ax.text(0.15, 1.03, texify("f090"), transform=ax.transAxes, fontsize=14)
 # right: polarization intensity
 opts = {
     'vmin': args.pmin,
@@ -57,7 +63,7 @@ opts = {
     'cmap': args.pcmap,
     'interpolation': 'nearest'
 }
-ax = plotstyle.setup_axis(axes[1], nticks=[5,5], yticks=False)
+ax = plotstyle.setup_axis(axes[1], nticks=[5,5], yticks=False, fmt=None)
 P  = np.sum(imap[1:]**2, axis=0)**0.5
 im = ax.imshow(P, **opts)
 ax.tick_params(axis='x', colors='white', which='both', labelcolor='black')
@@ -66,11 +72,17 @@ ax.set_xlabel('$l$')
 for side in ['left','right','top','bottom']:
     ax.spines[side].set_visible(True)
     ax.spines[side].set_color('white')
-cax = plotstyle.add_colorbar(fig, ax)
-fig.colorbar(im, cax=cax).set_label(texify("Polarization intensity [MJy/sr]"))
-
-# title
+# cax = plotstyle.add_colorbar(fig, ax)
+# fig.colorbar(im, cax=cax).set_label(texify("Polarization intensity [MJy/sr]"))
+cax = plotstyle.add_colorbar_hpad(ax, hpad="50%")
+fig.colorbar(im, cax=cax, orientation='horizontal').set_label(
+    texify("P [MJy/sr]")
+)
+cax.xaxis.set_ticks_position("top")
+cax.xaxis.set_label_position("top")
+ax.text(0.15, 1.03, texify("f090"), transform=ax.transAxes, fontsize=14)
 if args.title: plt.suptitle(texify(args.title), fontsize=16)
+fig.subplots_adjust(hspace=0, wspace=0.1)
 # IO
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
