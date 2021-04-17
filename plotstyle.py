@@ -36,12 +36,13 @@ def add_colorbar(fig, ax, size="5%", pad=0.1, axes_class=Axes, loc='right', **kw
     cb = divider.append_axes(loc, size=size, pad=pad, axes_class=axes_class, **kwargs)
     return cb
 
-def add_colorbar_hpad(fig, ax, size="5%", axes_class=Axes, **kwargs):
+def add_colorbar_hpad(ax, size="5%", pad="1%", axes_class=Axes, loc='top', **kwargs):
+    """currently hpad option only supports loc='top' or 'bottom', but in-principle not
+       hard to do so for 'left' and 'right' """
     divider = MyAxesDivider(ax)
     locator = divider.new_locator(nx=0, ny=0)
     ax.set_axes_locator(locator)
-    cb = divider.new_vertical_pad(size, axes_class=axes_class, **kwargs)
-    fig.add_axes(cb)
+    cb = divider.append_axes(loc, size=size, pad=pad, axes_class=axes_class, **kwargs)
     return cb
 
 def setup_axis(ax, fmt='d.d', minor=True, nminor=[5,5], nticks=[10,10], xticks=True, yticks=True):
@@ -72,7 +73,7 @@ class MyAxesDivider(AxesDivider):
     def __init__(self, *args, **kwargs):
         AxesDivider.__init__(self, *args, **kwargs)
 
-    def new_vertical_pad(self, size, pad=None, hpad=None,
+    def new_vertical(self, size, pad=None, hpad=None,
                          hpad_left=True, pack_start=False, **kwargs):
         """similar to new_vertical but adds a horizontal pad"""
         if pad:
@@ -86,6 +87,7 @@ class MyAxesDivider(AxesDivider):
         # new horizontal pad
         if hpad:
             if not isinstance(hpad, Size._Base):
+                # assuming a format of {hpad}%
                 pct = float(hpad[:-1])
                 hpad = Size.from_any(hpad, fraction_ref=self._xref)
             if hpad_left:
@@ -111,31 +113,27 @@ class MyAxesDivider(AxesDivider):
         # xxxxx|xxxxx
         # xxxxx|xxxxx
         #
-        # for now I will change when the colorbar is at the top, to be
-        # directly usable, and leave the equivalent work to the other
-        # case (bottom) as future work
         if pack_start:
             self._vertical.insert(0, size)
             self._yrefindex += 1
-            locator = self.new_locator(nx=self._xrefindex, ny=0)
+            ny = 0
         else:
-            # colorbar is added on top
             self._vertical.append(size)
-            # if no hpad is specified, reduce to the original behavior
-            if not hpad:
-                locator = self.new_locator(
-                    nx=self._xrefindex, ny=len(self._vertical)-1)
-            else:
-                # where the colorbar is located depends on whether
-                # hpad is added on the left or right
-                if hpad_left: nx = 1
-                else: nx = 0
-                locator = self.new_locator(nx=nx, ny=len(self._vertical)-1)
-                # now the original axes becomes grid-based, we also need
-                # to make sure the original plot spans two columns.
-                # this is achieved by setting nx:nx1 --> 0:2
-                locator_orig = self.new_locator(nx=0, nx1=2, ny=0)
-                self._axes.set_axes_locator(locator_orig)
+            ny = len(self._vertical)-1
+        if not hpad:
+            # if no hpad specified, reproduce original behavior
+            locator = self.new_locator(nx=self._xrefindex, ny=ny)
+        else:
+            # where the colorbar is located depends on whether
+            # hpad is added on the left or right
+            if hpad_left: nx = 1
+            else: nx = 0
+            locator = self.new_locator(nx=nx, ny=len(self._vertical)-1)
+            # now the original axes becomes grid-based, we also need
+            # to make sure the original plot spans two columns.
+            # this is achieved by setting nx:nx1 --> 0:2
+            locator_orig = self.new_locator(nx=0, nx1=2, ny=0)
+            self._axes.set_axes_locator(locator_orig)
         ax = self._get_new_axes(**kwargs)
         ax.set_axes_locator(locator)
         return ax

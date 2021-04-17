@@ -60,7 +60,7 @@ P  = np.sum(imap[1:]**2,axis=0)**0.5
 im = ax.imshow(P, **opts)
 ax.set_xlabel('$l$')
 ax.set_ylabel('$b$')
-cax = plotstyle.add_colorbar_hpad(fig, ax, pad="1%", hpad="50%")
+cax = plotstyle.add_colorbar_hpad(ax, pad="1%", hpad="50%")
 fig.colorbar(im, cax=cax, orientation='horizontal',
              shrink='50%').set_label(texify("P [MJy/sr]"), fontsize=12)
 cax.xaxis.set_label_position('top')
@@ -112,9 +112,8 @@ ax.set_aspect('equal')
 # colorbar
 # fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=12)
 # new colorbar
-cax = plotstyle.add_colorbar_hpad(fig, ax, pad="1%", hpad="50%")
-fig.colorbar(im, cax=cax, orientation='horizontal',
-             shrink='50%').set_label(texify("I [MJy/sr]"), fontsize=12)
+cax = plotstyle.add_colorbar_hpad(ax, pad="1%", hpad="50%", loc='right')
+fig.colorbar(im, cax=cax, orientation='horizontal').set_label(texify("I [MJy/sr]"), fontsize=12)
 cax.xaxis.set_label_position('top')
 cax.xaxis.set_ticks_position('top')
 ax.text(0.1, 1.03, texify("1.3 GHz"), transform=ax.transAxes, fontsize=14)

@@ -286,6 +286,13 @@ python plot_multifreq_annot.py --oname multifreq_annot3.pdf --area trim3 -T out/
 python plot_multifreq2.py --oname multifreq_zoom.pdf --min 2e8 --max 2e9 \
        --norm 1 -Q 3 -s 3 --area pilot --save out/multifreq_I_zoom.npy --snr 3
 #+END_SRC
+[2021-04-14 Wed]: use polarization
+#+BEGIN_SRC 
+    python plot_multifreq2.py --oname multifreq_pol_trim.pdf --min 1e7 \
+           --max 1e9 --norm 4 -Q 0 -s 0.1 --area trim3 --pol --smooth 3.5 --snr 3 \
+           --mask-method 1 --mask-alpha 1 --save out/multifreq_P_trim3.npy
+    python plot_multifreq_annot.py --oname multifreq_annot4.pdf --area trim3 -T out/multifreq_P_trim3.npy --axis --small
+#+END_SRC
 ** plot magnetic field of some region of interests
 The mouse object with temperature as underlay
 #+BEGIN_SRC bash
