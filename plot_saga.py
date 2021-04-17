@@ -60,8 +60,16 @@ P  = np.sum(imap[1:]**2,axis=0)**0.5
 im = ax.imshow(P, **opts)
 ax.set_xlabel('$l$')
 ax.set_ylabel('$b$')
-cax = plotstyle.add_colorbar(fig, ax)
-fig.colorbar(im, cax=cax).set_label(texify("Polarized Intensity [MJy/sr]"), fontsize=12)
+cax = plotstyle.add_colorbar_hpad(fig, ax, pad="1%", hpad="50%")
+fig.colorbar(im, cax=cax, orientation='horizontal',
+             shrink='50%').set_label(texify("P [MJy/sr]"), fontsize=12)
+cax.xaxis.set_label_position('top')
+cax.xaxis.set_ticks_position('top')
+ax.text(0.15, 1.03, texify("f090"), transform=ax.transAxes, fontsize=14)
+# cax = plotstyle.add_colorbar(fig, ax, loc='top')
+# fig.colorbar(im, cax=cax, orientation='horizontal').set_label(texify("Polarized Intensity [MJy/sr]"), fontsize=12)
+# fig.colorbar(im, cax=cax)
+# ax.set_title(texify("Polarized Intensity [MJy/sr]"), fontsize=12)
 
 ###############
 # right panel #
@@ -102,10 +110,15 @@ ax.set_xlabel('$l$')
 ax.set_ylabel('$b$')
 ax.set_aspect('equal')
 # colorbar
-cax = plotstyle.add_colorbar(fig, ax)
-fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=12)
-
-plt.subplots_adjust(hspace=0)
+# fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=12)
+# new colorbar
+cax = plotstyle.add_colorbar_hpad(fig, ax, pad="1%", hpad="50%")
+fig.colorbar(im, cax=cax, orientation='horizontal',
+             shrink='50%').set_label(texify("I [MJy/sr]"), fontsize=12)
+cax.xaxis.set_label_position('top')
+cax.xaxis.set_ticks_position('top')
+ax.text(0.1, 1.03, texify("1.3 GHz"), transform=ax.transAxes, fontsize=14)
+plt.subplots_adjust(hspace=0, wspace=0.1)
 if args.title: plt.suptitle(texify(args.title), fontsize=16)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
