@@ -16,7 +16,7 @@ python plot_planck_act_sidebyside.py -o plots --oname planck_act_sidebyside.pdf 
 #+END_SRC
 [2021-04-06 Tue]
 add ticks and use tex font
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_planck_act_sidebyside.py -o plots --oname planck_coadd_sidebyside2.pdf --use coadd --figsize "(8,5.6)"
 #+END_SRC
 ** QU in 3 bands
@@ -39,11 +39,11 @@ python plot_qu_in_3bands2.py --oname QU_3bands_new.pdf --figsize "[10,4.7]" --ar
 #+END_SRC
 [2021-04-06 Tue]: add colorbar per plot
 #+BEGIN_SRC bash
-python plot_qu_in_3bands2.py --oname QU_3bands_IAU.pdf          --figsize "[9,4.5]" --area trim2 --axis --IAU --sep-colorbar 
+python plot_qu_in_3bands2.py --oname QU_3bands_IAU.pdf          --figsize "[9,4.5]" --area trim2 --axis --IAU --sep-colorbar
 #+END_SRC
 [2021-04-06 Tue]: add ticks on all edges
-#+BEGIN_SRC 
-python plot_qu_in_3bands2.py --oname QU_3bands_IAU.pdf --figsize "[9,4.5]" --area trim2 --axis --IAU --sep-colorbar 
+#+BEGIN_SRC
+python plot_qu_in_3bands2.py --oname QU_3bands_IAU.pdf --figsize "[9,4.5]" --area trim2 --axis --IAU --sep-colorbar
 #+END_SRC
 polarization add coordinates
 #+BEGIN_SRC bash
@@ -52,7 +52,7 @@ polarization add coordinates
          --figsize "(9.5,3)" --freq f150 --axis
 #+END_SRC
 [2021-04-06 Tue]: polarization side by side add ticks on all edges
-#+BEGIN_SRC 
+#+BEGIN_SRC
   python plot_planck_act_sidebyside_pol.py --oname planck_coadd_sidebyside_pol.pdf \
          --min 0 --max 0.2 --cmap magma --area half \
          --figsize "(9.5,3)" --freq f150 --axis
@@ -157,7 +157,7 @@ mask out pixels with $\delta \psi > 15^\circ$,
          --figsize "(6,9)" --alpha 0.7 --mask 15
 #+END_SRC
 [2021-04-06 Tue]: texify and use projection
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_mag2.py --oname polfrac_mag_masked.pdf --smooth 2 --downgrade 4          --underlay plin --area quat --contour --cmap magma --figsize "(6,9)" --alpha 0.7 --mask 15 --axdir out
 #+END_SRC
 ** plot one coadd map only
@@ -264,7 +264,7 @@ fun experiment
          --axis --figsize "(8,4)" --area trim2
 #+END_SRC
 [2021-04-06 Tue]: change axis label to tex font
-#+BEGIN_SRC 
+#+BEGIN_SRC
   python plot_multifreq_2panel.py -T out/multifreq_I_trim_var.npy \
          -P out/multifreq_P_trim_median.npy --oname multifreq_2panel2.pdf \
          --axis --figsize "(10,5)" --area trim2
@@ -282,12 +282,12 @@ python plot_multifreq_annot.py --oname multifreq_annot3.pdf --area trim3 -T out/
 #+END_SRC
 [2021-04-06 Tue]: trim and texify
 [2021-04-12 Mon]: zoomed-in
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_multifreq2.py --oname multifreq_zoom.pdf --min 2e8 --max 2e9 \
        --norm 1 -Q 3 -s 3 --area pilot --save out/multifreq_I_zoom.npy --snr 3
 #+END_SRC
 [2021-04-14 Wed]: use polarization
-#+BEGIN_SRC 
+#+BEGIN_SRC
     python plot_multifreq2.py --oname multifreq_pol_trim.pdf --min 1e7 \
            --max 1e9 --norm 4 -Q 0 -s 0.1 --area trim3 --pol --smooth 3.5 --snr 3 \
            --mask-method 1 --mask-alpha 1 --save out/multifreq_P_trim3.npy
@@ -316,7 +316,7 @@ updates on [2021-03-17 Wed]: update paper plot to this version
          --figsize "(6.5,6)" --cmap magma --mask 10
 #+END_SRC
 [2021-04-07 Wed]: update saga plot with texify and projection
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_mag2.py -o plots --freq f090 --oname mag_SagA_f090_P.pdf --underlay P --min 0 --max 0.8 --area saga --figsize "(5,4.5)" --cmap magma --mask 10 --title "Sgr A^*" --sep-colorbar --largefont 14
 #+END_SRC
 GCRA
@@ -452,7 +452,7 @@ python plot_mcloud.py -o plots --oname mc_brick.pdf -l 0.253 -b 0.016 --tmin 0,0
 python plot_mag2.py -o plots --oname mc_brick2.pdf --area brick --min 0,0,0 --max 17,25,110 --underlay T --cmap planck_half --mask 30 --title "Bricks" --figsize "(9,3.5)" --transpose --show-freq --sep-colorbar
 #+END_SRC
 polarization in the background
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_mag2.py -o plots --oname mc_brick2_P.pdf --area brick --min 0,0,0 --max 0.2,0.2,1 --underlay P --cmap planck_half --mask 30 --title "Bricks" --figsize "(9,3.5)" --transpose --show-freq --sep-colorbar
 #+END_SRC
 test different signal to noise mask (using polarization intensity)
@@ -471,11 +471,11 @@ Arches
 python plot_mcloud.py -o plots --oname mc_arches.pdf -l 0.054 -b 0.027 --tmin 0,0,0 --tmax 17,25,110 --tonly --cmap planck_half --margin 0.1 --figsize "(9.5,3)" --colorbar --title Arches
 #+END_SRC
 [2021-04-06 Tue]: replot three little pigs
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_mag3.py -o plots --oname mc_tlp2.pdf --area tlp --underlay T --cmap planck_half --freq f220 --mask Psnr --title "Three Little Pigs" --figsize "(6,4)" --largefont 14 --alpha 0.8 --sep-colorbar
 #+END_SRC
 [2021-04-07 Wed]: replot 3lp to update texification
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_mag3.py -o plots --oname mc_tlp2.pdf --area tlp --underlay T --cmap planck_half --freq f220 --mask Psnr --title "Three Little Pigs" --figsize "(6,4)" --largefont 14 --alpha 0.8 --sep-colorbar
 #+END_SRC
 ** plot sensitivity
@@ -497,7 +497,7 @@ Numbers extracted:
 |------+------------------+------------------|
 
 ** plot dust sightline
-This box is defined as 
+This box is defined as
 #+BEGIN_SRC python
 boxes['dust4'] = np.array([[-0.82, 0.38],[-0.76,0.34]]) / 180*np.pi
 #+END_SRC
@@ -519,44 +519,66 @@ python plot_angle_dispersion.py --oname dispersion_f090.png --freq f090 --area q
 python plot_uncertainties.py --freq f090 --area quat --cmap plasma --smooth 2 --oname uncertainties_f090_Q.pdf --max 0.3
 #+END_SRC
 ** brick
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_brick.py --area brick --oname mc_brick.pdf
 #+END_SRC
 [2021-04-07 Wed]: texification and projection update
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_brick.py --area brick --oname mc_brick.pdf --cmap planck_half --figsize "(9,4)" --mask
 #+END_SRC
+[2021-04-17 Sat]: colorbar change
+#+BEGIN_SRC
+python plot_brick.py --area brick --oname mc_brick.pdf --cmap planck_half --figsize "(8,4.5)" --mask
+#+END_SRC
 ** tornado
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_tornado.py --area tndo --oname tornado.pdf --figsize "(9,4)"
 #+END_SRC
+[2021-04-17 Sat]: change colorbar
+#+BEGIN_SRC
+python plot_tornado.py --area tndo --oname tornado.pdf --figsize "(8,4.5)"
+#+END_SRC
 ** mouse
-#+BEGIN_SRC 
+#+BEGIN_SRC
  python plot_mouse2.py --area mouse --oname mouse.pdf --figsize "(8,4.5)" --smooth 1
 #+END_SRC
 [2021-04-12 Mon]: change negative to 1e-6
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_mouse2.py --area mouse --oname mouse.pdf --figsize "(9,3)" --smooth 1 --mask"
 #+END_SRC
 [2021-04-12 Mon]: check polarization fraction
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_polfrac.py --area mouse --freq f090 --oname polfrac_mouse.pdf --min 0 --max 0.05 --smooth 1
+#+END_SRC
+[2021-04-17 Sat]: update colorbar
+#+BEGIN_SRC
+python plot_mouse2.py --area mouse --oname mouse.pdf --figsize "(8,4)" --smooth 1 --mask
 #+END_SRC
 ** three little pigs
 [2021-04-08 Thu]
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_3lp.py --area tlp2 --oname mc_3lp.pdf --cmap planck_half --figsize "(8,3)" --mask
 #+END_SRC
+[2021-04-17 Sat]: update colorbar
+python plot_3lp.py --area tlp2 --oname mc_3lp.pdf --cmap planck_half --figsize "(8,4)" --mask
 ** sag astar
 [2021-04-08 Thu]
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_saga.py --area saga3 --oname saga_meerkat.pdf --cmap planck_half --figsize "(8,4)" --mask
 #+END_SRC
 [2021-04-08 Thu]: fun experiment -- add LIC
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_saga_lic.py --area saga3 --oname saga_fun.pdf --cmap planck_half --figsize "(5,5)" --mask --title "Sgr A^* and GCRA" --smooth 1
 #+END_SRC
+[2021-04-17 Sat]: change figure size and colorbar plotting
+#+BEGIN_SRC
+python plot_saga.py --area saga3 --oname saga_meerkat.pdf --cmap planck_half --figsize "(8,4.5)" --mask
+#+END_SRC
 ** l=1.3 complex
+[2021-04-17 Sat]: update colorbars
+#+BEGIN_SRC
+python plot_l13.py --area l1.3 --oname mc_l13.pdf --figsize "(8,6.5)" --cmap planck_half --scale 50 --mask --smooth 1
+#+END_SRC
 ** meerkat image alone
 here I plot MeerKAT image alone, in comparison to Coadd multi-color image
 [2021-04-14 Wed]: plot meercat
@@ -564,7 +586,7 @@ here I plot MeerKAT image alone, in comparison to Coadd multi-color image
 python plot_meerkat.py --area quat --oname map_meerkat.png
 #+END_SRC
 [2021-04-14 Wed]: to compare with a multicolor image
-#+BEGIN_SRC 
+#+BEGIN_SRC
   python plot_multifreq2.py --oname map_coadd.png --min 2e8 --max 2e9 \
          --norm 1 -Q 3 -s 3 --area quat --snr 3
 #+END_SRC
