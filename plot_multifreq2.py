@@ -189,9 +189,11 @@ popts = {
     'origin': 'lower',
 }
 fig = plt.figure(figsize=figsize)
-if args.axis: ax  = plt.subplot(111, projection=imap_f090.wcs)
+if args.axis:
+    ax  = plt.subplot(111, projection=imap_f090.wcs)
+    plotstyle.setup_axis(ax, nticks=[10,5])
 else: ax = plt.subplot(111)
-plotstyle.setup_axis(ax, nticks=[10,5])
+
 ax.imshow(omap, **popts)
 if not args.axis:
     ax.axis('off')
