@@ -6,6 +6,7 @@ as the contour.
 
 from common import *
 import matplotlib.pyplot as plt
+from matplotlib import ticker
 import lib
 import plotstyle
 
@@ -65,12 +66,11 @@ ax.set_xlabel('$l$')
 ax.set_ylabel('$b$')
 # add colorbar
 # cax = plotstyle.add_colorbar(fig, ax)
+locator = ticker.MaxNLocator(nbins=5)
 cax = plotstyle.add_colorbar_hpad(ax, hpad='50%', loc='top')
-fig.colorbar(im, cax=cax,
-             orientation='horizontal').set_label(texify("I [MJy/sr]"),
-                                                 fontsize=12)
-cax.xaxis.set_label_position('top')
-cax.xaxis.set_ticks_position('top')
+cb  = fig.colorbar(im, cax=cax, orientation='horizontal', ticks=locator,
+                   ticklocation='top')
+cb.set_label(texify("I [MJy/sr]"), fontsize=12)
 ax.text(0.15, 1.03, texify("f220"), transform=ax.transAxes, fontsize=14)
 
 # right panel
@@ -103,13 +103,14 @@ ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0,
 ax.set_xlabel('$l$')
 # colorbar
 # cax = plotstyle.add_colorbar(fig, ax)
+locator = ticker.MaxNLocator(nbins=5)
 cax = plotstyle.add_colorbar_hpad(ax, hpad='50%', loc='top')
-fig.colorbar(im, cax=cax,
+fig.colorbar(im, cax=cax, ticks=locator,
              orientation='horizontal').set_label(texify("I [MJy/sr]"),
                                                  fontsize=12)
 cax.xaxis.set_label_position('top')
 cax.xaxis.set_ticks_position('top')
-ax.text(0.15, 1.03, texify("Herschel"), transform=ax.transAxes, fontsize=14)
+ax.text(0.06, 1.03, texify("Herschel")+" $500 \mu$"+texify("m"), transform=ax.transAxes, fontsize=12)
 plt.subplots_adjust(hspace=0, wspace=0.1)
 if args.title: plt.suptitle(texify(args.title), fontsize=16)
 ofile = op.join(args.odir, args.oname)

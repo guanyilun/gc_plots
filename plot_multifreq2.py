@@ -192,6 +192,12 @@ fig = plt.figure(figsize=figsize)
 if args.axis:
     ax  = plt.subplot(111, projection=imap_f090.wcs)
     plotstyle.setup_axis(ax, nticks=[10,5])
+    ax.tick_params(axis='x', colors='white', which='both', labelcolor='black')
+    ax.tick_params(axis='y', colors='white', which='both', labelcolor='black')
+    ax.set_aspect('equal')
+    for side in ['left','right','top','bottom']:
+        ax.spines[side].set_visible(True)
+        ax.spines[side].set_color('white')
 else: ax = plt.subplot(111)
 
 ax.imshow(omap, **popts)

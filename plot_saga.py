@@ -8,7 +8,7 @@ from common import *
 import matplotlib.pyplot as plt
 import lib
 import plotstyle
-from matplotlib import colors
+from matplotlib import colors, ticker
 
 # parser defined in common
 parser.add_argument("--back", default="external/meerkat/MeerKAT_radio_bubbles.fits")
@@ -66,10 +66,12 @@ fig.colorbar(im, cax=cax, orientation='horizontal',
 cax.xaxis.set_label_position('top')
 cax.xaxis.set_ticks_position('top')
 ax.text(0.15, 1.03, texify("f090"), transform=ax.transAxes, fontsize=14)
-# cax = plotstyle.add_colorbar(fig, ax, loc='top')
-# fig.colorbar(im, cax=cax, orientation='horizontal').set_label(texify("Polarized Intensity [MJy/sr]"), fontsize=12)
-# fig.colorbar(im, cax=cax)
-# ax.set_title(texify("Polarized Intensity [MJy/sr]"), fontsize=12)
+ax.tick_params(axis='x', colors='white', which='both', labelcolor='black')
+ax.tick_params(axis='y', colors='white', which='both', labelcolor='black')
+ax.set_aspect('equal')
+for side in ['left','right','top','bottom']:
+    ax.spines[side].set_visible(True)
+    ax.spines[side].set_color('white')
 
 ###############
 # right panel #
@@ -113,9 +115,15 @@ ax.set_aspect('equal')
 # fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=12)
 # new colorbar
 cax = plotstyle.add_colorbar_hpad(ax, pad="1%", hpad="50%")
-fig.colorbar(im, cax=cax, orientation='horizontal').set_label(texify("I [MJy/sr]"), fontsize=12)
-cax.xaxis.set_label_position('top')
-cax.xaxis.set_ticks_position('top')
+cb = fig.colorbar(im, cax=cax, orientation='horizontal',
+                  ticks=[1e-5,1e-4,1e-3,1e-2], ticklocation='top')
+cb.set_label(texify("I [MJy/sr]"), fontsize=12)
+# import ipdb; ipdb.set_trace()
+x_minor = ticker.LogLocator(base=10.0, subs=np.arange(1.0, 10.0)*0.1, numticks=10)
+cb.ax.xaxis.set_minor_locator(x_minor)
+cb.update_ticks()
+
+
 ax.text(0.1, 1.03, texify("1.28 GHz"), transform=ax.transAxes, fontsize=14)
 plt.subplots_adjust(hspace=0, wspace=0.1)
 if args.title: plt.suptitle(texify(args.title), fontsize=16)

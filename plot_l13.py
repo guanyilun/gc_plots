@@ -85,7 +85,7 @@ cbar.set_ticks([30, 40, 60, 80])
 cbar.set_ticklabels([texify("30"), texify("40"), texify("60"), texify("80")])
 cax.xaxis.set_ticks_position('top')
 cax.xaxis.set_label_position('top')
-ax.text(0.12, 1.03, texify("f220"), transform=ax.transAxes, fontsize=14)
+ax.text(0.12, 1.02, texify("f220"), transform=ax.transAxes, fontsize=14)
 
 # right panel
 # ax = plt.subplot(122, projection=irmap.wcs)
@@ -135,7 +135,7 @@ cax.xaxis.set_ticks([600, 1000, 2000, 3000])
 cax.xaxis.set_ticklabels([texify("600"), texify("1000"), texify("2000"), texify("3000")], fontsize=10)
 cax.xaxis.set_ticks_position('top')
 cax.xaxis.set_label_position('top')
-ax.text(0.12, 1.03, texify("Herschel"), transform=ax.transAxes, fontsize=14)
+ax.text(0.10, 1.02, texify("Herschel")+" $500 \mu$"+texify("m"), transform=ax.transAxes, fontsize=10)
 
 plt.subplots_adjust(hspace=0, wspace=0.1)
 if args.title: plt.suptitle(r"$l=1.3$ {\rm Complex}", fontsize=16)

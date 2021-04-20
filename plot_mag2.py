@@ -43,6 +43,7 @@ parser.add_argument("--transpose", action='store_true')
 parser.add_argument("--show-freq", action='store_true')
 parser.add_argument("--sep-colorbar", action='store_true')
 parser.add_argument("--axdir", default='in')
+parser.add_argument("--label-freq", action='store_true')
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 if args.figsize: figsize=eval(args.figsize)
@@ -179,6 +180,11 @@ for i, freq in enumerate(freqs):
         if i == len(freqs)-1: fig.colorbar(im, cax=cbar).set_label(label, fontsize=14)
         else: fig.colorbar(im, cax=cbar)
     if args.show_freq: ax.set_title(texify(freqs[i]), fontsize=14)
+    if args.label_freq:
+        props = dict(alpha=1, facecolor='white')
+        axes[i].text(0.03, 0.85, texify(freq), bbox=props,
+                     verticalalignment='bottom', horizontalalignment='left',
+                     transform=axes[i].transAxes, fontsize=12)
     
 if len(freqs) == 1:
     axes.set_xlabel('$l$')
@@ -203,6 +209,7 @@ else:
         #     ax.spines[side].set_color('red')
         ax.tick_params(axis='x', colors='black', which='both', labelcolor='black')
         ax.tick_params(axis='y', colors='black', which='both', labelcolor='black')
+
 if not args.sep_colorbar:
     fig.subplots_adjust(right=0.9, hspace=0.03, wspace=0.02)
     # cax = fig.add_axes([0.93, 0.11, 0.04, 0.77])

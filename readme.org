@@ -157,9 +157,18 @@ mask out pixels with $\delta \psi > 15^\circ$,
          --figsize "(6,9)" --alpha 0.7 --mask 15
 #+END_SRC
 [2021-04-06 Tue]: texify and use projection
-#+BEGIN_SRC
-python plot_mag2.py --oname polfrac_mag_masked.pdf --smooth 2 --downgrade 4          --underlay plin --area quat --contour --cmap magma --figsize "(6,9)" --alpha 0.7 --mask 15 --axdir out
+#+BEGIN_SRC bash
+  python plot_mag2.py --oname polfrac_mag_masked.pdf --smooth 2 \
+         --downgrade 4 --underlay plin --area quat --contour --cmap magma \
+         --figsize "(6,9)" --alpha 0.7 --mask 15 --axdir out
 #+END_SRC
+[2021-04-19 Mon]: add label
+#+BEGIN_SRC bash
+  python plot_mag2.py --oname polfrac_mag_masked.pdf --smooth 2 \
+         --downgrade 4 --underlay plin --area quat --contour --cmap magma \
+         --figsize "(6,9)" --alpha 0.7 --mask 15 --axdir out --label-freq
+#+END_SRC
+
 ** plot one coadd map only
 This is to facilitate object identification work
 #+BEGIN_SRC bash
@@ -290,8 +299,14 @@ python plot_multifreq2.py --oname multifreq_zoom.pdf --min 2e8 --max 2e9 \
 #+BEGIN_SRC
     python plot_multifreq2.py --oname multifreq_pol_trim.pdf --min 1e7 \
            --max 1e9 --norm 4 -Q 0 -s 0.1 --area trim3 --pol --smooth 3.5 --snr 3 \
-           --mask-method 1 --mask-alpha 1 --save out/multifreq_P_trim3.npy
+           --mask-method 1 --mask-alpha 1 --save out/multifreq_P_trim3.npy --axis
     python plot_multifreq_annot.py --oname multifreq_annot4.pdf --area trim3 -T out/multifreq_P_trim3.npy --axis --small
+#+END_SRC
+[2021-04-17 Sat]: make annotated polarization figure
+#+BEGIN_SRC bash
+  python plot_multifreq2.py --oname multifreq_pol_trim.png --min 1e7 \
+         --max 1e9 --norm 4 -Q 0 -s 0.1 --area trim3 --pol --smooth 2 --snr 3 \
+         --mask-method 1 --mask-alpha 1 --save out/multifreq_P_trim3.npy --axis
 #+END_SRC
 ** plot magnetic field of some region of interests
 The mouse object with temperature as underlay
@@ -572,7 +587,7 @@ python plot_saga_lic.py --area saga3 --oname saga_fun.pdf --cmap planck_half --f
 #+END_SRC
 [2021-04-17 Sat]: change figure size and colorbar plotting
 #+BEGIN_SRC
-python plot_saga.py --area saga3 --oname saga_meerkat.pdf --cmap planck_half --figsize "(8,4.5)" --mask
+python plot_saga.py --area saga3 --oname saga_meerkat.pdf --cmap planck_half --figsize "(8,4.5)" --mask --scale 60
 #+END_SRC
 ** l=1.3 complex
 [2021-04-17 Sat]: update colorbars

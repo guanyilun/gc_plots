@@ -10,7 +10,7 @@ f090 polarization fraction, with contours showing polarization fraction
 from common import *
 import matplotlib.pyplot as plt
 import plotstyle, lib
-from matplotlib import colors
+from matplotlib import colors, ticker
 
 # parser defined in common
 parser.add_argument("--tmin", type=float, default=None)
@@ -60,7 +60,8 @@ im = ax.imshow(imap_sm[0], **opts)
 # cax = plotstyle.add_colorbar(fig, ax)
 # fig.colorbar(im, cax=cax).set_label(texify("Total intensity [MJy/sr]"))
 cax = plotstyle.add_colorbar_hpad(ax, pad="1%", hpad="50%")
-fig.colorbar(im, cax=cax, orientation='horizontal').set_label(texify("I [MJy/sr]"), fontsize=10)
+locator = ticker.MaxNLocator(nbins=4)
+fig.colorbar(im, cax=cax, orientation='horizontal', ticks=locator).set_label(texify("I [MJy/sr]"), fontsize=10)
 cax.xaxis.set_label_position('top')
 cax.xaxis.set_ticks_position('top')
 ax.text(0.1, 1.03, texify("f090"), transform=ax.transAxes, fontsize=12)
@@ -104,10 +105,9 @@ opts = {
 }
 P   = np.sum(imap_sm[1:]**2, axis=0)**0.5
 im  = ax.imshow(P, **opts)
-# cax = plotstyle.add_colorbar(fig, ax)
-# fig.colorbar(im, cax=cax).set_label(texify("Polarized intensity [MJy/sr]"))
 cax = plotstyle.add_colorbar_hpad(ax, pad="1%", hpad="50%")
-fig.colorbar(im, cax=cax, orientation='horizontal').set_label(texify("P [MJy/sr]"), fontsize=10)
+locator = ticker.MaxNLocator(nbins=4)
+fig.colorbar(im, cax=cax, orientation='horizontal', ticks=locator).set_label(texify("P [MJy/sr]"), fontsize=10)
 cax.xaxis.set_label_position('top')
 cax.xaxis.set_ticks_position('top')
 ax.text(0.1, 1.03, texify("f090"), transform=ax.transAxes, fontsize=12)
