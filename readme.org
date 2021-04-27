@@ -575,7 +575,9 @@ python plot_mouse2.py --area mouse --oname mouse.pdf --figsize "(8,4)" --smooth 
 python plot_3lp.py --area tlp2 --oname mc_3lp.pdf --cmap planck_half --figsize "(8,3)" --mask
 #+END_SRC
 [2021-04-17 Sat]: update colorbar
+#+BEGIN_SRC
 python plot_3lp.py --area tlp2 --oname mc_3lp.pdf --cmap planck_half --figsize "(8,4)" --mask
+#+END_SRC
 ** sag astar
 [2021-04-08 Thu]
 #+BEGIN_SRC

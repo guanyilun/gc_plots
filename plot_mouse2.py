@@ -64,7 +64,10 @@ locator = ticker.MaxNLocator(nbins=4)
 fig.colorbar(im, cax=cax, orientation='horizontal', ticks=locator).set_label(texify("I [MJy/sr]"), fontsize=10)
 cax.xaxis.set_label_position('top')
 cax.xaxis.set_ticks_position('top')
-ax.text(0.1, 1.03, texify("f090"), transform=ax.transAxes, fontsize=12)
+ax.text(0.12, 1.03, texify("f090"), transform=ax.transAxes, fontsize=12)
+# ax.text(0.1, 1.06, texify("f090"), transform=ax.transAxes, fontsize=12)
+# ax.text(0.06, 1.02, texify("B")+"-"+texify("fields")+": "+texify("f090"),
+#         transform=ax.transAxes, fontsize=8)
 ax.set_xlabel(r"$l$")
 ax.set_ylabel(r"$b$")
 # foreground: magnetic field orientation
@@ -81,8 +84,11 @@ P_snr = P / P_err
 mask  = P_snr < 3
 cmap_ = plt.get_cmap('binary')  # actual cmap doesn't matter
 color = cmap_(np.ones_like(P))
-color[ mask,-1] = 0.3
-color[~mask,-1] = 1
+# color[ mask,-1] = 0.3
+# color[~mask,-1] = 1
+val   = np.min([P_snr, np.ones_like(P_snr)*3], axis=0)
+val  /= 3
+color[...,-1] = val
 color = color.reshape(color.shape[0]*color.shape[1],4)
 ax.quiver(Bx,By,pivot='middle', headlength=0, headaxislength=0, color=color, scale=30)
 
@@ -110,7 +116,7 @@ locator = ticker.MaxNLocator(nbins=4)
 fig.colorbar(im, cax=cax, orientation='horizontal', ticks=locator).set_label(texify("P [MJy/sr]"), fontsize=10)
 cax.xaxis.set_label_position('top')
 cax.xaxis.set_ticks_position('top')
-ax.text(0.1, 1.03, texify("f090"), transform=ax.transAxes, fontsize=12)
+ax.text(0.12, 1.03, texify("f090"), transform=ax.transAxes, fontsize=12)
 
 ###############
 # right panel #
@@ -148,8 +154,11 @@ if args.mask:
     # mask = Pangle_err > 10 
     cmap_ = plt.get_cmap('binary')  # actual cmap doesn't matter
     color = cmap_(np.ones_like(X))
-    color[ mask,-1] = 0.3
-    color[~mask,-1] = 1
+    # color[ mask,-1] = 0.3
+    # color[~mask,-1] = 1
+    val   = np.min([Psnr, np.ones_like(Psnr)*3], axis=0)
+    val  /= 3
+    color[...,-1] = val
     color=color.reshape(color.shape[0]*color.shape[1],4)
 else:
     color='k'
@@ -165,8 +174,10 @@ cax = plotstyle.add_colorbar_hpad(ax, pad="1%", hpad="50%")
 fig.colorbar(im, cax=cax, orientation='horizontal').set_label(texify("I [MJy/sr]"), fontsize=10)
 cax.xaxis.set_label_position('top')
 cax.xaxis.set_ticks_position('top')
-ax.text(0.1, 1.03, texify("1.28 GHz"), transform=ax.transAxes, fontsize=12)
-
+ax.text(0.04, 1.07, texify("I")+": "+ texify("1.28 GHz"), transform=ax.transAxes, fontsize=8)
+# ax.text(0.04, 1.07, texify("1.28 GHz"), transform=ax.transAxes, fontsize=10)
+ax.text(0.04, 1.02, texify("B")+"-"+texify("fields")+": "+texify("f090"),
+        transform=ax.transAxes, fontsize=8)
 if args.title: plt.suptitle(texify(args.title), fontsize=16)
 fig.subplots_adjust(hspace=0, wspace=0.1)
 ofile = op.join(args.odir, args.oname)

@@ -93,8 +93,11 @@ if args.mask:
     mask  = Psnr < 3
     cmap_ = plt.get_cmap('binary')  # actual cmap doesn't matter
     color = cmap_(np.ones_like(X))
-    color[ mask,-1] = 0.3
-    color[~mask,-1] = 1
+    # color[ mask,-1] = 0.3
+    # color[~mask,-1] = 1
+    val   = np.min([Psnr, np.ones_like(Psnr)*3], axis=0)
+    val  /= 3
+    color[...,-1] = val
     color=color.reshape(color.shape[0]*color.shape[1],4)
 else:
     color='k'
@@ -110,7 +113,9 @@ fig.colorbar(im, cax=cax, ticks=locator,
                                                  fontsize=12)
 cax.xaxis.set_label_position('top')
 cax.xaxis.set_ticks_position('top')
-ax.text(0.06, 1.03, texify("Herschel")+" $500 \mu$"+texify("m"), transform=ax.transAxes, fontsize=12)
+ax.text(0.04, 1.09, texify("Herschel")+" $500 \mu$"+texify("m"), transform=ax.transAxes, fontsize=12)
+ax.text(0.04, 1.02, texify("B")+"-"+texify("fields")+": "+texify("f090"), transform=ax.transAxes, fontsize=12)
+# ax.text(0.06, 1.03, texify("Herschel")+" $500 \mu$"+texify("m"), transform=ax.transAxes, fontsize=12)
 plt.subplots_adjust(hspace=0, wspace=0.1)
 if args.title: plt.suptitle(texify(args.title), fontsize=16)
 ofile = op.join(args.odir, args.oname)

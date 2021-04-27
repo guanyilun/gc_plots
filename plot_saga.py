@@ -101,8 +101,11 @@ if args.mask:
     # mask = Pangle_err > 10 
     cmap_ = plt.get_cmap('binary')  # actual cmap doesn't matter
     color = cmap_(np.ones_like(X))
-    color[ mask,-1] = 0.2
-    color[~mask,-1] = 1
+    # color[ mask,-1] = 0.2
+    # color[~mask,-1] = 1
+    val   = np.min([Psnr, np.ones_like(Psnr)*3], axis=0)
+    val  /= 3
+    color[...,-1] = val
     color=color.reshape(color.shape[0]*color.shape[1],4)
 else:
     color='k'
@@ -123,8 +126,11 @@ x_minor = ticker.LogLocator(base=10.0, subs=np.arange(1.0, 10.0)*0.1, numticks=1
 cb.ax.xaxis.set_minor_locator(x_minor)
 cb.update_ticks()
 
-
-ax.text(0.1, 1.03, texify("1.28 GHz"), transform=ax.transAxes, fontsize=14)
+ax.text(0.06, 1.07, texify("I")+": "+ texify("1.28 GHz"), transform=ax.transAxes, fontsize=12)
+# ax.text(0.04, 1.07, texify("1.28 GHz"), transform=ax.transAxes, fontsize=10)
+ax.text(0.06, 1.02, texify("B")+"-"+texify("fields")+": "+texify("f090"),
+        transform=ax.transAxes, fontsize=12)
+# ax.text(0.1, 1.03, texify("1.28 GHz"), transform=ax.transAxes, fontsize=14)
 plt.subplots_adjust(hspace=0, wspace=0.1)
 if args.title: plt.suptitle(texify(args.title), fontsize=16)
 ofile = op.join(args.odir, args.oname)

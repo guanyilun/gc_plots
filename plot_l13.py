@@ -92,8 +92,6 @@ ax.text(0.12, 1.02, texify("f220"), transform=ax.transAxes, fontsize=14)
 ax = plt.subplot(122, projection=irmap.wcs)
 plotstyle.setup_axis(ax, yticks=False, nticks=[5,5], fmt=None)
 opts.update({
-    # 'vmin': args.min2,
-    # 'vmax': args.max2,
     'vmin': None,
     'vmax': None,
     'norm': colors.LogNorm(vmin=5e2, vmax=3e3),
@@ -116,14 +114,23 @@ if args.mask:
     # Pangle_err = lib.Pangle_error(imap, ivar*s**2, deg=True)    
     # mask = Pangle_err > 10 
     cmap_ = plt.get_cmap('binary')  # actual cmap doesn't matter
+    # color = cmap_(np.ones_like(X))
+    # color[ mask,-1] = 0.3
+    # color[~mask,-1] = 1
     color = cmap_(np.ones_like(X))
-    color[ mask,-1] = 0.3
-    color[~mask,-1] = 1
-    color=color.reshape(color.shape[0]*color.shape[1],4)
+    val   = np.min([Psnr, np.ones_like(X)*3], axis=0)
+    # val   = np.max([val,  np.ones_like(X)*1], axis=0)
+    val  /= 3
+    # color = cmap_(val)
+    color[...,-1] = val
+    color = color.reshape(color.shape[0]*color.shape[1],4)
+
 else:
     color='k'
-ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0,
-          color=color, transform=ax.get_transform('world'), scale=args.scale)
+q = ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0,
+              color=color, transform=ax.get_transform('world'), scale=args.scale)
+# ax.quiverkey(q, X=0.12, Y=1.02, U=2, angle=-45,
+#              label=texify('ACT f220'), labelpos='E')
 ax.set_xlabel('$l$')
 # colorbar
 # cax = plotstyle.add_colorbar(fig, ax)
@@ -135,7 +142,9 @@ cax.xaxis.set_ticks([600, 1000, 2000, 3000])
 cax.xaxis.set_ticklabels([texify("600"), texify("1000"), texify("2000"), texify("3000")], fontsize=10)
 cax.xaxis.set_ticks_position('top')
 cax.xaxis.set_label_position('top')
-ax.text(0.10, 1.02, texify("Herschel")+" $500 \mu$"+texify("m"), transform=ax.transAxes, fontsize=10)
+ax.text(0.04, 1.04, texify("Herschel")+" $500 \mu$"+texify("m"), transform=ax.transAxes, fontsize=10)
+ax.text(0.04, 1.01, texify("B")+"-"+texify("fields")+": "+texify("f090"), transform=ax.transAxes, fontsize=10)
+
 
 plt.subplots_adjust(hspace=0, wspace=0.1)
 if args.title: plt.suptitle(r"$l=1.3$ {\rm Complex}", fontsize=16)
