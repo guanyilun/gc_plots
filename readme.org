@@ -627,3 +627,7 @@ python plot_meerkat.py --area quat --oname map_meerkat.png
 #+BEGIN_SRC bash
 rsync -ai plots/map_{coadd,meerkat}.png yilung@phy-act1:/home/yilung/public_html/galactic/210414/plots/
 #+END_SRC
+** plot passbands
+#+BEGIN_SRC 
+python plot_passband.py
+#+END_SRC
