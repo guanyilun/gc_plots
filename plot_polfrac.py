@@ -42,14 +42,14 @@ else:
 # compute polarization fraction
 P = np.sum(imap[1:]**2, axis=0)**0.5
 p = P/imap[0]
-# mask = imap[0] > 1.6
 # calculate p error
 P_err = lib.P_error(imap, ivar*s**2)
 I_err = ivar[0]**-0.5 / s
 p_err = (imap[0] * P_err - P * I_err) / imap[0]**2
-# mask_max = p == np.max(p[mask])
-# p[~mask] = 1e-6
-# print(f'max: {p[mask_max]} +- {p_err[mask_max]}')
+mask = imap[0] > 1.6
+mask_max = p == np.max(p[mask])
+p[~mask] = 1e-6
+print(f'max: {p[mask_max]} +- {p_err[mask_max]}')
 
 # import ipdb; ipdb.set_trace()
 plot_opts = {

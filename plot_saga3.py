@@ -12,7 +12,7 @@ from matplotlib import colors, ticker
 
 # parser defined in common
 parser.add_argument("--back", default="external/meerkat/MeerKAT_radio_bubbles.fits")
-parser.add_argument("--title", default="Sgr A^*")
+parser.add_argument("--title", default="GCRA and Sgr A")
 parser.add_argument("--figsize", default=None)
 parser.add_argument("--smooth", type=float, default=None)
 parser.add_argument("--freq", default='f090')
@@ -50,19 +50,25 @@ fig = plt.figure(figsize=figsize)
 ##############
 # left panel #
 ##############
-ax = plt.subplot(121, projection=imap.wcs)
+# ax = plt.subplot(121, projection=imap.wcs)
+ax = plt.subplot(121, projection=irmap.wcs)
 opts = {
-    'cmap': 'magma',
-    'norm': colors.LogNorm(vmin=1e-2, vmax=3),
+    # 'cmap': 'magma',
+    # 'norm': colors.LogNorm(vmin=1e-2, vmax=3),    
+    'cmap': 'planck_half',
+    'norm': colors.LogNorm(vmin=1e-5, vmax=1e-2),    
+
 }
 plotstyle.setup_axis(ax, nticks=[5,5], fmt=None)
 P  = np.sum(imap[1:]**2,axis=0)**0.5
-im = ax.imshow(P, **opts)
+# im = ax.imshow(P, **opts)
+im = ax.imshow(irmap, **opts)
 ax.set_xlabel('$l$')
 ax.set_ylabel('$b$')
 cax = plotstyle.add_colorbar_hpad(ax, pad="1%", hpad="50%")
 fig.colorbar(im, cax=cax, orientation='horizontal',
-             shrink='50%').set_label(texify("P [MJy/sr]"), fontsize=12)
+#              shrink='50%').set_label(texify("P [MJy/sr]"), fontsize=12)
+             shrink='50%').set_label(texify("I [MJy/sr]"), fontsize=12)
 cax.xaxis.set_label_position('top')
 cax.xaxis.set_ticks_position('top')
 ax.text(0.15, 1.03, texify("f090"), transform=ax.transAxes, fontsize=14)
@@ -72,6 +78,16 @@ ax.set_aspect('equal')
 for side in ['left','right','top','bottom']:
     ax.spines[side].set_visible(True)
     ax.spines[side].set_color('white')
+
+# add contours
+# levels = np.logspace(np.log10(5),np.log10(25),5)
+# levels = [5,9,13,17,21,25]
+levels = np.arange(1,31,1)
+# print(levels)
+# ax.contour(imap[0], levels=10, cmap='gray', norm=colors.LogNorm(vmin=5, vmax=50))
+# ax.contour(imap[0], levels=levels, cmap='Greys', norm=colors.Normalize(vmin=5, vmax=50), alpha=0.6)
+# ax.contour(imap[0], levels=levels, colors='w', alpha=0.6)
+ax.contour(X, Y, imap[0], levels=levels, colors='k', alpha=0.3, transform=ax.get_transform('world'))
 
 ###############
 # right panel #

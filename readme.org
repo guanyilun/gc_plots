@@ -553,6 +553,14 @@ python plot_tornado.py --area tndo --oname tornado.pdf --figsize "(9,4)"
 #+BEGIN_SRC
 python plot_tornado.py --area tndo --oname tornado.pdf --figsize "(8,4.5)"
 #+END_SRC
+[2021-04-28 Wed]: check polarization
+#+BEGIN_SRC 
+python plot_polfrac.py --area tndo --freq f090 --oname polfrac_tndo.pdf --min 0 --max 0.05 --smooth 1
+#+END_SRC
+[2021-04-29 Thu]: add polarization vector
+#+BEGIN_SRC 
+python plot_tornado2.py --area tndo --freq f090 --oname tornado2.pdf --figsize "(8,4.5)" --mask --scale 40
+#+END_SRC
 ** mouse
 #+BEGIN_SRC
  python plot_mouse2.py --area mouse --oname mouse.pdf --figsize "(8,4.5)" --smooth 1
@@ -590,6 +598,14 @@ python plot_saga_lic.py --area saga3 --oname saga_fun.pdf --cmap planck_half --f
 [2021-04-17 Sat]: change figure size and colorbar plotting
 #+BEGIN_SRC
 python plot_saga.py --area saga3 --oname saga_meerkat.pdf --cmap planck_half --figsize "(8,4.5)" --mask --scale 60
+#+END_SRC
+[2021-04-29 Thu]: change to a 3-panel plot like for mouse
+#+BEGIN_SRC
+python plot_saga2.py --area saga3 --oname saga_meerkat2.pdf --cmap planck_half --figsize "(10,4.5)" --mask --scale 60
+#+END_SRC
+[2021-04-29 Thu]: go back to 2panel but add contour
+#+BEGIN_SRC 
+python plot_saga3.py --area saga3 --oname saga_meerkat2.pdf --cmap planck_half --figsize "(8,4.5)" --mask --scale 50
 #+END_SRC
 ** l=1.3 complex
 [2021-04-17 Sat]: update colorbars

@@ -87,4 +87,3 @@ fig.subplots_adjust(hspace=0, wspace=0.1)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)
 plt.savefig(ofile, bbox_inches='tight')
-

@@ -158,6 +158,7 @@ boxes['tlp2']  = np.array([[-0.15,0.2],[0,0.005]]) / 180*np.pi  # enlarged
 boxes['brick'] = np.array([[-0.025,0.30],[0.075,0.2]]) / 180*np.pi
 boxes['brick2']= np.array([[-0.1,0.40],[0.2,0.1]]) / 180*np.pi
 boxes['dust4'] = np.array([[-0.82, 0.38],[-0.76,0.34]]) / 180*np.pi
+# boxes['l1.3']  = np.array([[-0.25,1.3], [0.25,1.1]]) / 180*np.pi
 boxes['l1.3']  = np.array([[-0.25,1.4], [0.25,1.1]]) / 180*np.pi
 # boxes['gcra']  = np.array([[-0.5,0.28],[0.5,0]]) / 180*np.pi
 # boxes['tlp']   = np.array([[-0.12,0.18],[-0.04,0.025]]) / 180*np.pi
