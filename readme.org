@@ -554,11 +554,11 @@ python plot_tornado.py --area tndo --oname tornado.pdf --figsize "(9,4)"
 python plot_tornado.py --area tndo --oname tornado.pdf --figsize "(8,4.5)"
 #+END_SRC
 [2021-04-28 Wed]: check polarization
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_polfrac.py --area tndo --freq f090 --oname polfrac_tndo.pdf --min 0 --max 0.05 --smooth 1
 #+END_SRC
 [2021-04-29 Thu]: add polarization vector
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_tornado2.py --area tndo --freq f090 --oname tornado2.pdf --figsize "(8,4.5)" --mask --scale 40
 #+END_SRC
 ** mouse
@@ -604,7 +604,7 @@ python plot_saga.py --area saga3 --oname saga_meerkat.pdf --cmap planck_half --f
 python plot_saga2.py --area saga3 --oname saga_meerkat2.pdf --cmap planck_half --figsize "(10,4.5)" --mask --scale 60
 #+END_SRC
 [2021-04-29 Thu]: go back to 2panel but add contour
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_saga3.py --area saga3 --oname saga_meerkat2.pdf --cmap planck_half --figsize "(8,4.5)" --mask --scale 50
 #+END_SRC
 ** l=1.3 complex
@@ -628,6 +628,11 @@ python plot_meerkat.py --area quat --oname map_meerkat.png
 rsync -ai plots/map_{coadd,meerkat}.png yilung@phy-act1:/home/yilung/public_html/galactic/210414/plots/
 #+END_SRC
 ** plot passbands
-#+BEGIN_SRC 
+#+BEGIN_SRC
 python plot_passband.py
+#+END_SRC
+* non-paper plots
+[2021-05-04 Tue] plot multifreq lic (add --force to overwrite saved texture)
+#+BEGIN_SRC
+python plot_multifreq_lic.py -T out/multifreq_I_trim_var.npy --area trim2 --oname mf_lic.pdf
 #+END_SRC
