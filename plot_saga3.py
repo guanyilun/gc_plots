@@ -50,25 +50,25 @@ fig = plt.figure(figsize=figsize)
 ##############
 # left panel #
 ##############
-# ax = plt.subplot(121, projection=imap.wcs)
-ax = plt.subplot(121, projection=irmap.wcs)
+ax = plt.subplot(121, projection=imap.wcs)
+# ax = plt.subplot(121, projection=irmap.wcs)
 opts = {
-    # 'cmap': 'magma',
-    # 'norm': colors.LogNorm(vmin=1e-2, vmax=3),    
-    'cmap': 'planck_half',
-    'norm': colors.LogNorm(vmin=1e-5, vmax=1e-2),    
+    'cmap': 'magma',
+    'norm': colors.LogNorm(vmin=1e-2, vmax=3),
+    # 'cmap': 'planck_half',
+    # 'norm': colors.LogNorm(vmin=1e-5, vmax=1e-2),
 
 }
 plotstyle.setup_axis(ax, nticks=[5,5], fmt=None)
 P  = np.sum(imap[1:]**2,axis=0)**0.5
-# im = ax.imshow(P, **opts)
-im = ax.imshow(irmap, **opts)
+im = ax.imshow(P, **opts)
+# im = ax.imshow(irmap, **opts)
 ax.set_xlabel('$l$')
 ax.set_ylabel('$b$')
 cax = plotstyle.add_colorbar_hpad(ax, pad="1%", hpad="50%")
 fig.colorbar(im, cax=cax, orientation='horizontal',
-#              shrink='50%').set_label(texify("P [MJy/sr]"), fontsize=12)
-             shrink='50%').set_label(texify("I [MJy/sr]"), fontsize=12)
+             shrink='50%').set_label(texify("P [MJy/sr]"), fontsize=12)
+#              shrink='50%').set_label(texify("I [MJy/sr]"), fontsize=12)
 cax.xaxis.set_label_position('top')
 cax.xaxis.set_ticks_position('top')
 ax.text(0.15, 1.03, texify("f090"), transform=ax.transAxes, fontsize=14)
@@ -82,12 +82,15 @@ for side in ['left','right','top','bottom']:
 # add contours
 # levels = np.logspace(np.log10(5),np.log10(25),5)
 # levels = [5,9,13,17,21,25]
-levels = np.arange(1,31,1)
+levels = np.arange(1,31,2)
 # print(levels)
 # ax.contour(imap[0], levels=10, cmap='gray', norm=colors.LogNorm(vmin=5, vmax=50))
 # ax.contour(imap[0], levels=levels, cmap='Greys', norm=colors.Normalize(vmin=5, vmax=50), alpha=0.6)
-# ax.contour(imap[0], levels=levels, colors='w', alpha=0.6)
-ax.contour(X, Y, imap[0], levels=levels, colors='k', alpha=0.3, transform=ax.get_transform('world'))
+ax.contour(imap[0], levels=levels, colors='w', alpha=0.5)
+# ax.contour(X, Y, imap[0], levels=levels, colors='k', alpha=0.3, transform=ax.get_transform('world'))
+sagax, sagay = [359.94423568, -0.04616002]
+ax.scatter([sagax], [sagay], s=15, marker='x', color='w',
+           transform=ax.get_transform('world'), alpha=0.7)
 
 ###############
 # right panel #
@@ -113,8 +116,8 @@ if args.mask:
     P_err = lib.P_error(imap, ivar*s**2)
     Psnr  = P / P_err
     mask  = Psnr < 3
-    # Pangle_err = lib.Pangle_error(imap, ivar*s**2, deg=True)    
-    # mask = Pangle_err > 10 
+    # Pangle_err = lib.Pangle_error(imap, ivar*s**2, deg=True)
+    # mask = Pangle_err > 10
     cmap_ = plt.get_cmap('binary')  # actual cmap doesn't matter
     color = cmap_(np.ones_like(X))
     # color[ mask,-1] = 0.2
@@ -125,11 +128,15 @@ if args.mask:
     color=color.reshape(color.shape[0]*color.shape[1],4)
 else:
     color='k'
+sagax, sagay = [359.94423568, -0.04616002]
+ax.scatter([sagax], [sagay], s=15, marker='x', color='w',
+           transform=ax.get_transform('world'), alpha=0.7)
 ax.quiver(X,Y,Bx,By,pivot='middle', headlength=0, headaxislength=0, scale=args.scale,
           color=color, transform=ax.get_transform('world'))
 ax.set_xlabel('$l$')
 ax.set_ylabel('$b$')
 ax.set_aspect('equal')
+
 # colorbar
 # fig.colorbar(im, cax=cax).set_label(texify("Total Intensity [MJy/sr]"), fontsize=12)
 # new colorbar
@@ -147,6 +154,7 @@ ax.text(0.06, 1.02, texify("B")+"-"+texify("fields")+": "+texify("f090"),
         transform=ax.transAxes, fontsize=12)
 # ax.text(0.1, 1.03, texify("1.28 GHz"), transform=ax.transAxes, fontsize=14)
 plt.subplots_adjust(hspace=0, wspace=0.1)
+
 if args.title: plt.suptitle(texify(args.title), fontsize=16)
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)

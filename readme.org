@@ -612,27 +612,63 @@ python plot_saga3.py --area saga3 --oname saga_meerkat2.pdf --cmap planck_half -
 #+BEGIN_SRC
 python plot_l13.py --area l1.3 --oname mc_l13.pdf --figsize "(8,6.5)" --cmap planck_half --scale 50 --mask --smooth 1
 #+END_SRC
-** meerkat image alone
+* non-paper plots
+[2021-05-04 Tue] plot multifreq lic (add --force to overwrite saved texture)
+#+BEGIN_SRC
+python plot_multifreq_lic.py -T out/multifreq_I_trim_var.npy --area trim2 --oname mf_lic.pdf
+#+END_SRC
+[2021-05-05 Wed] plot passbands
+#+BEGIN_SRC
+python plot_passband.py
+#+END_SRC
+** web visualizer materials
+*** MeerKAT
 here I plot MeerKAT image alone, in comparison to Coadd multi-color image
 [2021-04-14 Wed]: plot meercat
 #+BEGIN_SRC bash
 python plot_meerkat.py --area quat --oname map_meerkat.png
 #+END_SRC
+*** Multicolor
 [2021-04-14 Wed]: to compare with a multicolor image
 #+BEGIN_SRC
   python plot_multifreq2.py --oname map_coadd.png --min 2e8 --max 2e9 \
          --norm 1 -Q 3 -s 3 --area quat --snr 3
 #+END_SRC
+*** per freq map
+
+*** Transfer
 [2021-04-14 Wed]: transfer to phyact1
 #+BEGIN_SRC bash
 rsync -ai plots/map_{coadd,meerkat}.png yilung@phy-act1:/home/yilung/public_html/galactic/210414/plots/
 #+END_SRC
-** plot passbands
+** prepare data releases
 #+BEGIN_SRC
-python plot_passband.py
+python prepare_release.py --odir release
 #+END_SRC
-* non-paper plots
-[2021-05-04 Tue] plot multifreq lic (add --force to overwrite saved texture)
-#+BEGIN_SRC
-python plot_multifreq_lic.py -T out/multifreq_I_trim_var.npy --area trim2 --oname mf_lic.pdf
+*** more plots
+[2021-05-05 Wed] Meerkat with act vectors
+#+BEGIN_SRC python
+python plot_visualizer.py --area quat --back radio --front bvec_f090 --log --min 1e-5 --max 1e-2 --cmap planck_half --scale 100 --mask --smooth2 1 --dg2 2 --oname viz_meerkat_f090.png
+python plot_visualizer.py --area quat --back radio --front bvec_f150 --log --min 1e-5 --max 1e-2 --cmap planck_half --scale 100 --mask --smooth2 1 --dg2 2 --oname viz_meerkat_f150.png
+python plot_visualizer.py --area quat --back radio --front bvec_f220 --log --min 1e-5 --max 1e-2 --cmap planck_half --scale 100 --mask --smooth2 1 --dg2 2 --oname viz_meerkat_f220.png
+#+END_SRC
+[2021-05-05 Wed] coadd maps
+#+BEGIN_SRC bash
+  for f in f090 f150 f220; do
+      echo $f
+      python plot_visualizer.py --area trim2 --back tmap_${f} --log --cmap planck_half --oname viz_tmap_${f}.png --axis --colorbar
+      python plot_visualizer.py --area trim2 --back tmap_planck_${f} --log --cmap planck_half --oname viz_tmap_planck_${f}.png --axis --colorbar
+  done
+#+END_SRC
+[2021-05-05 Wed] coadd maps in polarized intensity
+#+BEGIN_SRC bash
+f=f090
+python plot_visualizer.py --area trim2 --back pmap_${f} --cmap magma --oname viz_pmap_${f}.png --axis --min 0 --max 0.2 --colorbar
+python plot_visualizer.py --area trim2 --back pmap_planck_${f} --cmap magma --oname viz_pmap_planck_${f}.png --axis --min 0 --max 0.2 --colorbar
+f=f150
+python plot_visualizer.py --area trim2 --back pmap_${f} --cmap magma --oname viz_pmap_${f}.png --axis --min 0 --max 0.2 --colorbar
+python plot_visualizer.py --area trim2 --back pmap_planck_${f} --cmap magma --oname viz_pmap_planck_${f}.png --axis --min 0 --max 0.2 --colorbar
+f=f220
+python plot_visualizer.py --area trim2 --back pmap_${f} --cmap magma --oname viz_pmap_${f}.png --axis --min 0 --max 0.6 --colorbar
+python plot_visualizer.py --area trim2 --back pmap_planck_${f} --cmap magma --oname viz_pmap_planck_${f}.png --axis --min 0 --max 0.6 --colorbar
 #+END_SRC

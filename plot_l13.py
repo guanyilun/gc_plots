@@ -142,9 +142,8 @@ cax.xaxis.set_ticks([600, 1000, 2000, 3000])
 cax.xaxis.set_ticklabels([texify("600"), texify("1000"), texify("2000"), texify("3000")], fontsize=10)
 cax.xaxis.set_ticks_position('top')
 cax.xaxis.set_label_position('top')
-ax.text(0.04, 1.04, texify("Herschel")+" $500 \mu$"+texify("m"), transform=ax.transAxes, fontsize=10)
-ax.text(0.04, 1.01, texify("B")+"-"+texify("fields")+": "+texify("f090"), transform=ax.transAxes, fontsize=10)
-
+ax.text(0.04, 1.04, texify("I")+": "+texify("Herschel")+" $500 \mu$"+texify("m"), transform=ax.transAxes, fontsize=10)
+ax.text(0.04, 1.01, texify("B")+"-"+texify("fields")+": "+texify("f220"), transform=ax.transAxes, fontsize=10)
 
 plt.subplots_adjust(hspace=0, wspace=0.1)
 if args.title: plt.suptitle(r"$l=1.3$ {\rm Complex}", fontsize=16)

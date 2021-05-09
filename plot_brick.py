@@ -113,7 +113,8 @@ fig.colorbar(im, cax=cax, ticks=locator,
                                                  fontsize=12)
 cax.xaxis.set_label_position('top')
 cax.xaxis.set_ticks_position('top')
-ax.text(0.04, 1.09, texify("Herschel")+" $500 \mu$"+texify("m"), transform=ax.transAxes, fontsize=12)
+ax.text(0.04, 1.09, texify("I")+": "+texify("Herschel")+" $500 \mu$"+texify("m"),
+        transform=ax.transAxes, fontsize=12)
 ax.text(0.04, 1.02, texify("B")+"-"+texify("fields")+": "+texify("f220"), transform=ax.transAxes, fontsize=12)
 # ax.text(0.06, 1.03, texify("Herschel")+" $500 \mu$"+texify("m"), transform=ax.transAxes, fontsize=12)
 plt.subplots_adjust(hspace=0, wspace=0.1)

@@ -55,18 +55,15 @@ fig = plt.figure(figsize=(12,6))
 box = None
 
 plot_opts = {
-    'origin': 'lower',
     'cmap': args.cmap,
     'vmin': args.min,
     'vmax': args.max,
-    # 'extent': [2,-2,-1,1],
 }
 
 imap = process_map(load_map(filedb[args.freq]['coadd']),
                    box=box, freq=args.freq, deconvolve=args.deconv,
                    smooth=args.smooth)
 plt.imshow(imap, **plot_opts)
-# plt.grid(c='k', alpha=0.5)
 plt.axis('off')
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)

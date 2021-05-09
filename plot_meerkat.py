@@ -47,6 +47,9 @@ else:
 irmap[irmap<0] = 1e-6
 
 im = ax.imshow(irmap, **opts)
+
+# add act vectors
+
 if args.axis:
     ax.set_xlabel('$l$')
     ax.set_ylabel('$b$')
