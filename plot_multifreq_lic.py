@@ -1,8 +1,5 @@
-"""This will make a two panel plot with upper panel being
-the total intensity and lower panel being the polarization
-intensity for comparison. It actually does no computing but
-to load saved maps computed separately using plot_multifreq
-or plot_multifreq2 (for polarization).
+"""This script produces LIC plot based on multifrequency temperature
+plot
 
 """
 
@@ -40,7 +37,6 @@ popts = {
 }
 
 # plots:
-# -> upper panel: temperature
 fig, ax = plt.subplots(1, 1, figsize=figsize, subplot_kw={'projection':imap.wcs})
 if not args.axis:
     ax.axis('off')
@@ -73,12 +69,14 @@ else:
     texture = np.load(args.texture)
 # boost contrast
 curve = lambda x: 1/(1+np.exp(-(x-0.5)))
-texture = curve(texture)
+# texture = curve(texture)  # option to adjust contrast of lic texture
 alpha = np.min([np.ones_like(texture), 1.2*(P/P.max())**0.7],axis=0)
 textures = np.stack([np.ones_like(texture)*alpha]*3+[0.6*texture], axis=2)
 ax.imshow(tmap, **popts)
 ax.imshow(textures, origin='lower')
 
+# watermark
+ax.text(0.84, 0.05, "ACT Collaboration", fontsize=10, color='gray', transform=ax.transAxes, alpha=0.8)
 
 ofile = op.join(args.odir, args.oname)
 print("Writing:", ofile)

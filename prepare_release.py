@@ -10,7 +10,8 @@ from common import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--odir", help='data release directory')
-parser.add_argument("--tag", help='data release tag', default='sr-mw1')
+parser.add_argument("--tag", help='data release tag', default='sr-gc-1')
+parser.add_argument("--subver", help='subversion number', default="0")
 args = parser.parse_args()
 if not op.exists(args.odir): os.makedirs(args.odir)
 
@@ -22,6 +23,8 @@ for f in freqs:
     ivar_ifile = filedb[f]['coadd_ivar']
     # define output filename
     tag = args.tag.replace('-','_')
+    subver = 0  # subversion number
+    tag += f'.{subver}'
     imap_ofile = op.join(args.odir, f'act_planck_{tag}_s19_{f}_map.fits')
     ivar_ofile = op.join(args.odir, f'act_planck_{tag}_s19_{f}_ivar.fits')
     # 1. convert to IAU: flip sign U -> -U

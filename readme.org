@@ -57,6 +57,22 @@ polarization add coordinates
          --min 0 --max 0.2 --cmap magma --area half \
          --figsize "(9.5,3)" --freq f150 --axis
 #+END_SRC
+[2021-06-20 Sun]: 
+#+BEGIN_SRC bash
+  python plot_planck_act_sidebyside_f090.py --oname planck_coadd_sidebyside_f090.pdf \
+         --min 0 --max 0.2 --cmap magma --area half \
+         --figsize "(9.5,3)" --freq f090 --axis
+#+END_SRC
+[2021-06-20 Sun]:
+#+BEGIN_SRC 
+python plot_planck_act_sidebyside_onefreq.py -o plots \
+       --oname planck_coadd_sidebyside_1f.pdf --use coadd \
+       --figsize "(9.5,3)"
+#+END_SRC
+[2021-06-20 Sun]:
+#+BEGIN_SRC 
+python plot_planck_act_sidebyside2.py -o plots --oname planck_coadd_sidebyside_act.pdf --use coadd --figsize "(8,5.6)"
+#+END_SRC
 ** magnetic field in 3 bands
 #+BEGIN_SRC bash
 python plot_mag_in_3bands.py -o plots
@@ -671,4 +687,8 @@ python plot_visualizer.py --area trim2 --back pmap_planck_${f} --cmap magma --on
 f=f220
 python plot_visualizer.py --area trim2 --back pmap_${f} --cmap magma --oname viz_pmap_${f}.png --axis --min 0 --max 0.6 --colorbar
 python plot_visualizer.py --area trim2 --back pmap_planck_${f} --cmap magma --oname viz_pmap_planck_${f}.png --axis --min 0 --max 0.6 --colorbar
+#+END_SRC
+** check leakage
+#+BEGIN_SRC 
+python check_leakage.py
 #+END_SRC
